@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest-50: #f0f5f2;
+  --color-forest-100: #dce8e1;
+  --color-forest-200: #b9d1c4;
+  --color-forest-300: #8fb3a1;
+  --color-forest-400: #6a9280;
+  --color-forest-500: #4a7662;
+  --color-forest-600: #3a5f4f;
+  --color-forest-700: #2d5a3d;
+  --color-forest-800: #264832;
+  --color-forest-900: #1e3a29;
+  --color-forest-950: #0f2118;
+
+  --color-sand-50: #fdf8f3;
+  --color-sand-100: #f9edd9;
+  --color-sand-200: #f0d7ae;
+  --color-sand-300: #e4bb7b;
+  --color-sand-400: #d9a35a;
+  --color-sand-500: #c4956a;
+  --color-sand-600: #b07a48;
+  --color-sand-700: #935f3a;
+  --color-sand-800: #7a4f34;
+  --color-sand-900: #66432e;
+
+  --color-bone: #FAFAF8;
+  --color-ink: #1A1F1C;
+
+  --font-sans: 'Geist', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+  --font-serif: 'Fraunces', Georgia, serif;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--color-ink);
+    background: var(--color-bone);
+  }
+  ::selection {
+    background-color: var(--color-forest-700);
+    color: var(--color-bone);
+  }
+}
+
+/* Marquee animations — track content is duplicated, so translating
+   to -50% (or from -50% to 0) produces a seamless infinite loop. */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
