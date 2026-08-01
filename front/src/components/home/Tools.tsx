@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards, Mousewheel, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import { slides } from '@/data/tools';
+import { getPublishedTools, type ToolData } from '@/api/auth';
+import { useLocale, localized } from '@/context/locale';
 
 import 'swiper/css';
 import 'swiper/css/effect-cards';
@@ -10,19 +11,35 @@ import 'swiper/css/effect-cards';
 // ---- Component ----
 
 export default function Tools() {
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const { locale } = useLocale();
+  const [tools, setTools] = useState<ToolData[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
 
-  const update = (swiper: SwiperType) => {
-    const idx = swiper.realIndex;
-    if (slides[idx]) setActiveIdx(idx);
-  };
+  useEffect(() => {
+    getPublishedTools()
+      .then(setTools)
+      .catch(() => setTools([]))
+      .finally(() => setLoaded(true));
+  }, []);
 
-  const active = activeIdx === null ? null : slides[activeIdx];
-  const link = active ? active.link : slides[0].link;
+  const onSwiperInit = useCallback((swiper: SwiperType) => {
+    swiperRef.current = swiper;
+    setActiveIdx(swiper.realIndex);
+  }, []);
+
+  const onSlideChange = useCallback((swiper: SwiperType) => {
+    setActiveIdx(swiper.realIndex);
+  }, []);
+
+  if (!loaded || tools.length === 0) return null;
+
+  const active = tools[activeIdx] || tools[0];
+  const link = active?.link || '#';
 
   return (
     <>
-      {/* All CSS is local to this component — no dependency on index.css */}
       <style>{`
         @media (max-width: 750px) {
           .tools-content {
@@ -74,7 +91,7 @@ export default function Tools() {
               fontFamily: "'Fraunces', Georgia, serif",
             }}
           >
-            Nos outils
+            {locale === 'fr' ? 'Nos outils' : 'Our Tools'}
           </h2>
         </div>
 
@@ -125,7 +142,7 @@ export default function Tools() {
                 lineHeight: 1.2,
               }}
             >
-              {active === null ? 'Nos outils' : active.title}
+              {active ? localized(active, 'title', locale) : (locale === 'fr' ? 'Nos outils' : 'Our Tools')}
             </h2>
 
             <div
@@ -140,7 +157,7 @@ export default function Tools() {
                 justifyContent: 'center',
               }}
             >
-              {active === null ? (
+              {active ? (
                 <p
                   style={{
                     color: '#1a1f1c',
@@ -150,23 +167,7 @@ export default function Tools() {
                     margin: 0,
                   }}
                 >
-                  Découvrez les{' '}
-                  <span
-                    style={{
-                      background:
-                        'linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%)',
-                      padding: '0 4px',
-                      borderRadius: '4px',
-                      color: '#fff',
-                    }}
-                  >
-                    outils numériques
-                  </span>{' '}
-                  de l&apos;OSS, dédiés au suivi de l&apos;environnement et à l&apos;aide à la
-                  décision. De la surveillance de la dégradation des terres à la
-                  gestion des ressources en eau, ces plateformes accompagnent les
-                  pays africains vers la neutralité de la dégradation des terres
-                  (NDT).
+                  {localized(active, 'description', locale)}
                 </p>
               ) : (
                 <p
@@ -178,7 +179,34 @@ export default function Tools() {
                     margin: 0,
                   }}
                 >
-                  {active.desc}
+                  {locale === 'fr'
+                    ? <>Découvrez les{' '}
+                      <span
+                        style={{
+                          background:
+                            'linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%)',
+                          padding: '0 4px',
+                          borderRadius: '4px',
+                          color: '#fff',
+                        }}
+                      >
+                        outils numériques
+                      </span>{' '}
+                      de l'OSS, dédiés au suivi de l'environnement et à l'aide à la
+                      décision.</>
+                    : <>Discover the{' '}
+                      <span
+                        style={{
+                          background:
+                            'linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%)',
+                          padding: '0 4px',
+                          borderRadius: '4px',
+                          color: '#fff',
+                        }}
+                      >
+                        digital tools
+                      </span>{' '}
+                      of OSS, dedicated to environmental monitoring and decision support.</>}
                 </p>
               )}
             </div>
@@ -206,7 +234,7 @@ export default function Tools() {
                 fontFamily: "'Comfortaa', cursive",
               }}
             >
-              Visiter l&apos;outil
+              {locale === 'fr' ? "Visiter l'outil" : 'Visit Tool'}
             </a>
           </div>
 
@@ -226,22 +254,22 @@ export default function Tools() {
               effect="cards"
               cardsEffect={{ rotate: true }}
               grabCursor
-              initialSlide={2}
+              initialSlide={Math.min(2, tools.length - 1)}
               speed={500}
-              loop
+              rewind
               mousewheel={{ invert: false }}
               autoplay={{
                 delay: 2500,
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }}
-              onSwiper={update}
-              onSlideChange={update}
+              onSwiper={onSwiperInit}
+              onSlideChange={onSlideChange}
               style={{ width: '100%', height: '100%', padding: '30px 20px' }}
             >
-              {slides.map((s) => (
+              {tools.map((t) => (
                 <SwiperSlide
-                  key={s.title}
+                  key={t.id}
                   style={{
                     position: 'relative',
                     boxShadow: '0 15px 50px rgba(0, 0, 0, 0.2)',
@@ -251,15 +279,14 @@ export default function Tools() {
                   }}
                 >
                   <img
-                    src={s.image}
-                    alt={s.title}
+                    src={t.image}
+                    alt={localized(t, 'title', locale)}
                     style={{
                       position: 'absolute',
                       inset: 0,
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: s.imgPosition ? '50% 0%' : undefined,
                     }}
                   />
                   <div
@@ -287,7 +314,7 @@ export default function Tools() {
                       fontFamily: "'Comfortaa', cursive",
                     }}
                   >
-                    {s.title}
+                    {localized(t, 'title', locale)}
                   </h2>
                 </SwiperSlide>
               ))}

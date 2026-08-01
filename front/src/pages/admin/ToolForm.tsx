@@ -1,8 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import { listHero, createHero, updateHero, type HeroData } from "../../api/auth";
+import {
+  listTools,
+  getTool,
+  createTool,
+  updateTool,
+} from "../../api/auth";
 import ImageUpload from "../../components/admin/ImageUpload";
-import { Globe, Loader2 } from "lucide-react";
+import { Globe, Loader2, ArrowLeft } from "lucide-react";
 
 type Lang = "fr" | "en";
 
@@ -35,50 +41,43 @@ const emptyForm = {
   page_id: 1,
   title_fr: "",
   title_en: "",
-  subtitle_fr: "",
-  subtitle_en: "",
-  cta_primary_label_fr: "",
-  cta_primary_label_en: "",
-  cta_primary_link: "#",
-  cta_secondary_label_fr: "",
-  cta_secondary_label_en: "",
-  cta_secondary_link: "#",
-  background_image: "/hero.jpg",
+  description_fr: "",
+  description_en: "",
+  image: "",
+  link: "#",
+  sort_order: 0,
   is_published: true,
 };
 
-export default function AdminHero() {
+export default function ToolForm() {
   const { token } = useAuth();
-  const [hero, setHero] = useState<HeroData | null>(null);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditing = !!id;
+
   const [form, setForm] = useState(emptyForm);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [lang, setLang] = useState<Lang>("fr");
 
-  const loadHero = useCallback(async () => {
-    if (!token) return;
+  const loadTool = useCallback(async () => {
+    if (!token || !id) return;
     setLoading(true);
     try {
-      const heroes = await listHero(token);
-      const h = heroes[0] || null;
-      setHero(h);
-      if (h) {
+      const tool = await getTool(token, Number(id));
+      if (tool) {
         setForm({
-          page_id: h.page_id,
-          title_fr: h.title_fr,
-          title_en: h.title_en,
-          subtitle_fr: h.subtitle_fr,
-          subtitle_en: h.subtitle_en,
-          cta_primary_label_fr: h.cta_primary_label_fr,
-          cta_primary_label_en: h.cta_primary_label_en,
-          cta_primary_link: h.cta_primary_link,
-          cta_secondary_label_fr: h.cta_secondary_label_fr,
-          cta_secondary_label_en: h.cta_secondary_label_en,
-          cta_secondary_link: h.cta_secondary_link,
-          background_image: h.background_image,
-          is_published: h.is_published,
+          page_id: tool.page_id,
+          title_fr: tool.title_fr,
+          title_en: tool.title_en,
+          description_fr: tool.description_fr,
+          description_en: tool.description_en,
+          image: tool.image,
+          link: tool.link,
+          sort_order: tool.sort_order,
+          is_published: tool.is_published,
         });
       }
     } catch (err: any) {
@@ -86,11 +85,19 @@ export default function AdminHero() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, id]);
 
   useEffect(() => {
-    loadHero();
-  }, [loadHero]);
+    if (isEditing) {
+      loadTool();
+    } else {
+      if (token) {
+        listTools(token).then((tools) => {
+          setForm((f) => ({ ...f, sort_order: tools.length }));
+        });
+      }
+    }
+  }, [loadTool, isEditing, token]);
 
   const handleSave = async () => {
     if (!token) return;
@@ -98,14 +105,13 @@ export default function AdminHero() {
     setError("");
     setSuccess("");
     try {
-      if (hero) {
-        await updateHero(token, hero.id, form);
+      if (isEditing && id) {
+        await updateTool(token, Number(id), form);
       } else {
-        const created = await createHero(token, form);
-        setHero(created);
+        await createTool(token, form);
       }
-      setSuccess("Hero saved successfully!");
-      setTimeout(() => setSuccess(""), 3000);
+      setSuccess("Tool saved successfully!");
+      setTimeout(() => navigate("/admin/tools"), 800);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -125,9 +131,20 @@ export default function AdminHero() {
 
   return (
     <div className="p-8 max-w-3xl">
+      {/* Header with breadcrumb */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-ink">Hero</h2>
-        <p className="text-ink/50 text-sm mt-1">Edit the hero banner on the home page</p>
+        <button
+          onClick={() => navigate("/admin/tools")}
+          className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Tools
+        </button>
+        <h2 className="text-2xl font-bold text-ink">
+          {isEditing ? "Edit Tool" : "New Tool"}
+        </h2>
+        <p className="text-ink/50 text-sm mt-1">
+          {isEditing ? "Update this OSS tool" : "Add a new OSS tool to the carousel"}
+        </p>
       </div>
 
       {error && (
@@ -167,91 +184,59 @@ export default function AdminHero() {
             />
           </div>
 
-          {/* Subtitle */}
+          {/* Description */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Subtitle ({lang.toUpperCase()})
+              Description ({lang.toUpperCase()})
             </label>
             <textarea
-              value={lang === "fr" ? form.subtitle_fr : form.subtitle_en}
-              onChange={(e) => set(lang === "fr" ? "subtitle_fr" : "subtitle_en", e.target.value)}
+              value={lang === "fr" ? form.description_fr : form.description_en}
+              onChange={(e) => set(lang === "fr" ? "description_fr" : "description_en", e.target.value)}
               required
-              rows={2}
+              rows={3}
               className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-none"
             />
           </div>
-
-          {/* CTA Primary */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Primary CTA Label ({lang.toUpperCase()})
-              </label>
-              <input
-                type="text"
-                value={lang === "fr" ? form.cta_primary_label_fr : form.cta_primary_label_en}
-                onChange={(e) =>
-                  set(lang === "fr" ? "cta_primary_label_fr" : "cta_primary_label_en", e.target.value)
-                }
-                required
-                className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Primary CTA Link
-              </label>
-              <input
-                type="text"
-                value={form.cta_primary_link}
-                onChange={(e) => set("cta_primary_link", e.target.value)}
-                className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-              />
-            </div>
-          </div>
-
-          {/* CTA Secondary */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Secondary CTA Label ({lang.toUpperCase()})
-              </label>
-              <input
-                type="text"
-                value={lang === "fr" ? form.cta_secondary_label_fr : form.cta_secondary_label_en}
-                onChange={(e) =>
-                  set(lang === "fr" ? "cta_secondary_label_fr" : "cta_secondary_label_en", e.target.value)
-                }
-                required
-                className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Secondary CTA Link
-              </label>
-              <input
-                type="text"
-                value={form.cta_secondary_link}
-                onChange={(e) => set("cta_secondary_link", e.target.value)}
-                className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-              />
-            </div>
-          </div>
         </div>
 
-        {/* Background image */}
+        {/* Image & Link */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Background Image
+            Image & Link
           </h4>
+
           <ImageUpload
-            value={form.background_image}
-            onChange={(url) => set("background_image", url)}
-            section="hero"
-            label="Background Image"
-            placeholder="/hero.jpg"
+            value={form.image}
+            onChange={(url) => set("image", url)}
+            section="tools"
+            label="Image"
+            placeholder="/misland.jpg"
           />
+
+          <div className="mt-4 mb-4">
+            <label className="block text-sm font-medium text-ink/80 mb-1.5">
+              Tool Link
+            </label>
+            <input
+              type="text"
+              value={form.link}
+              onChange={(e) => set("link", e.target.value)}
+              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
+              placeholder="https://..."
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-ink/80 mb-1.5">
+              Sort Order
+            </label>
+            <input
+              type="number"
+              value={form.sort_order}
+              onChange={(e) => set("sort_order", Number(e.target.value))}
+              className="w-full max-w-32 px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
+            />
+          </div>
         </div>
 
         {/* Published toggle */}
@@ -279,6 +264,13 @@ export default function AdminHero() {
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? "Saving…" : "Save"}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/admin/tools")}
+            className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
+          >
+            Cancel
           </button>
         </div>
       </div>

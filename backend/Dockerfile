@@ -20,6 +20,9 @@ RUN npm install --omit=dev
 
 COPY --from=build /app/dist ./dist
 
+# Create uploads directory with subfolders
+RUN mkdir -p /app/uploads/hero /app/uploads/fields /app/uploads/tools /app/uploads/partners /app/uploads/socials
+
 EXPOSE 8000
 
 CMD ["node", "dist/index.js"]

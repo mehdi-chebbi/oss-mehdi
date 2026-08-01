@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi } from "../api/auth";
 import { useAuth } from "../context/auth";
@@ -8,8 +8,17 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, logoutReason } = useAuth();
   const navigate = useNavigate();
+
+  // Show reuse detection / expiry message if redirected from session loss
+  useEffect(() => {
+    if (logoutReason === "reuse_detected") {
+      setError("Your session was revoked for security reasons. Please sign in again.");
+    } else if (logoutReason === "expired") {
+      setError("Your session has expired. Please sign in again.");
+    }
+  }, [logoutReason]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +26,8 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await loginApi(email, password);
-      await login(data.accessToken);
+      // Refresh token is set as httpOnly cookie automatically by the server
+      login(data.accessToken);
       navigate("/admin");
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -36,7 +46,11 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-5">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className={`border px-4 py-3 rounded-lg text-sm ${
+              logoutReason === "reuse_detected"
+                ? "bg-amber-50 border-amber-200 text-amber-800"
+                : "bg-red-50 border-red-200 text-red-700"
+            }`}>
               {error}
             </div>
           )}

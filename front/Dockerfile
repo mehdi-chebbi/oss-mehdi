@@ -16,18 +16,26 @@ FROM nginx:1.27-alpine
 # Static output lives in /app/dist after `vite build`
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# SPA fallback + API proxy
+# SPA fallback + API proxy + uploads proxy
 RUN printf 'server {\n\
   listen 80;\n\
   server_name _;\n\
   root /usr/share/nginx/html;\n\
   index index.html;\n\
 \n\
+  client_max_body_size 10M;\n\
+\n\
   location /api/ {\n\
     proxy_pass http://backend:8000;\n\
     proxy_set_header Host $host;\n\
     proxy_set_header X-Real-IP $remote_addr;\n\
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+  }\n\
+\n\
+  location /uploads/ {\n\
+    proxy_pass http://backend:8000;\n\
+    proxy_set_header Host $host;\n\
+    proxy_set_header X-Real-IP $remote_addr;\n\
   }\n\
 \n\
   location / { try_files $uri $uri/ /index.html; }\n\

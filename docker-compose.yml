@@ -6,6 +6,8 @@ services:
     ports:
       - "3000:80"
     restart: unless-stopped
+    depends_on:
+      - backend
 
   postgres:
     image: postgres:16-alpine
@@ -34,9 +36,16 @@ services:
       DB_NAME: appdb
       JWT_SECRET: super-secret-jwt-key-change-in-productions
       JWT_REFRESH_SECRET: super-secret-refresh-key-change-in-production
+      NODE_ENV: production
+      COOKIE_DOMAIN: ""
+      CSRF_ORIGIN: ""
+      ALLOWED_ORIGINS: ""
+    volumes:
+      - uploads:/app/uploads
     depends_on:
       - postgres
     restart: unless-stopped
 
 volumes:
   pgdata:
+  uploads:

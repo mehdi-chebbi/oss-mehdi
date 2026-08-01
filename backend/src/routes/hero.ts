@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adminOnly } from "../middleware/admin.js";
+import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
   getPublishedHero,
   listHero,
@@ -22,15 +22,15 @@ router.get("/", async (req, res) => {
   res.json(hero);
 });
 
-// Admin: list all hero entries
-router.get("/all", adminOnly, async (req, res) => {
+// Authenticated: list all hero entries
+router.get("/all", editorOrAdmin, async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
   const heroes = await listHero(pageId);
   res.json(heroes);
 });
 
-// Admin: get single hero
-router.get("/:id", adminOnly, async (req, res) => {
+// Authenticated: get single hero
+router.get("/:id", editorOrAdmin, async (req, res) => {
   const hero = await getHero(Number(req.params.id));
   if (!hero) {
     res.status(404).json({ error: "Hero not found" });
@@ -39,8 +39,8 @@ router.get("/:id", adminOnly, async (req, res) => {
   res.json(hero);
 });
 
-// Admin: create hero
-router.post("/", adminOnly, async (req, res) => {
+// Authenticated: create hero
+router.post("/", editorOrAdmin, async (req, res) => {
   try {
     const hero = await createHero(req.body);
     res.status(201).json(hero);
@@ -49,8 +49,8 @@ router.post("/", adminOnly, async (req, res) => {
   }
 });
 
-// Admin: update hero
-router.patch("/:id", adminOnly, async (req, res) => {
+// Authenticated: update hero
+router.patch("/:id", editorOrAdmin, async (req, res) => {
   try {
     const hero = await updateHero(Number(req.params.id), req.body);
     if (!hero) {
@@ -63,8 +63,8 @@ router.patch("/:id", adminOnly, async (req, res) => {
   }
 });
 
-// Admin: delete hero
-router.delete("/:id", adminOnly, async (req, res) => {
+// Authenticated: delete hero
+router.delete("/:id", editorOrAdmin, async (req, res) => {
   const deleted = await deleteHero(Number(req.params.id));
   if (!deleted) {
     res.status(404).json({ error: "Hero not found" });

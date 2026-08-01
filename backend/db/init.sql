@@ -184,7 +184,8 @@ CREATE TABLE IF NOT EXISTS socials (
     id          SERIAL PRIMARY KEY,
     platform    VARCHAR(50) NOT NULL UNIQUE,
     url         VARCHAR(500) NOT NULL,
-    icon_svg    TEXT NOT NULL,
+    icon_svg    TEXT NOT NULL DEFAULT '',
+    icon_file   VARCHAR(500) NOT NULL DEFAULT '',
     sort_order  INT NOT NULL DEFAULT 0,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -241,3 +242,20 @@ CREATE TABLE IF NOT EXISTS preview_tokens (
 );
 
 CREATE INDEX IF NOT EXISTS idx_preview_tokens_token ON preview_tokens (token);
+
+-- ═══════════════════════════════════════════
+-- Refresh Tokens (rotation + reuse detection)
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash  VARCHAR(64) NOT NULL UNIQUE,
+    family      UUID NOT NULL,
+    expires_at  TIMESTAMPTZ NOT NULL,
+    revoked_at  TIMESTAMPTZ,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens (user_id);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_family ON refresh_tokens (family);
