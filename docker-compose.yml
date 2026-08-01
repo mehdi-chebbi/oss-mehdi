@@ -32,7 +32,7 @@ services:
       DB_USER: appuser
       DB_PASSWORD: appsecret
       DB_NAME: appdb
-      JWT_SECRET: super-secret-jwt-key-change-in-production
+      JWT_SECRET: super-secret-jwt-key-change-in-productions
       JWT_REFRESH_SECRET: super-secret-refresh-key-change-in-production
     depends_on:
       - postgres
