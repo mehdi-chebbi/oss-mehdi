@@ -13,6 +13,7 @@ import {
   Wrench,
   Handshake,
   Share2,
+  Newspaper,
 } from "lucide-react";
 
 /* ── Sidebar structure ── */
@@ -26,6 +27,13 @@ const pages = [
       { to: "/admin/tools", label: "Tools", icon: Wrench, adminOnly: false },
       { to: "/admin/partners", label: "Partners", icon: Handshake, adminOnly: false },
       { to: "/admin/socials", label: "Socials", icon: Share2, adminOnly: false },
+    ],
+  },
+  {
+    label: "News",
+    icon: Newspaper,
+    sections: [
+      { to: "/admin/news", label: "Articles", icon: Newspaper, adminOnly: false },
     ],
   },
 ];

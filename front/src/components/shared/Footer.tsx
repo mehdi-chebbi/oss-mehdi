@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock, Send, Check } from 'lucide-react';
 import { socials } from '@/data/socials';
-import { footerNavLinks, legalLinks } from '@/data/navigation';
+import { getFooterNavLinks, getLegalLinks } from '@/data/navigation';
 import { contactInfo } from '@/data/contact';
+import type { Locale } from '@/context/locale';
 
-// Map label to icon component
+// Map label to icon component (keys are locale-stable identifiers, not display labels)
 const iconMap: Record<string, React.ElementType> = {
   Adresse: MapPin,
   Téléphone: Phone,
@@ -15,12 +17,33 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const { lang } = useParams<{ lang: string }>();
+  const locale: Locale = lang === 'en' ? 'en' : 'fr';
+
+  const footerNavLinks = getFooterNavLinks(locale);
+  const legalLinks = getLegalLinks(locale);
 
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubscribed(true);
     setEmail('');
     setTimeout(() => setSubscribed(false), 4000);
+  };
+
+  // Helper: render a nav link — route links use <Link>, anchors use <a>
+  const renderNavLink = (href: string, label: string, className: string, onClick?: () => void) => {
+    if (href.startsWith('/')) {
+      return (
+        <Link to={href} className={className} onClick={onClick}>
+          {label}
+        </Link>
+      );
+    }
+    return (
+      <a href={href} className={className} onClick={onClick}>
+        {label}
+      </a>
+    );
   };
 
   return (
@@ -36,8 +59,9 @@ export default function Footer() {
               className="h-[72px] w-auto mb-5"
             />
             <p className="font-serif text-[15px] text-ink/60 leading-[1.55] mb-6 max-w-xs">
-              L&apos;Observatoire du Sahara et du Sahel au service du développement
-              durable en Afrique.
+              {locale === 'en'
+                ? 'The Sahara and Sahel Observatory at the service of sustainable development in Africa.'
+                : "L'Observatoire du Sahara et du Sahel au service du développement durable en Afrique."}
             </p>
             <div className="flex items-center gap-1.5">
               {socials.map((s) => (
@@ -63,17 +87,16 @@ export default function Footer() {
           {/* Column 2 — Navigation */}
           <div>
             <h3 className="font-serif font-bold text-ink text-lg mb-5">
-              Navigation
+              {locale === 'en' ? 'Navigation' : 'Navigation'}
             </h3>
             <ul className="space-y-3">
               {footerNavLinks.map((l) => (
                 <li key={l.label}>
-                  <a
-                    href={l.href}
-                    className="text-[15px] text-ink/60 hover:text-[#489e42] transition-colors duration-150"
-                  >
-                    {l.label}
-                  </a>
+                  {renderNavLink(
+                    l.href,
+                    l.label,
+                    'text-[15px] text-ink/60 hover:text-[#489e42] transition-colors duration-150',
+                  )}
                 </li>
               ))}
             </ul>
@@ -82,7 +105,7 @@ export default function Footer() {
           {/* Column 3 — Contact */}
           <div>
             <h3 className="font-serif font-bold text-ink text-lg mb-5">
-              Contact
+              {locale === 'en' ? 'Contact' : 'Contact'}
             </h3>
             <ul className="space-y-4">
               {contactInfo.map((item) => {
@@ -112,16 +135,20 @@ export default function Footer() {
           {/* Column 4 — Newsletter */}
           <div>
             <h3 className="font-serif font-bold text-ink text-lg mb-3">
-              Newsletter
+              {locale === 'en' ? 'Newsletter' : 'Newsletter'}
             </h3>
             <p className="text-[14px] text-ink/60 leading-relaxed mb-4">
-              Restez informé de nos actualités et de nos dernières publications.
+              {locale === 'en'
+                ? 'Stay informed about our news and latest publications.'
+                : 'Restez informé de nos actualités et de nos dernières publications.'}
             </p>
             {subscribed ? (
               <div className="flex items-center gap-2 rounded-md bg-[#489e42]/10 px-4 py-3 text-[#3d7e38]">
                 <Check className="h-4 w-4 shrink-0" />
                 <span className="text-[14px] font-medium">
-                  Merci ! Votre inscription a bien été prise en compte.
+                  {locale === 'en'
+                    ? 'Thank you! Your subscription has been registered.'
+                    : 'Merci ! Votre inscription a bien été prise en compte.'}
                 </span>
               </div>
             ) : (
@@ -131,8 +158,8 @@ export default function Footer() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Votre adresse email"
-                  aria-label="Adresse email"
+                  placeholder={locale === 'en' ? 'Your email address' : 'Votre adresse email'}
+                  aria-label={locale === 'en' ? 'Email address' : 'Adresse email'}
                   className="w-full rounded-md border border-ink/15 bg-white px-3.5 py-2.5 text-[14px] text-ink placeholder:text-ink/40 focus:border-[#489e42] focus:outline-none focus:ring-1 focus:ring-[#489e42] transition-colors"
                 />
                 <button
@@ -140,7 +167,7 @@ export default function Footer() {
                   className="inline-flex items-center justify-center gap-2 rounded-md bg-[#3183d4] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#2a6db8] transition-colors duration-200"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  S&apos;abonner
+                  {locale === 'en' ? 'Subscribe' : "S'abonner"}
                 </button>
               </form>
             )}
@@ -150,8 +177,9 @@ export default function Footer() {
         {/* ---- Bottom bar ---- */}
         <div className="border-t border-ink/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[13px] text-ink/50 text-center sm:text-left">
-            © {new Date().getFullYear()} OSS — Observatoire du Sahara et du
-            Sahel. Tous droits réservés.
+            {locale === 'en'
+              ? `© ${new Date().getFullYear()} OSS — Sahara and Sahel Observatory. All rights reserved.`
+              : `© ${new Date().getFullYear()} OSS — Observatoire du Sahara et du Sahel. Tous droits réservés.`}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {legalLinks.map((l) => (

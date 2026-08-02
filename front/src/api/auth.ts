@@ -168,19 +168,48 @@ export async function uploadFile(
 
 // ── Auth ──
 
-export async function login(email: string, password: string) {
-  // Login response now only has { user, accessToken } — refresh token is set as httpOnly cookie
-  return request<{ user: User; accessToken: string }>("/auth/login", {
+// NOTE: login/register use a RAW fetch (not the `request` helper) because they are
+// public endpoints. A 401 here means "invalid credentials", NOT "access token
+// expired" — routing them through the 401-refresh interceptor would turn a wrong
+// password into a spurious "SESSION_EXPIRED". They also carry the optional
+// CAPTCHA token once the account is flagged for too many failures (login) or
+// on every registration (register).
+
+export async function login(
+  email: string,
+  password: string,
+  captchaToken?: string,
+) {
+  const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // send/receive the refresh cookie
+    body: JSON.stringify({ email, password, captchaToken }),
   });
+  const body = await res.json().catch(() => ({ error: "Login failed" }));
+  if (!res.ok) {
+    throw new Error(body.error || `Error ${res.status}`);
+  }
+  return body as { user: User; accessToken: string };
 }
 
-export async function register(name: string, email: string, password: string) {
-  return request<{ user: User; accessToken: string }>("/auth/register", {
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  captchaToken?: string,
+) {
+  const res = await fetch(`${API_BASE}/auth/register`, {
     method: "POST",
-    body: JSON.stringify({ name, email, password }),
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ name, email, password, captchaToken }),
   });
+  const body = await res.json().catch(() => ({ error: "Registration failed" }));
+  if (!res.ok) {
+    throw new Error(body.error || `Error ${res.status}`);
+  }
+  return body as { user: User; accessToken: string };
 }
 
 /** Try to get a fresh access token via the refresh cookie (for mount/initial load) */
@@ -521,6 +550,113 @@ export async function updateSocial(
 
 export async function deleteSocial(token: string, id: number) {
   return request<{ message: string }>(`/socials/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
+// ── News CRUD ──
+export interface NewsData {
+  id: number;
+  title_fr: string;
+  title_en: string;
+  body_fr: string;
+  body_en: string;
+  images: string[];        // array of image URL strings
+  thumbnail_index: number; // which image is the card thumbnail
+  date: string;
+  slug: string;
+  is_published?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Helper: get the thumbnail URL for an article (the one selected by the admin,
+// falling back to the first image if the index is out of range, then "").
+export function getThumbnail(article: Pick<NewsData, "images" | "thumbnail_index">): string {
+  const imgs = article.images || [];
+  if (imgs.length === 0) return "";
+  const idx = Math.min(Math.max(0, article.thumbnail_index || 0), imgs.length - 1);
+  return imgs[idx] || "";
+}
+
+export interface NewsListResponse {
+  items: NewsData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// Public: latest published news (for the home page)
+export async function getLatestNews(limit = 4) {
+  return request<NewsData[]>(`/news/latest?limit=${limit}`);
+}
+
+// Public: paginated list with optional year + keyword filter
+export async function listPublishedNews(opts?: {
+  page?: number;
+  limit?: number;
+  year?: number;
+  q?: string;
+}) {
+  const params = new URLSearchParams();
+  if (opts?.page) params.set("page", String(opts.page));
+  if (opts?.limit) params.set("limit", String(opts.limit));
+  if (opts?.year) params.set("year", String(opts.year));
+  if (opts?.q) params.set("q", opts.q);
+  const qs = params.toString();
+  return request<NewsListResponse>(`/news${qs ? `?${qs}` : ""}`);
+}
+
+// Public: distinct years with published articles
+export async function getNewsYears() {
+  return request<number[]>(`/news/years`);
+}
+
+// Public: single article by slug
+export async function getNewsBySlug(slug: string) {
+  return request<NewsData>(`/news/slug/${encodeURIComponent(slug)}`);
+}
+
+// Authenticated: list all news (including drafts)
+export async function listAllNews(token: string) {
+  return request<NewsData[]>("/news/all", { headers: authHeader(token) });
+}
+
+// Authenticated: get single news for editing
+export async function getNews(token: string, id: number) {
+  return request<NewsData>(`/news/${id}`, { headers: authHeader(token) });
+}
+
+// Authenticated: create news
+export async function createNews(
+  token: string,
+  data: Partial<NewsData>,
+) {
+  return request<NewsData>("/news", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: update news
+export async function updateNews(
+  token: string,
+  id: number,
+  data: Partial<NewsData>,
+) {
+  return request<NewsData>(`/news/${id}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: delete news
+export async function deleteNews(token: string, id: number) {
+  return request<{ message: string }>(`/news/${id}`, {
     method: "DELETE",
     headers: authHeader(token),
   });

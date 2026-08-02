@@ -12,6 +12,17 @@ import {
   hardenRevokedToken,
   getPoolClient,
 } from "../utils/tokens.js";
+import {
+  getFailRecord,
+  recordFailedLogin,
+  clearFailRecord,
+  dummyCompare,
+  verifyCaptcha,
+  validatePasswordStrength,
+  sleep,
+  checkFamilyLimit,
+  incrementFamilyCount,
+} from "../utils/security.js";
 import { env } from "../config/env.js";
 import crypto from "crypto";
 
@@ -54,10 +65,34 @@ export function clearCookieOptions() {
 
 // ── Auth operations ──
 
-export async function register(name: string, email: string, password: string) {
+/**
+ * Register a new account.
+ * CAPTCHA is ALWAYS required on registration (account-spam / email-harvesting surface).
+ * Email existence is NOT revealed (generic error) to prevent enumeration.
+ */
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  captchaToken?: string,
+  remoteip?: string,
+) {
+  // 1. CAPTCHA always required
+  const captchaOk = await verifyCaptcha(captchaToken, remoteip);
+  if (!captchaOk) {
+    throw new Error("CAPTCHA_REQUIRED");
+  }
+
+  // 2. Password strength
+  const pwErr = validatePasswordStrength(password);
+  if (pwErr) {
+    throw new Error(pwErr);
+  }
+
+  // 3. Email uniqueness — generic error to avoid enumeration
   const existing = await query("SELECT id FROM users WHERE email = $1", [email]);
   if (existing.rows.length > 0) {
-    throw new Error("Email already registered");
+    throw new Error("UNABLE_TO_REGISTER");
   }
 
   const hash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -82,18 +117,63 @@ export async function register(name: string, email: string, password: string) {
   };
 }
 
-export async function login(email: string, password: string) {
+/**
+ * Login with progressive-delay + CAPTCHA-gate fail tracking and constant-time
+ * "user not found" handling.
+ *
+ * Flow:
+ *   1. Lookup fail record for this email.
+ *   2. If CAPTCHA is required (>= maxFails), verify the token — reject early.
+ *   3. If a delay is pending, sleep BEFORE bcrypt (collapses attacker throughput).
+ *   4. Real bcrypt (user exists) OR dummy bcrypt (no user) — same timing.
+ *   5. On failure: record fail (escalates delay + CAPTCHA), throw generic error.
+ *   6. On success: clear fail record, issue tokens.
+ *
+ * Email lookup stays case-sensitive to match existing DB rows; the fail tracker
+ * key is normalized (lowercased) so Foo@x.com and foo@x.com share a counter.
+ */
+export async function login(
+  email: string,
+  password: string,
+  captchaToken?: string,
+  remoteip?: string,
+) {
+  // 1. Existing fail record for this email (normalized key)
+  const failRec = getFailRecord(email);
+
+  // 2. CAPTCHA gate (only enforced once the account has been flagged)
+  if (failRec?.captchaRequired) {
+    const ok = await verifyCaptcha(captchaToken, remoteip);
+    if (!ok) {
+      throw new Error("CAPTCHA_REQUIRED");
+    }
+  }
+
+  // 3. Progressive delay before the expensive compare
+  if (failRec && failRec.nextDelayMs > 0) {
+    await sleep(failRec.nextDelayMs);
+  }
+
+  // 4. Lookup + compare (constant-time for nonexistent users)
   const result = await query("SELECT * FROM users WHERE email = $1", [email]);
   const user: UserRow | undefined = result.rows[0];
 
-  if (!user) {
+  let valid = false;
+  if (user) {
+    valid = await bcrypt.compare(password, user.password);
+  } else {
+    // Burn comparable time so a missing account isn't distinguishable by timing
+    await dummyCompare(password);
+  }
+
+  // 5. Failure path
+  if (!user || !valid) {
+    recordFailedLogin(email);
     throw new Error("Invalid credentials");
   }
 
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) {
-    throw new Error("Invalid credentials");
-  }
+  // 6. Success — reset the fail tracker and issue tokens
+  clearFailRecord(email);
 
   const payload = { userId: user.id, role: user.role };
   const family = crypto.randomUUID();
@@ -151,6 +231,12 @@ export async function refresh(token: string) {
       throw new Error("TOKEN_EXPIRED");
     }
 
+    // 4b. Per-family abuse limit (belt-and-suspenders on top of rotation/reuse detection)
+    if (!checkFamilyLimit(row.family)) {
+      await client.query("ROLLBACK");
+      throw new Error("FAMILY_RATE_LIMIT");
+    }
+
     // 5. Reuse detection: if token was already revoked
     if (row.revoked_at) {
       const revokedMs = new Date(row.revoked_at).getTime();
@@ -175,6 +261,7 @@ export async function refresh(token: string) {
       // is shared across tabs at the browser level (no explicit frontend sync needed).
       // Tab 1's Set-Cookie response already updated the cookie for the entire origin.
       await hardenRevokedToken(row.token_hash, client);
+      incrementFamilyCount(row.family);
       await client.query("COMMIT");
 
       return {
@@ -191,6 +278,7 @@ export async function refresh(token: string) {
     const newRefreshToken = signRefreshToken(newPayload);
 
     await storeRefreshToken(payload.userId, newRefreshToken, row.family, client);
+    incrementFamilyCount(row.family);
     await client.query("COMMIT");
 
     return {

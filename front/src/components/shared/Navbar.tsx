@@ -1,22 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { navItems } from '@/data/navigation';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
+import { getNavItems } from '@/data/navigation';
+import type { Locale } from '@/context/locale';
 
 const languages = [
   { code: 'fr', label: 'Français', display: 'FR' },
   { code: 'en', label: 'English', display: 'EN' },
 ];
 
-export default function Navbar() {
+/**
+ * `overlay` — when true, the navbar floats over the content below it (no
+ * spacer is rendered). Use this on pages with a full-bleed hero (e.g. the
+ * homepage). On all other pages, omit it and a constant-height spacer is
+ * rendered so content sits cleanly below the fixed navbar without any
+ * page-level padding hacks.
+ */
+export default function Navbar({ overlay = false }: { overlay?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { lang } = useParams<{ lang: string }>();
 
-  const currentLang = lang === 'en' ? 'en' : 'fr';
+  const currentLang: Locale = lang === 'en' ? 'en' : 'fr';
+  const navItems = getNavItems(currentLang);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -46,14 +56,17 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', onClick);
   }, [langOpen]);
 
+  // Switch language while preserving the current path (e.g. /fr/news → /en/news)
   const switchLang = (code: string) => {
     setLangOpen(false);
-    navigate(`/${code}`);
+    const newPath = location.pathname.replace(/^\/(fr|en)(\/|$)/, `/${code}$2`);
+    navigate(newPath + location.search + location.hash);
   };
 
   const displayLang = languages.find((l) => l.code === currentLang)?.display || 'FR';
 
   return (
+    <>
     <header
       className={`
         fixed top-0 left-0 right-0 z-50 border-b border-ink/10 bg-white
@@ -74,7 +87,7 @@ export default function Navbar() {
           </svg>
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder={currentLang === 'en' ? 'Search...' : 'Rechercher...'}
             className="w-36 lg:w-44 pl-8 pr-3 py-1.5 text-[13px] bg-ink/[0.04] border border-ink/[0.08] rounded-lg text-ink placeholder:text-ink/30 focus:outline-none focus:border-ink/20 focus:bg-white transition-colors"
           />
         </div>
@@ -132,16 +145,29 @@ export default function Navbar() {
         <ul className="hidden lg:flex items-end gap-0.5 pb-1 ml-auto mr-auto max-w-7xl pr-8">
           {navItems.map((item) => (
             <li key={item.href}>
-              <a
-                href={item.href}
-                className="
-                  block px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
-                  hover:text-ink hover:bg-ink/[0.04]
-                  transition-colors duration-150
-                "
-              >
-                {item.label}
-              </a>
+              {item.href.startsWith('/') ? (
+                <Link
+                  to={item.href}
+                  className="
+                    block px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
+                    hover:text-ink hover:bg-ink/[0.04]
+                    transition-colors duration-150
+                  "
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  href={item.href}
+                  className="
+                    block px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
+                    hover:text-ink hover:bg-ink/[0.04]
+                    transition-colors duration-150
+                  "
+                >
+                  {item.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -150,7 +176,7 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen((v) => !v)}
           className="lg:hidden p-2 -mr-2 rounded-md hover:bg-ink/[0.04] transition-colors self-center"
-          aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-label={mobileOpen ? (currentLang === 'en' ? 'Close menu' : 'Fermer le menu') : (currentLang === 'en' ? 'Open menu' : 'Ouvrir le menu')}
           aria-expanded={mobileOpen}
         >
           {mobileOpen ? (
@@ -177,18 +203,36 @@ export default function Navbar() {
           <ul className="flex flex-col">
             {navItems.map((item) => (
               <li key={item.href}>
-                <a
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-2 py-2.5 text-[14px] text-ink/55 hover:text-ink transition-colors duration-150"
-                >
-                  {item.label}
-                </a>
+                {item.href.startsWith('/') ? (
+                  <Link
+                    to={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-2 py-2.5 text-[14px] text-ink/55 hover:text-ink transition-colors duration-150"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-2 py-2.5 text-[14px] text-ink/55 hover:text-ink transition-colors duration-150"
+                  >
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
         </div>
       </div>
     </header>
+    {/* Constant-height spacer — pushes content below the fixed navbar so
+        pages never need their own top-padding hack. Always sized to the
+        navbar's EXPANDED height (144px = h-36); when the navbar shrinks on
+        scroll, the gap shows the body's bone background (same as content),
+        so it's imperceptible. Skipped when `overlay` is set (full-bleed
+        hero pages). */}
+    {!overlay && <div className="h-36" aria-hidden="true" />}
+    </>
   );
 }

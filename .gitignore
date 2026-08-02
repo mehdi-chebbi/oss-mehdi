@@ -1,0 +1,19 @@
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules
+dist
+dist-ssr
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+*.swp

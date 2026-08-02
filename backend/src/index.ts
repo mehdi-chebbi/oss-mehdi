@@ -1,9 +1,9 @@
 import express from "express";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import path from "path";
-import fs from "fs";
 import { env } from "./config/env.js";
-import { pool, query } from "./config/db.js";
+import { pool } from "./config/db.js";
 import { cleanupExpiredTokens } from "./utils/tokens.js";
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
@@ -12,9 +12,61 @@ import fieldsRoutes from "./routes/fields.js";
 import toolsRoutes from "./routes/tools.js";
 import partnersRoutes from "./routes/partners.js";
 import socialsRoutes from "./routes/socials.js";
+import newsRoutes from "./routes/news.js";
 import uploadRoutes from "./routes/upload.js";
 
+// ── Fail-fast env validation ──
+// In production, refuse to boot if secrets are missing or still set to their
+// insecure defaults. This guarantees a misconfigured deploy fails loudly
+// instead of silently running with publicly-known keys.
+const DEFAULT_SECRETS = [
+  "super-secret-jwt-key-change-in-production",
+  "super-secret-refresh-key-change-in-production",
+];
+const TURNSTILE_ALWAYS_PASS_SECRET = "1x0000000000000000000000000000000AA";
+
+function validateEnv() {
+  if (!env.isProduction) return; // dev is lenient
+
+  const fatal = (msg: string) => {
+    console.error(`FATAL: ${msg}`);
+    process.exit(1);
+  };
+
+  if (!process.env.JWT_SECRET || DEFAULT_SECRETS.includes(process.env.JWT_SECRET)) {
+    fatal("JWT_SECRET must be set to a non-default value in production");
+  }
+  if (
+    !process.env.JWT_REFRESH_SECRET ||
+    DEFAULT_SECRETS.includes(process.env.JWT_REFRESH_SECRET)
+  ) {
+    fatal("JWT_REFRESH_SECRET must be set to a non-default value in production");
+  }
+  if (
+    !process.env.TURNSTILE_SECRET ||
+    process.env.TURNSTILE_SECRET === TURNSTILE_ALWAYS_PASS_SECRET
+  ) {
+    fatal("TURNSTILE_SECRET must be set to a real (non-test) value in production");
+  }
+}
+
+validateEnv();
+
 const app = express();
+
+// Trust the proxy hop so req.ip reflects the real client IP (needed for IP-based
+// rate limiting to work behind nginx/Caddy/load balancers). Enable via TRUST_PROXY=true.
+if (env.trustProxy) {
+  app.set("trust proxy", 1);
+}
+
+// Security headers (Helmet). crossOriginResourcePolicy is relaxed so uploaded
+// images served from /uploads can be embedded cross-origin by the frontend.
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -85,6 +137,7 @@ app.use("/api/fields", fieldsRoutes);
 app.use("/api/tools", toolsRoutes);
 app.use("/api/partners", partnersRoutes);
 app.use("/api/socials", socialsRoutes);
+app.use("/api/news", newsRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Health check
@@ -97,20 +150,8 @@ app.get("/api/health", async (_req, res) => {
   }
 });
 
-// Run DB migrations on startup, then start server
+// Start server
 async function start() {
-  try {
-    // Run refresh_tokens migration
-    const migration = fs.readFileSync(
-      path.resolve(process.cwd(), "src/db/refresh_tokens.sql"),
-      "utf8",
-    );
-    await query(migration);
-    console.log("✅ DB migrations applied");
-  } catch (err) {
-    console.warn("⚠️  Migration warning (table may already exist):", (err as Error).message);
-  }
-
   // Periodic cleanup of expired refresh tokens (every hour)
   const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
   setInterval(async () => {

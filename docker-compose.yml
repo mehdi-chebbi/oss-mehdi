@@ -3,6 +3,10 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+      args:
+        # Vite reads this at build time → bakes site key into the JS bundle.
+        # Site keys are public by design (visible in browser anyway).
+        VITE_TURNSTILE_SITE_KEY: "0x4AAAAAAEEZs14kAL9OcKpf"
     ports:
       - "3000:80"
     restart: unless-stopped
@@ -34,12 +38,19 @@ services:
       DB_USER: appuser
       DB_PASSWORD: appsecret
       DB_NAME: appdb
-      JWT_SECRET: super-secret-jwt-key-change-in-productions
-      JWT_REFRESH_SECRET: super-secret-refresh-key-change-in-production
+      # ── Secrets (hardcoded) ──
+      # Generated with: openssl rand -hex 32
+      JWT_SECRET: "fcab09c8bb83dd1316c2bafb62f109b61d1b5bb6d42fb6603ad9bd92349ed686"
+      JWT_REFRESH_SECRET: "a2577104ac8c96f70d75a43a892a32168bbbf1c7af169f6024614bcead283056"
+      TURNSTILE_SITE_KEY: "0x4AAAAAAEEZs14kAL9OcKpf"
+      TURNSTILE_SECRET: "0x4AAAAAAEEZsxwtfxZ4mKs34QnoJ-quvIc"
+      # ── Runtime config ──
       NODE_ENV: production
       COOKIE_DOMAIN: ""
-      CSRF_ORIGIN: ""
-      ALLOWED_ORIGINS: ""
+      CSRF_ORIGIN: "http://localhost:3000"
+      ALLOWED_ORIGINS: "http://localhost:3000"
+      # Backend is behind nginx in docker → trust proxy so req.ip is real client IP
+      TRUST_PROXY: "true"
     volumes:
       - uploads:/app/uploads
     depends_on:

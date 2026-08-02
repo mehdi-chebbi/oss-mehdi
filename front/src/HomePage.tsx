@@ -14,7 +14,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SocialSidebar />
-      <Navbar />
+      <Navbar overlay />
       <main className="flex-1">
         <Hero />
         <Stats />

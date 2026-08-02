@@ -55,27 +55,36 @@ export async function storeRefreshToken(
   );
 }
 
-/** Find an active (non-revoked, non-expired) refresh token by its value */
+/**
+ * Find a refresh token by its value.
+ *
+ * When called inside a transaction (client provided), we lock the row with
+ * FOR UPDATE. This is CRITICAL: it serializes concurrent refresh attempts
+ * that use the SAME token, so two parallel requests can't both observe
+ * `revoked_at IS NULL`, both rotate, and both commit — which would mint two
+ * live tokens from one and silently bypass reuse detection.
+ */
 export async function findRefreshToken(
   token: string,
   client?: any,
 ): Promise<RefreshTokenRow | null> {
   const tokenHash = hashToken(token);
   const q = client || query;
+  const lock = client ? " FOR UPDATE" : "";
   const result = await q(
     `SELECT id, user_id, token_hash, family, expires_at, revoked_at, created_at
      FROM refresh_tokens
-     WHERE token_hash = $1`,
+     WHERE token_hash = $1${lock}`,
     [tokenHash],
   );
   return result.rows[0] || null;
 }
 
-/** Revoke a single refresh token (rotation) */
+/** Revoke a single refresh token (rotation). Only flips an active token. */
 export async function revokeRefreshToken(tokenHash: string, client?: any): Promise<void> {
   const q = client || query;
   await q(
-    `UPDATE refresh_tokens SET revoked_at = now() WHERE token_hash = $1`,
+    `UPDATE refresh_tokens SET revoked_at = now() WHERE token_hash = $1 AND revoked_at IS NULL`,
     [tokenHash],
   );
 }
@@ -100,14 +109,22 @@ export async function revokeAllUserTokens(userId: number, client?: any): Promise
 
 /**
  * Harden a revoked token so it can't be used again during the grace period.
- * Sets revoked_at to before the grace window, so the next request with
- * this token will fail the grace period check and kill the family.
+ *
+ * Sets `revoked_at` to a timestamp far enough in the past that the next request
+ * with this token will fail the grace-period check and kill the family.
+ *
+ * The offset is DERIVED from `env.refreshTokenGracePeriodMs` (not a magic SQL
+ * string) so the invariant holds if the grace period is ever changed. We add a
+ * buffer equal to the grace period so the hardened timestamp is guaranteed to
+ * be outside the window regardless of clock skew between JS and Postgres.
  */
 export async function hardenRevokedToken(tokenHash: string, client?: any): Promise<void> {
   const q = client || query;
+  const offsetMs = env.refreshTokenGracePeriodMs * 2;
+  const hardenedAt = new Date(Date.now() - offsetMs);
   await q(
-    `UPDATE refresh_tokens SET revoked_at = now() - interval '10 seconds' WHERE token_hash = $1`,
-    [tokenHash],
+    `UPDATE refresh_tokens SET revoked_at = $2 WHERE token_hash = $1`,
+    [tokenHash, hardenedAt],
   );
 }
 

@@ -11,8 +11,15 @@ import {
   clearCookieOptions,
 } from "../services/auth.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { ipRateLimit, getClientIp } from "../utils/security.js";
 
 const router = Router();
+
+// ── Rate-limit presets (per IP, per endpoint) ──
+const loginLimiter = ipRateLimit({ windowMs: 60_000, max: 10, keySuffix: "login" });
+const registerLimiter = ipRateLimit({ windowMs: 60_000, max: 5, keySuffix: "register" });
+const refreshLimiter = ipRateLimit({ windowMs: 60_000, max: 30, keySuffix: "refresh" });
+const logoutLimiter = ipRateLimit({ windowMs: 60_000, max: 20, keySuffix: "logout" });
 
 // ── CSRF protection: verify Origin/Referer on cookie-authenticated endpoints ──
 // Fails CLOSED: if both Origin and Referer are missing, the request is rejected.
@@ -49,14 +56,14 @@ function csrfCheck(req: any, res: any, next: any) {
 
 // ── Routes ──
 
-router.post("/register", async (req, res) => {
+router.post("/register", registerLimiter, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, captchaToken } = req.body;
     if (!name || !email || !password) {
       res.status(400).json({ error: "name, email, and password are required" });
       return;
     }
-    const data = await register(name, email, password);
+    const data = await register(name, email, password, captchaToken, getClientIp(req));
 
     // Set refresh token as httpOnly cookie
     res.cookie(REFRESH_COOKIE_NAME, data.refreshToken, refreshCookieOptions());
@@ -64,18 +71,28 @@ router.post("/register", async (req, res) => {
     // Return access token + user (NOT the refresh token in body)
     res.status(201).json({ user: data.user, accessToken: data.accessToken });
   } catch (err: any) {
-    res.status(409).json({ error: err.message });
+    if (err.message === "CAPTCHA_REQUIRED") {
+      res.status(400).json({ error: "captcha_required" });
+      return;
+    }
+    if (err.message === "UNABLE_TO_REGISTER") {
+      // Generic message — do NOT reveal that the email is already taken
+      res.status(409).json({ error: "Unable to create account" });
+      return;
+    }
+    // Password-strength / validation errors
+    res.status(400).json({ error: err.message });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, captchaToken } = req.body;
     if (!email || !password) {
       res.status(400).json({ error: "email and password are required" });
       return;
     }
-    const data = await login(email, password);
+    const data = await login(email, password, captchaToken, getClientIp(req));
 
     // Set refresh token as httpOnly cookie
     res.cookie(REFRESH_COOKIE_NAME, data.refreshToken, refreshCookieOptions());
@@ -83,11 +100,23 @@ router.post("/login", async (req, res) => {
     // Return access token + user (NOT the refresh token in body)
     res.json({ user: data.user, accessToken: data.accessToken });
   } catch (err: any) {
-    res.status(401).json({ error: err.message });
+    if (err.message === "CAPTCHA_REQUIRED") {
+      // 400 (not 401) so the frontend's 401-refresh interceptor doesn't fire
+      res.status(400).json({ error: "captcha_required" });
+      return;
+    }
+    // "Invalid credentials" is the only expected auth error from login().
+    // Anything else is a DB / infra failure — don't mislabel it as 401.
+    if (err.message === "Invalid credentials") {
+      res.status(401).json({ error: "Invalid credentials" });
+    } else {
+      console.error("Login error:", err);
+      res.status(500).json({ error: "Login failed" });
+    }
   }
 });
 
-router.post("/refresh", csrfCheck, async (req, res) => {
+router.post("/refresh", csrfCheck, refreshLimiter, async (req, res) => {
   try {
     const token = req.cookies?.[REFRESH_COOKIE_NAME];
     if (!token) {
@@ -109,13 +138,15 @@ router.post("/refresh", csrfCheck, async (req, res) => {
 
     if (err.message === "TOKEN_REUSED") {
       res.status(401).json({ error: "SESSION_REVOKED", reason: "reuse_detected" });
+    } else if (err.message === "FAMILY_RATE_LIMIT") {
+      res.status(429).json({ error: "Too many refresh attempts" });
     } else {
       res.status(401).json({ error: err.message });
     }
   }
 });
 
-router.post("/logout", csrfCheck, async (req, res) => {
+router.post("/logout", csrfCheck, logoutLimiter, async (req, res) => {
   try {
     const token = req.cookies?.[REFRESH_COOKIE_NAME];
     if (token) {
@@ -130,16 +161,22 @@ router.post("/logout", csrfCheck, async (req, res) => {
   }
 });
 
-router.post("/logout-everywhere", csrfCheck, authMiddleware, async (req, res) => {
-  try {
-    await logoutEverywhere(req.user!.userId);
-    // Clear the cookie on this browser too
-    res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions());
-    res.json({ message: "Logged out everywhere" });
-  } catch {
-    res.status(500).json({ error: "Logout everywhere failed" });
-  }
-});
+router.post(
+  "/logout-everywhere",
+  csrfCheck,
+  logoutLimiter,
+  authMiddleware,
+  async (req, res) => {
+    try {
+      await logoutEverywhere(req.user!.userId);
+      // Clear the cookie on this browser too
+      res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions());
+      res.json({ message: "Logged out everywhere" });
+    } catch {
+      res.status(500).json({ error: "Logout everywhere failed" });
+    }
+  },
+);
 
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await me(req.user!.userId);

@@ -109,24 +109,26 @@ CREATE TABLE IF NOT EXISTS fields (
 );
 
 -- ═══════════════════════════════════════════
--- News (Actualités)
+-- News (Actualités) — full articles in DB, bilingual, slug-based URLs
 -- ═══════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS news (
     id              SERIAL PRIMARY KEY,
-    page_id         INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
-    title_fr        VARCHAR(500) NOT NULL,
-    title_en        VARCHAR(500) NOT NULL,
-    excerpt_fr      TEXT NOT NULL,
-    excerpt_en      TEXT NOT NULL,
-    image           VARCHAR(500) NOT NULL,
-    date            DATE NOT NULL,
-    link            VARCHAR(500) NOT NULL DEFAULT '#',
-    is_featured     BOOLEAN NOT NULL DEFAULT false,
-    sort_order      INT NOT NULL DEFAULT 0,
-    is_published    BOOLEAN NOT NULL DEFAULT true,
+    title_fr        TEXT NOT NULL,
+    title_en        TEXT NOT NULL,
+    body_fr         TEXT NOT NULL DEFAULT '',
+    body_en         TEXT NOT NULL DEFAULT '',
+    images          JSONB NOT NULL DEFAULT '[]',       -- array of image URL strings
+    thumbnail_index INT NOT NULL DEFAULT 0,            -- which image to use as the card thumbnail
+    date            DATE NOT NULL DEFAULT CURRENT_DATE,
+    slug            VARCHAR(200) NOT NULL UNIQUE,
+    is_published    BOOLEAN NOT NULL DEFAULT false,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
+CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
+CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
 
 -- ═══════════════════════════════════════════
 -- Tools (Nos outils)

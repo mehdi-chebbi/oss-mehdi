@@ -14,6 +14,10 @@ import AdminPartners from "./pages/admin/Partners";
 import PartnerForm from "./pages/admin/PartnerForm";
 import AdminSocials from "./pages/admin/Socials";
 import SocialForm from "./pages/admin/SocialForm";
+import AdminNews from "./pages/admin/News";
+import NewsForm from "./pages/admin/NewsForm";
+import NewsList from "./pages/NewsList";
+import NewsArticle from "./pages/NewsArticle";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { token, loading } = useAuth();
@@ -45,11 +49,29 @@ function PublicPage() {
   );
 }
 
+function PublicNewsList() {
+  return (
+    <LocaleProvider>
+      <NewsList />
+    </LocaleProvider>
+  );
+}
+
+function PublicNewsArticle() {
+  return (
+    <LocaleProvider>
+      <NewsArticle />
+    </LocaleProvider>
+  );
+}
+
 function AppRoutes() {
   return (
     <Routes>
       {/* Public — locale in URL */}
       <Route path="/:lang" element={<PublicPage />} />
+      <Route path="/:lang/news" element={<PublicNewsList />} />
+      <Route path="/:lang/news/:slug" element={<PublicNewsArticle />} />
       <Route path="/" element={<Navigate to="/fr" replace />} />
 
       {/* Login */}
@@ -80,6 +102,11 @@ function AppRoutes() {
         <Route path="socials" element={<AdminSocials />} />
         <Route path="socials/new" element={<SocialForm />} />
         <Route path="socials/:id" element={<SocialForm />} />
+
+        {/* News — list + add/edit */}
+        <Route path="news" element={<AdminNews />} />
+        <Route path="news/new" element={<NewsForm />} />
+        <Route path="news/:id" element={<NewsForm />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/fr" replace />} />
