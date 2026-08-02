@@ -6,7 +6,7 @@ import fs from "fs";
 const UPLOAD_ROOT = path.resolve(process.cwd(), "uploads");
 
 // Allowed sections — maps to subfolder names
-const VALID_SECTIONS = ["hero", "fields", "tools", "partners", "socials", "news"] as const;
+const VALID_SECTIONS = ["hero", "fields", "tools", "partners", "socials", "news", "departments", "projects"] as const;
 type Section = (typeof VALID_SECTIONS)[number];
 
 // Max file size: 10 MB

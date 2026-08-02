@@ -1,14 +1,14 @@
 import type { Locale } from '@/context/locale';
 import type { NavItem } from '@/types';
 
-// Navigation is locale-aware: labels switch FR/EN, and the News item links to
-// the real /:lang/news route (not a home-page anchor) so it's reachable from any page.
+// Navigation is locale-aware: labels switch FR/EN, and the News + Projects items
+// link to real /:lang/* routes (not home-page anchors) so they're reachable from any page.
 export function getNavItems(locale: Locale): NavItem[] {
   if (locale === 'en') {
     return [
       { label: 'About us', href: '#qui-sommes-nous' },
       { label: 'Our fields', href: '#nos-domaines' },
-      { label: 'Projects', href: '#projets' },
+      { label: 'Projects', href: '/en/projects' },
       { label: 'Knowledge sharing', href: '#partage' },
       { label: 'News', href: '/en/news' },
       { label: 'Opportunities', href: '#opportunites' },
@@ -18,7 +18,7 @@ export function getNavItems(locale: Locale): NavItem[] {
   return [
     { label: 'Qui sommes-nous', href: '#qui-sommes-nous' },
     { label: 'Nos domaines', href: '#nos-domaines' },
-    { label: 'Projets', href: '#projets' },
+    { label: 'Projets', href: '/fr/projects' },
     { label: 'Partage de connaissances', href: '#partage' },
     { label: 'Actualités', href: '/fr/news' },
     { label: 'Opportunités', href: '#opportunites' },

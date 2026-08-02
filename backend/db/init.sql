@@ -246,6 +246,59 @@ CREATE TABLE IF NOT EXISTS preview_tokens (
 CREATE INDEX IF NOT EXISTS idx_preview_tokens_token ON preview_tokens (token);
 
 -- ═══════════════════════════════════════════
+-- Departments (for /projects section)
+-- Top-level grouping for projects. Projects table (added later) will
+-- reference departments(id). Slug auto-generated from title_en, stable.
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS departments (
+    id              SERIAL PRIMARY KEY,
+    title_fr        TEXT NOT NULL,
+    title_en        TEXT NOT NULL,
+    description_fr  TEXT NOT NULL DEFAULT '',
+    description_en  TEXT NOT NULL DEFAULT '',
+    image           VARCHAR(500) NOT NULL DEFAULT '',
+    slug            VARCHAR(200) NOT NULL UNIQUE,
+    sort_order      INT NOT NULL DEFAULT 0,
+    is_published    BOOLEAN NOT NULL DEFAULT false,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
+CREATE INDEX IF NOT EXISTS idx_departments_published ON departments (is_published);
+
+-- ═══════════════════════════════════════════
+-- Projects (belong to a department)
+-- year_end is nullable (ongoing projects have no end year yet).
+-- status is an enum: 'en_cours' (in progress) | 'cloture' (closed).
+-- budget is a free-text string (e.g. "1.2M EUR", "$500,000") for admin flexibility.
+-- Slug auto-generated from title_en + id, stable, never regenerated.
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS projects (
+    id              SERIAL PRIMARY KEY,
+    department_id   INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    title_fr        TEXT NOT NULL,
+    title_en        TEXT NOT NULL,
+    description_fr  TEXT NOT NULL DEFAULT '',
+    description_en  TEXT NOT NULL DEFAULT '',
+    image           VARCHAR(500) NOT NULL DEFAULT '',
+    year_start      INT,
+    year_end        INT,
+    status          VARCHAR(20) NOT NULL DEFAULT 'en_cours'
+                    CHECK (status IN ('en_cours', 'cloture')),
+    budget          VARCHAR(100) NOT NULL DEFAULT '',
+    slug            VARCHAR(200) NOT NULL UNIQUE,
+    sort_order      INT NOT NULL DEFAULT 0,
+    is_published    BOOLEAN NOT NULL DEFAULT false,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_projects_department ON projects (department_id);
+CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
+CREATE INDEX IF NOT EXISTS idx_projects_published ON projects (is_published);
+
+-- ═══════════════════════════════════════════
 -- Refresh Tokens (rotation + reuse detection)
 -- ═══════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS refresh_tokens (

@@ -18,6 +18,13 @@ import AdminNews from "./pages/admin/News";
 import NewsForm from "./pages/admin/NewsForm";
 import NewsList from "./pages/NewsList";
 import NewsArticle from "./pages/NewsArticle";
+import ProjectsList from "./pages/ProjectsList";
+import DepartmentDetail from "./pages/DepartmentDetail";
+import ProjectDetail from "./pages/ProjectDetail";
+import AdminDepartments from "./pages/admin/Departments";
+import DepartmentForm from "./pages/admin/DepartmentForm";
+import AdminProjects from "./pages/admin/Projects";
+import ProjectForm from "./pages/admin/ProjectForm";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { token, loading } = useAuth();
@@ -65,6 +72,30 @@ function PublicNewsArticle() {
   );
 }
 
+function PublicProjectsList() {
+  return (
+    <LocaleProvider>
+      <ProjectsList />
+    </LocaleProvider>
+  );
+}
+
+function PublicDepartmentDetail() {
+  return (
+    <LocaleProvider>
+      <DepartmentDetail />
+    </LocaleProvider>
+  );
+}
+
+function PublicProjectDetail() {
+  return (
+    <LocaleProvider>
+      <ProjectDetail />
+    </LocaleProvider>
+  );
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -72,6 +103,9 @@ function AppRoutes() {
       <Route path="/:lang" element={<PublicPage />} />
       <Route path="/:lang/news" element={<PublicNewsList />} />
       <Route path="/:lang/news/:slug" element={<PublicNewsArticle />} />
+      <Route path="/:lang/projects" element={<PublicProjectsList />} />
+      <Route path="/:lang/projects/:deptSlug" element={<PublicDepartmentDetail />} />
+      <Route path="/:lang/projects/:deptSlug/:projectSlug" element={<PublicProjectDetail />} />
       <Route path="/" element={<Navigate to="/fr" replace />} />
 
       {/* Login */}
@@ -107,6 +141,16 @@ function AppRoutes() {
         <Route path="news" element={<AdminNews />} />
         <Route path="news/new" element={<NewsForm />} />
         <Route path="news/:id" element={<NewsForm />} />
+
+        {/* Departments — list + add/edit */}
+        <Route path="departments" element={<AdminDepartments />} />
+        <Route path="departments/new" element={<DepartmentForm />} />
+        <Route path="departments/:id" element={<DepartmentForm />} />
+
+        {/* Projects — list (dept selector) + add/edit */}
+        <Route path="projects" element={<AdminProjects />} />
+        <Route path="projects/new" element={<ProjectForm />} />
+        <Route path="projects/:id" element={<ProjectForm />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/fr" replace />} />

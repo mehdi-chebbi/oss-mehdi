@@ -662,6 +662,169 @@ export async function deleteNews(token: string, id: number) {
   });
 }
 
+// ── Departments CRUD ──
+export interface DepartmentData {
+  id: number;
+  title_fr: string;
+  title_en: string;
+  description_fr: string;
+  description_en: string;
+  image: string;
+  slug: string;
+  sort_order: number;
+  is_published: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Public: all published departments (for the /projects landing page later)
+export async function getPublishedDepartments() {
+  return request<DepartmentData[]>("/departments");
+}
+
+// Public: single department by slug
+export async function getDepartmentBySlug(slug: string) {
+  return request<DepartmentData>(`/departments/slug/${encodeURIComponent(slug)}`);
+}
+
+// Authenticated: list all departments (including drafts)
+export async function listAllDepartments(token: string) {
+  return request<DepartmentData[]>("/departments/all", { headers: authHeader(token) });
+}
+
+// Authenticated: get single department for editing
+export async function getDepartment(token: string, id: number) {
+  return request<DepartmentData>(`/departments/${id}`, { headers: authHeader(token) });
+}
+
+// Authenticated: create department
+export async function createDepartment(
+  token: string,
+  data: Partial<DepartmentData>,
+) {
+  return request<DepartmentData>("/departments", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: update department
+export async function updateDepartment(
+  token: string,
+  id: number,
+  data: Partial<DepartmentData>,
+) {
+  return request<DepartmentData>(`/departments/${id}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: delete department
+export async function deleteDepartment(token: string, id: number) {
+  return request<{ message: string }>(`/departments/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
+// ── Projects CRUD ──
+export type ProjectStatus = "en_cours" | "cloture";
+
+export interface ProjectData {
+  id: number;
+  department_id: number;
+  title_fr: string;
+  title_en: string;
+  description_fr: string;
+  description_en: string;
+  image: string;
+  year_start: number | null;
+  year_end: number | null;
+  status: ProjectStatus;
+  budget: string;
+  slug: string;
+  sort_order: number;
+  is_published: boolean;
+  created_at?: string;
+  updated_at?: string;
+  // Joined from departments (public endpoints only)
+  department_slug?: string;
+  department_title_fr?: string;
+  department_title_en?: string;
+}
+
+// Status label helper (bilingual)
+export function statusLabel(status: ProjectStatus, locale: "fr" | "en"): string {
+  if (status === "cloture") return locale === "fr" ? "Clôturé" : "Closed";
+  return locale === "fr" ? "En cours" : "In progress";
+}
+
+// Year range helper: "2020 – 2023", "2020 – présent", "2020"
+export function yearRange(start: number | null, end: number | null, locale: "fr" | "en"): string {
+  const s = start ?? null;
+  if (s === null) return "";
+  if (end === null || end === undefined) {
+    return `${s} – ${locale === "fr" ? "présent" : "present"}`;
+  }
+  return s === end ? `${s}` : `${s} – ${end}`;
+}
+
+// Public: published projects for a department (by dept slug)
+export async function getPublishedProjectsByDept(deptSlug: string) {
+  return request<ProjectData[]>(`/projects/dept/${encodeURIComponent(deptSlug)}`);
+}
+
+// Public: single project by slug
+export async function getProjectBySlug(slug: string) {
+  return request<ProjectData>(`/projects/slug/${encodeURIComponent(slug)}`);
+}
+
+// Authenticated: list all projects for a department (including drafts)
+export async function listAllProjectsByDept(token: string, deptId: number) {
+  return request<ProjectData[]>(`/projects/all/${deptId}`, { headers: authHeader(token) });
+}
+
+// Authenticated: get single project for editing
+export async function getProject(token: string, id: number) {
+  return request<ProjectData>(`/projects/${id}`, { headers: authHeader(token) });
+}
+
+// Authenticated: create project
+export async function createProject(
+  token: string,
+  data: Partial<ProjectData>,
+) {
+  return request<ProjectData>("/projects", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: update project
+export async function updateProject(
+  token: string,
+  id: number,
+  data: Partial<ProjectData>,
+) {
+  return request<ProjectData>(`/projects/${id}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: delete project
+export async function deleteProject(token: string, id: number) {
+  return request<{ message: string }>(`/projects/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
 // ── Types ──
 export interface User {
   id: number;

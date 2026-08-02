@@ -14,6 +14,9 @@ import {
   Handshake,
   Share2,
   Newspaper,
+  FolderKanban,
+  Building2,
+  Briefcase,
 } from "lucide-react";
 
 /* ── Sidebar structure ── */
@@ -34,6 +37,14 @@ const pages = [
     icon: Newspaper,
     sections: [
       { to: "/admin/news", label: "Articles", icon: Newspaper, adminOnly: false },
+    ],
+  },
+  {
+    label: "Projects",
+    icon: FolderKanban,
+    sections: [
+      { to: "/admin/departments", label: "Departments", icon: Building2, adminOnly: false },
+      { to: "/admin/projects", label: "Projects", icon: Briefcase, adminOnly: false },
     ],
   },
 ];
