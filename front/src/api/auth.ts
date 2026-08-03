@@ -18,9 +18,9 @@ export function clearAccessToken() {
 // ── Refresh logic (coalesced — prevents storm on mount) ──
 
 let isRefreshing = false;
-let refreshPromise: Promise<string> | null = null;
+let refreshPromise: Promise<string | null> | null = null;
 
-async function refreshAccessToken(): Promise<string> {
+async function refreshAccessToken(): Promise<string | null> {
   // Coalesce concurrent refresh attempts (mount-storm safe)
   if (isRefreshing && refreshPromise) return refreshPromise;
 
@@ -33,6 +33,13 @@ async function refreshAccessToken(): Promise<string> {
         headers: { "Content-Type": "application/json" },
         credentials: "include", // send cookies
       });
+
+      // 204 = no session (no cookie sent) — not an error, just nothing to refresh.
+      // This is the normal state on public pages; stays silent in the console.
+      if (res.status === 204) {
+        _accessToken = null;
+        return null;
+      }
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({ error: "Refresh failed" }));
@@ -77,6 +84,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (res.status === 401) {
     try {
       const newToken = await refreshAccessToken();
+      // No session (refresh returned 204) — can't retry, treat as expired
+      if (!newToken) {
+        throw new Error("SESSION_EXPIRED");
+      }
       // Retry the original request with the new token
       const retryRes = await fetch(`${API_BASE}${path}`, {
         ...options,
@@ -147,6 +158,9 @@ export async function uploadFile(
   if (res.status === 401) {
     try {
       const newToken = await refreshAccessToken();
+      if (!newToken) {
+        throw new Error("SESSION_EXPIRED");
+      }
       res = await doUpload(newToken);
     } catch (err: any) {
       _accessToken = null;

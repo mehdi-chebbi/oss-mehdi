@@ -46,6 +46,7 @@ services:
       TURNSTILE_SECRET: "0x4AAAAAAEEZsxwtfxZ4mKs34QnoJ-quvIc"
       # ── Runtime config ──
       NODE_ENV: production
+      COOKIE_SECURE: "false"   # HTTP locally — browsers reject Secure cookies over http://
       COOKIE_DOMAIN: ""
       CSRF_ORIGIN: "http://localhost:3000"
       ALLOWED_ORIGINS: "http://localhost:3000"

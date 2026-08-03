@@ -97,6 +97,8 @@ router.post("/login", loginLimiter, async (req, res) => {
     // Set refresh token as httpOnly cookie
     res.cookie(REFRESH_COOKIE_NAME, data.refreshToken, refreshCookieOptions());
 
+    console.log(`[AUTH] login OK user=${data.user.id} email=${data.user.email}`);
+
     // Return access token + user (NOT the refresh token in body)
     res.json({ user: data.user, accessToken: data.accessToken });
   } catch (err: any) {
@@ -108,9 +110,10 @@ router.post("/login", loginLimiter, async (req, res) => {
     // "Invalid credentials" is the only expected auth error from login().
     // Anything else is a DB / infra failure — don't mislabel it as 401.
     if (err.message === "Invalid credentials") {
+      console.log(`[AUTH] login FAIL email=${req.body?.email} reason="invalid credentials"`);
       res.status(401).json({ error: "Invalid credentials" });
     } else {
-      console.error("Login error:", err);
+      console.error("[AUTH] login ERROR:", err);
       res.status(500).json({ error: "Login failed" });
     }
   }
@@ -120,7 +123,10 @@ router.post("/refresh", csrfCheck, refreshLimiter, async (req, res) => {
   try {
     const token = req.cookies?.[REFRESH_COOKIE_NAME];
     if (!token) {
-      res.status(401).json({ error: "No refresh token" });
+      // No session — return 204 (not 401) so it doesn't show as an error in
+      // the browser console on public pages. The frontend treats 204 as
+      // "no active session" and stays logged out silently.
+      res.status(204).end();
       return;
     }
 
@@ -131,16 +137,22 @@ router.post("/refresh", csrfCheck, refreshLimiter, async (req, res) => {
       res.cookie(REFRESH_COOKIE_NAME, data.refreshToken, refreshCookieOptions());
     }
 
+    console.log(`[AUTH] refresh OK user=${data.userId} family=${data.family} reusedGrace=${data.reusedGrace}`);
+
     res.json({ accessToken: data.accessToken });
   } catch (err: any) {
     // Clear the cookie on any refresh failure
     res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions());
 
+    // Security events (reuse detection) stay loud
     if (err.message === "TOKEN_REUSED") {
+      console.warn(`[AUTH] refresh REJECT reason="token_reused" — entire family revoked`);
       res.status(401).json({ error: "SESSION_REVOKED", reason: "reuse_detected" });
     } else if (err.message === "FAMILY_RATE_LIMIT") {
+      console.warn(`[AUTH] refresh REJECT reason="family_rate_limit"`);
       res.status(429).json({ error: "Too many refresh attempts" });
     } else {
+      console.log(`[AUTH] refresh REJECT reason="${err.message}"`);
       res.status(401).json({ error: err.message });
     }
   }
@@ -150,7 +162,8 @@ router.post("/logout", csrfCheck, logoutLimiter, async (req, res) => {
   try {
     const token = req.cookies?.[REFRESH_COOKIE_NAME];
     if (token) {
-      await logout(token);
+      const result = await logout(token);
+      if (result.userId) console.log(`[AUTH] logout user=${result.userId}`);
     }
     res.clearCookie(REFRESH_COOKIE_NAME, clearCookieOptions());
     res.json({ message: "Logged out" });

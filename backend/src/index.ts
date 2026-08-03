@@ -171,6 +171,10 @@ async function start() {
 
   app.listen(env.port, () => {
     console.log(`Backend running on port ${env.port}`);
+    // One-line auth config summary (enough to verify a deploy at a glance)
+    console.log(
+      `[AUTH] config: cookieSecure=${env.cookieSecure} isProduction=${env.isProduction} cookieDomain=${JSON.stringify(env.cookieDomain)} allowedOrigins=${JSON.stringify(env.allowedOrigins)} trustProxy=${env.trustProxy}`,
+    );
   });
 }
 
