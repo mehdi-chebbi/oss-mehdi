@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listAllNews,
@@ -13,33 +14,32 @@ import { Loader2, Plus, Trash2, Pencil, Newspaper } from "lucide-react";
 export default function AdminNews() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [news, setNews] = useState<NewsData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<NewsData | null>(null);
 
-  const loadNews = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listAllNews(token);
-      setNews(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: news = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["news"],
+    queryFn: () => listAllNews(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadNews();
-  }, [loadNews]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteNews(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["news"] });
+    },
+  });
 
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteNews(token, deleteTarget.id);
-      setNews((prev) => prev.filter((n) => n.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

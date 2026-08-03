@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listAllDepartments,
@@ -12,33 +13,32 @@ import { Loader2, Plus, Trash2, Pencil, Building2 } from "lucide-react";
 export default function AdminDepartments() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState<DepartmentData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<DepartmentData | null>(null);
 
-  const loadDepartments = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listAllDepartments(token);
-      setDepartments(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: departments = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["departments"],
+    queryFn: () => listAllDepartments(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadDepartments();
-  }, [loadDepartments]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteDepartment(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["departments"] });
+    },
+  });
 
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteDepartment(token, deleteTarget.id);
-      setDepartments((prev) => prev.filter((d) => d.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

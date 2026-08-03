@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/auth";
-import { LocaleProvider } from "./context/locale";
+import PublicLayout from "./components/shared/PublicLayout";
+import RouteProgress from "./components/shared/RouteProgress";
 import AdminLayout from "./components/admin/AdminLayout";
 import HomePage from "./HomePage";
 import Login from "./pages/Login";
@@ -25,145 +26,130 @@ import AdminDepartments from "./pages/admin/Departments";
 import DepartmentForm from "./pages/admin/DepartmentForm";
 import AdminProjects from "./pages/admin/Projects";
 import ProjectForm from "./pages/admin/ProjectForm";
+import {
+  homeLoader,
+  newsListLoader,
+  newsArticleLoader,
+  projectsListLoader,
+  departmentDetailLoader,
+  projectDetailLoader,
+} from "./loaders/public";
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { token, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-ink/40">Loading…</div>;
-  if (!token) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
-
+/** Redirect /admin → /admin/hero (content editors) or /admin/users (admins) */
 function AdminIndexRedirect() {
   const { user } = useAuth();
-  return <Navigate to={user?.role === "admin" ? "/admin" : "/admin/hero"} replace />;
+  return <Navigate to={user?.role === "admin" ? "/admin/users" : "/admin/hero"} replace />;
 }
 
-function AdminShell() {
+/**
+ * Root layout — wraps every route with the top progress bar.
+ * Must be inside <RouterProvider> (uses useNavigation) and inside
+ * <AuthProvider> (child routes use useAuth).
+ */
+function RootLayout() {
   return (
-    <ProtectedRoute>
-      <AdminLayout>
-        <Outlet />
-      </AdminLayout>
-    </ProtectedRoute>
+    <>
+      <RouteProgress />
+      <Outlet />
+    </>
   );
 }
 
-function PublicPage() {
-  return (
-    <LocaleProvider>
-      <HomePage />
-    </LocaleProvider>
-  );
-}
+// ── Router ──
+// Layout routes: <PublicLayout> and <AdminLayout> stay mounted across all
+// their child routes. Only the <Outlet/> (page content) swaps. Loaders run
+// before the route renders, so pages get data on first paint (no flash).
 
-function PublicNewsList() {
-  return (
-    <LocaleProvider>
-      <NewsList />
-    </LocaleProvider>
-  );
-}
+export const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/",
+        element: <PublicLayout />,
+        children: [
+          { index: true, element: <Navigate to="/fr" replace /> },
+          {
+            path: ":lang",
+            children: [
+              { index: true, loader: homeLoader, element: <HomePage /> },
+              { path: "news", loader: newsListLoader, element: <NewsList /> },
+              { path: "news/:slug", loader: newsArticleLoader, element: <NewsArticle /> },
+              { path: "projects", loader: projectsListLoader, element: <ProjectsList /> },
+              { path: "projects/:deptSlug", loader: departmentDetailLoader, element: <DepartmentDetail /> },
+              { path: "projects/:deptSlug/:projectSlug", loader: projectDetailLoader, element: <ProjectDetail /> },
+            ],
+          },
+        ],
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminIndexRedirect /> },
+          { path: "users", element: <AdminUsers /> },
+          { path: "hero", element: <AdminHero /> },
 
-function PublicNewsArticle() {
-  return (
-    <LocaleProvider>
-      <NewsArticle />
-    </LocaleProvider>
-  );
-}
+          // Fields
+          { path: "fields", element: <AdminFields /> },
+          { path: "fields/new", element: <FieldForm /> },
+          { path: "fields/:id", element: <FieldForm /> },
 
-function PublicProjectsList() {
-  return (
-    <LocaleProvider>
-      <ProjectsList />
-    </LocaleProvider>
-  );
-}
+          // Tools
+          { path: "tools", element: <AdminTools /> },
+          { path: "tools/new", element: <ToolForm /> },
+          { path: "tools/:id", element: <ToolForm /> },
 
-function PublicDepartmentDetail() {
-  return (
-    <LocaleProvider>
-      <DepartmentDetail />
-    </LocaleProvider>
-  );
-}
+          // Partners
+          { path: "partners", element: <AdminPartners /> },
+          { path: "partners/new", element: <PartnerForm /> },
+          { path: "partners/:id", element: <PartnerForm /> },
 
-function PublicProjectDetail() {
-  return (
-    <LocaleProvider>
-      <ProjectDetail />
-    </LocaleProvider>
-  );
-}
+          // Socials
+          { path: "socials", element: <AdminSocials /> },
+          { path: "socials/new", element: <SocialForm /> },
+          { path: "socials/:id", element: <SocialForm /> },
 
-function AppRoutes() {
-  return (
-    <Routes>
-      {/* Public — locale in URL */}
-      <Route path="/:lang" element={<PublicPage />} />
-      <Route path="/:lang/news" element={<PublicNewsList />} />
-      <Route path="/:lang/news/:slug" element={<PublicNewsArticle />} />
-      <Route path="/:lang/projects" element={<PublicProjectsList />} />
-      <Route path="/:lang/projects/:deptSlug" element={<PublicDepartmentDetail />} />
-      <Route path="/:lang/projects/:deptSlug/:projectSlug" element={<PublicProjectDetail />} />
-      <Route path="/" element={<Navigate to="/fr" replace />} />
+          // News
+          { path: "news", element: <AdminNews /> },
+          { path: "news/new", element: <NewsForm /> },
+          { path: "news/:id", element: <NewsForm /> },
 
-      {/* Login */}
-      <Route path="/login" element={<Login />} />
+          // Departments
+          { path: "departments", element: <AdminDepartments /> },
+          { path: "departments/new", element: <DepartmentForm /> },
+          { path: "departments/:id", element: <DepartmentForm /> },
 
-      {/* Admin — shared layout with sidebar */}
-      <Route path="/admin" element={<AdminShell />}>
-        <Route index element={<AdminIndexRedirect />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="hero" element={<AdminHero />} />
+          // Projects
+          { path: "projects", element: <AdminProjects /> },
+          { path: "projects/new", element: <ProjectForm /> },
+          { path: "projects/:id", element: <ProjectForm /> },
+        ],
+      },
+      {
+        path: "*",
+        element: <Navigate to="/fr" replace />,
+      },
+    ],
+  },
+]);
 
-        {/* Fields — list + add/edit */}
-        <Route path="fields" element={<AdminFields />} />
-        <Route path="fields/new" element={<FieldForm />} />
-        <Route path="fields/:id" element={<FieldForm />} />
-
-        {/* Tools — list + add/edit */}
-        <Route path="tools" element={<AdminTools />} />
-        <Route path="tools/new" element={<ToolForm />} />
-        <Route path="tools/:id" element={<ToolForm />} />
-
-        {/* Partners — list + add/edit */}
-        <Route path="partners" element={<AdminPartners />} />
-        <Route path="partners/new" element={<PartnerForm />} />
-        <Route path="partners/:id" element={<PartnerForm />} />
-
-        {/* Socials — list + add/edit */}
-        <Route path="socials" element={<AdminSocials />} />
-        <Route path="socials/new" element={<SocialForm />} />
-        <Route path="socials/:id" element={<SocialForm />} />
-
-        {/* News — list + add/edit */}
-        <Route path="news" element={<AdminNews />} />
-        <Route path="news/new" element={<NewsForm />} />
-        <Route path="news/:id" element={<NewsForm />} />
-
-        {/* Departments — list + add/edit */}
-        <Route path="departments" element={<AdminDepartments />} />
-        <Route path="departments/new" element={<DepartmentForm />} />
-        <Route path="departments/:id" element={<DepartmentForm />} />
-
-        {/* Projects — list (dept selector) + add/edit */}
-        <Route path="projects" element={<AdminProjects />} />
-        <Route path="projects/new" element={<ProjectForm />} />
-        <Route path="projects/:id" element={<ProjectForm />} />
-      </Route>
-
-      <Route path="*" element={<Navigate to="/fr" replace />} />
-    </Routes>
-  );
-}
-
+/**
+ * Default export — wraps the router with AuthProvider.
+ * Rendered by main.tsx inside <QueryClientProvider>.
+ *
+ * AuthProvider sits OUTSIDE RouterProvider so that admin routes (which use
+ * useAuth) can access the context. AuthProvider's mount-time tryRefresh()
+ * runs once on app boot, independent of the router.
+ */
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }

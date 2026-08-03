@@ -45,7 +45,7 @@ export const REFRESH_COOKIE_NAME = "refreshToken";
 export function refreshCookieOptions() {
   return {
     httpOnly: true,
-    secure: env.isProduction,
+    secure: env.cookieSecure,
     sameSite: "lax" as const,
     path: "/api/auth",
     domain: env.cookieDomain,
@@ -56,7 +56,7 @@ export function refreshCookieOptions() {
 export function clearCookieOptions() {
   return {
     httpOnly: true,
-    secure: env.isProduction,
+    secure: env.cookieSecure,
     sameSite: "lax" as const,
     path: "/api/auth",
     domain: env.cookieDomain,
@@ -248,7 +248,7 @@ export async function refresh(token: string) {
         await revokeTokenFamily(row.family, client);
         await client.query("COMMIT");
         console.warn(
-          `[SECURITY] Refresh token reuse detected for family ${row.family}, user ${row.user_id}. Entire family revoked.`,
+          `[AUTH] SECURITY: refresh token reuse detected — family ${row.family} revoked (user ${row.user_id})`,
         );
         throw new Error("TOKEN_REUSED");
       }
@@ -266,6 +266,8 @@ export async function refresh(token: string) {
 
       return {
         accessToken: signAccessToken({ userId: payload.userId, role: payload.role }),
+        userId: payload.userId,
+        family: row.family,
         reusedGrace: true,
       };
     }
@@ -284,6 +286,8 @@ export async function refresh(token: string) {
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
+      userId: payload.userId,
+      family: row.family,
       reusedGrace: false,
     };
   } catch (err) {
@@ -295,11 +299,13 @@ export async function refresh(token: string) {
 }
 
 /** Logout: revoke the current refresh token and clear the cookie */
-export async function logout(token: string) {
+export async function logout(token: string): Promise<{ userId?: number }> {
   const row = await findRefreshToken(token);
   if (row && !row.revoked_at) {
     await revokeRefreshToken(row.token_hash);
+    return { userId: row.user_id };
   }
+  return {};
 }
 
 /** Logout everywhere: revoke all tokens for the user */

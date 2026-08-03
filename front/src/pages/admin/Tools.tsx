@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listTools,
@@ -12,35 +13,34 @@ import { Loader2, Plus, Trash2, Pencil, ExternalLink } from "lucide-react";
 export default function AdminTools() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [tools, setTools] = useState<ToolData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<ToolData | null>(null);
 
-  const loadTools = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listTools(token);
-      setTools(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: tools = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["tools"],
+    queryFn: () => listTools(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadTools();
-  }, [loadTools]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteTool(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tools"] });
+    },
+  });
 
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteTool(token, deleteTarget.id);
-      setTools((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

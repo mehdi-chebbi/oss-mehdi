@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
-import { getSocials, type SocialData } from '@/api/auth';
+import { useQuery } from "@tanstack/react-query";
+import { getSocials, type SocialData } from "@/api/auth";
 
+/**
+ * Fixed-left vertical social-media sidebar.
+ *
+ * Uses React Query so the socials are fetched once and cached across all
+ * pages. Navigating between public pages does NOT re-fetch — the cached data
+ * is shown instantly, so the sidebar never disappears during navigation.
+ */
 export default function SocialSidebar() {
-  const [socials, setSocials] = useState<SocialData[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const { data: socials } = useQuery<SocialData[]>({
+    queryKey: ["socials"],
+    queryFn: getSocials,
+    staleTime: Infinity, // cache forever (socials rarely change)
+  });
 
-  useEffect(() => {
-    getSocials()
-      .then(setSocials)
-      .catch(() => setSocials([]))
-      .finally(() => setLoaded(true));
-  }, []);
-
-  if (!loaded || socials.length === 0) return null;
+  if (!socials || socials.length === 0) return null;
 
   return (
     <aside className="fixed left-0 top-[55%] -translate-y-1/2 z-40 hidden lg:flex flex-col items-center">

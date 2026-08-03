@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listPartners,
@@ -12,38 +13,37 @@ import { Loader2, Plus, Trash2, Pencil } from "lucide-react";
 export default function AdminPartners() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [partners, setPartners] = useState<PartnerData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<PartnerData | null>(null);
 
-  const loadPartners = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listPartners(token);
-      setPartners(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: partners = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["partners"],
+    queryFn: () => listPartners(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadPartners();
-  }, [loadPartners]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
 
   const row1 = partners.filter((p) => p.row_number === 1);
   const row2 = partners.filter((p) => p.row_number === 2);
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deletePartner(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
+    },
+  });
+
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deletePartner(token, deleteTarget.id);
-      setPartners((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

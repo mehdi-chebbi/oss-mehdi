@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listFields,
@@ -14,35 +15,34 @@ const MAX_FIELDS = 4;
 export default function AdminFields() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [fields, setFields] = useState<FieldData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<FieldData | null>(null);
 
-  const loadFields = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listFields(token);
-      setFields(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: fields = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["fields"],
+    queryFn: () => listFields(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadFields();
-  }, [loadFields]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteField(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fields"] });
+    },
+  });
 
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteField(token, deleteTarget.id);
-      setFields((prev) => prev.filter((f) => f.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

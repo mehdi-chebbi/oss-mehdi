@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { getPublishedPartners, type PartnerData } from '@/api/auth';
+import type { PartnerData } from '@/api/auth';
 import { useLocale } from '@/context/locale';
 
 // Edge fade mask — applied to the row viewport (not the track).
@@ -29,19 +28,14 @@ function LogoTile({ name, image }: { name: string; image: string }) {
   );
 }
 
-export default function Partners() {
+interface PartnersProps {
+  items: PartnerData[];
+}
+
+export default function Partners({ items: partners }: PartnersProps) {
   const { locale } = useLocale();
-  const [partners, setPartners] = useState<PartnerData[]>([]);
-  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    getPublishedPartners()
-      .then(setPartners)
-      .catch(() => setPartners([]))
-      .finally(() => setLoaded(true));
-  }, []);
-
-  if (!loaded || partners.length === 0) return null;
+  if (partners.length === 0) return null;
 
   const row1 = partners.filter((p) => p.row_number === 1);
   const row2 = partners.filter((p) => p.row_number === 2);

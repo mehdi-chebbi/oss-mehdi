@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards, Mousewheel, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import { getPublishedTools, type ToolData } from '@/api/auth';
+import type { ToolData } from '@/api/auth';
 import { useLocale, localized } from '@/context/locale';
 
 import 'swiper/css';
@@ -10,19 +10,14 @@ import 'swiper/css/effect-cards';
 
 // ---- Component ----
 
-export default function Tools() {
+interface ToolsProps {
+  items: ToolData[];
+}
+
+export default function Tools({ items: tools }: ToolsProps) {
   const { locale } = useLocale();
-  const [tools, setTools] = useState<ToolData[]>([]);
-  const [loaded, setLoaded] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-
-  useEffect(() => {
-    getPublishedTools()
-      .then(setTools)
-      .catch(() => setTools([]))
-      .finally(() => setLoaded(true));
-  }, []);
 
   const onSwiperInit = useCallback((swiper: SwiperType) => {
     swiperRef.current = swiper;
@@ -33,7 +28,7 @@ export default function Tools() {
     setActiveIdx(swiper.realIndex);
   }, []);
 
-  if (!loaded || tools.length === 0) return null;
+  if (tools.length === 0) return null;
 
   const active = tools[activeIdx] || tools[0];
   const link = active?.link || '#';

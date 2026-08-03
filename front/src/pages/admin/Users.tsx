@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import { listUsers, createUser, updateUser, deleteUser, type User } from "../../api/auth";
 import { Pencil, Trash2, X, UserPlus } from "lucide-react";
 
 export default function AdminUsers() {
   const { token, user: currentUser } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   // Modal state
@@ -15,22 +15,15 @@ export default function AdminUsers() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "editor" });
   const [submitting, setSubmitting] = useState(false);
 
-  const loadUsers = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listUsers(token);
-      setUsers(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: users = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => listUsers(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
 
   const openCreate = () => {
     setEditingUser(null);
@@ -63,7 +56,7 @@ export default function AdminUsers() {
         await createUser(token, form);
       }
       setModalOpen(false);
-      loadUsers();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -75,9 +68,10 @@ export default function AdminUsers() {
     if (!token) return;
     if (u.id === currentUser?.id) return;
     if (!confirm(`Delete ${u.name}?`)) return;
+    setError("");
     try {
       await deleteUser(token, u.id);
-      loadUsers();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     } catch (err: any) {
       setError(err.message);
     }

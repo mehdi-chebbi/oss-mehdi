@@ -1,23 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPublishedHero, type HeroData } from '../../api/auth';
+import type { HeroData } from '../../api/auth';
 import type { Locale } from '../../context/locale';
 
-export default function Hero() {
+interface HeroProps {
+  data: HeroData | null;
+}
+
+export default function Hero({ data: hero }: HeroProps) {
   const [mounted, setMounted] = useState(false);
-  const [hero, setHero] = useState<HeroData | null>(null);
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
   useEffect(() => {
     const t = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(t);
-  }, []);
-
-  useEffect(() => {
-    getPublishedHero()
-      .then(setHero)
-      .catch(() => setHero(null));
   }, []);
 
   // Fallback defaults if API fails

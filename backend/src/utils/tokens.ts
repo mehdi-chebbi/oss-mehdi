@@ -4,6 +4,16 @@ import { env } from "../config/env.js";
 import type { AuthPayload } from "../middleware/auth.js";
 import { query, pool } from "../config/db.js";
 
+// ── Query helper ──
+// Normalizes "call as a function" vs "call as a method" between the bare
+// `query` helper (a function) and a `PoolClient` (which exposes `.query()` as
+// a method). Without this, `const q = client || query; await q(...)` crashes
+// with "q is not a function" whenever a transaction client is passed in.
+function getQuery(client?: any): (text: string, params?: unknown[]) => Promise<any> {
+  if (client) return (text, params) => client.query(text, params as any[]);
+  return query as any;
+}
+
 // ── JWT signing ──
 
 export function signAccessToken(payload: AuthPayload): string {
@@ -47,7 +57,7 @@ export async function storeRefreshToken(
   const decoded = jwt.decode(token) as { exp: number } | null;
   const expiresAt = decoded ? new Date(decoded.exp * 1000) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  const q = client || query;
+  const q = getQuery(client);
   await q(
     `INSERT INTO refresh_tokens (user_id, token_hash, family, expires_at)
      VALUES ($1, $2, $3, $4)`,
@@ -69,7 +79,7 @@ export async function findRefreshToken(
   client?: any,
 ): Promise<RefreshTokenRow | null> {
   const tokenHash = hashToken(token);
-  const q = client || query;
+  const q = getQuery(client);
   const lock = client ? " FOR UPDATE" : "";
   const result = await q(
     `SELECT id, user_id, token_hash, family, expires_at, revoked_at, created_at
@@ -82,7 +92,7 @@ export async function findRefreshToken(
 
 /** Revoke a single refresh token (rotation). Only flips an active token. */
 export async function revokeRefreshToken(tokenHash: string, client?: any): Promise<void> {
-  const q = client || query;
+  const q = getQuery(client);
   await q(
     `UPDATE refresh_tokens SET revoked_at = now() WHERE token_hash = $1 AND revoked_at IS NULL`,
     [tokenHash],
@@ -91,7 +101,7 @@ export async function revokeRefreshToken(tokenHash: string, client?: any): Promi
 
 /** Revoke all tokens in a family (reuse detection — kill entire session) */
 export async function revokeTokenFamily(family: string, client?: any): Promise<void> {
-  const q = client || query;
+  const q = getQuery(client);
   await q(
     `UPDATE refresh_tokens SET revoked_at = now() WHERE family = $1`,
     [family],
@@ -100,7 +110,7 @@ export async function revokeTokenFamily(family: string, client?: any): Promise<v
 
 /** Revoke all refresh tokens for a user ("log out everywhere") */
 export async function revokeAllUserTokens(userId: number, client?: any): Promise<void> {
-  const q = client || query;
+  const q = getQuery(client);
   await q(
     `UPDATE refresh_tokens SET revoked_at = now() WHERE user_id = $1`,
     [userId],
@@ -119,7 +129,7 @@ export async function revokeAllUserTokens(userId: number, client?: any): Promise
  * be outside the window regardless of clock skew between JS and Postgres.
  */
 export async function hardenRevokedToken(tokenHash: string, client?: any): Promise<void> {
-  const q = client || query;
+  const q = getQuery(client);
   const offsetMs = env.refreshTokenGracePeriodMs * 2;
   const hardenedAt = new Date(Date.now() - offsetMs);
   await q(

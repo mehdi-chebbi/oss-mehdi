@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listSocials,
@@ -12,35 +13,34 @@ import { Loader2, Plus, Trash2, Pencil, ExternalLink } from "lucide-react";
 export default function AdminSocials() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const [socials, setSocials] = useState<SocialData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<SocialData | null>(null);
 
-  const loadSocials = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await listSocials(token);
-      setSocials(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const { data: socials = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["socials"],
+    queryFn: () => listSocials(token!),
+    enabled: !!token,
+  });
 
   useEffect(() => {
-    loadSocials();
-  }, [loadSocials]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteSocial(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["socials"] });
+    },
+  });
 
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteSocial(token, deleteTarget.id);
-      setSocials((prev) => prev.filter((s) => s.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

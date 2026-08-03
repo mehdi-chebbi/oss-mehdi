@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
-import { getPublishedFields, type FieldData } from '@/api/auth';
+import type { FieldData } from '@/api/auth';
 import { useLocale, localized } from '@/context/locale';
 
 // ---- Card component ----
@@ -81,19 +81,14 @@ FieldCard.displayName = 'FieldCard';
 
 // ---- Section ----
 
-export default function Fields() {
+interface FieldsProps {
+  items: FieldData[];
+}
+
+export default function Fields({ items: fields }: FieldsProps) {
   const { locale } = useLocale();
-  const [fields, setFields] = React.useState<FieldData[]>([]);
-  const [loaded, setLoaded] = React.useState(false);
 
-  React.useEffect(() => {
-    getPublishedFields()
-      .then(setFields)
-      .catch(() => setFields([]))
-      .finally(() => setLoaded(true));
-  }, []);
-
-  if (!loaded || fields.length === 0) return null;
+  if (fields.length === 0) return null;
 
   return (
     <section id="nos-domaines" className="bg-bone pt-20 lg:pt-28 pb-4 lg:pb-6">

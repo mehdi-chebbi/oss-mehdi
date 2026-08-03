@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
-import { listHero, createHero, updateHero, type HeroData } from "../../api/auth";
+import { listHero, createHero, updateHero } from "../../api/auth";
 import ImageUpload from "../../components/admin/ImageUpload";
 import { Globe, Loader2 } from "lucide-react";
 
@@ -49,48 +50,45 @@ const emptyForm = {
 
 export default function AdminHero() {
   const { token } = useAuth();
-  const [hero, setHero] = useState<HeroData | null>(null);
+  const queryClient = useQueryClient();
   const [form, setForm] = useState(emptyForm);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [lang, setLang] = useState<Lang>("fr");
 
-  const loadHero = useCallback(async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const heroes = await listHero(token);
-      const h = heroes[0] || null;
-      setHero(h);
-      if (h) {
-        setForm({
-          page_id: h.page_id,
-          title_fr: h.title_fr,
-          title_en: h.title_en,
-          subtitle_fr: h.subtitle_fr,
-          subtitle_en: h.subtitle_en,
-          cta_primary_label_fr: h.cta_primary_label_fr,
-          cta_primary_label_en: h.cta_primary_label_en,
-          cta_primary_link: h.cta_primary_link,
-          cta_secondary_label_fr: h.cta_secondary_label_fr,
-          cta_secondary_label_en: h.cta_secondary_label_en,
-          cta_secondary_link: h.cta_secondary_link,
-          background_image: h.background_image,
-          is_published: h.is_published,
-        });
-      }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  const { data: heroes, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["hero"],
+    queryFn: () => listHero(token!),
+    enabled: !!token,
+  });
+
+  const hero = heroes?.[0] || null;
+
+  // Populate form fields once the hero data is available.
+  useEffect(() => {
+    if (hero) {
+      setForm({
+        page_id: hero.page_id,
+        title_fr: hero.title_fr,
+        title_en: hero.title_en,
+        subtitle_fr: hero.subtitle_fr,
+        subtitle_en: hero.subtitle_en,
+        cta_primary_label_fr: hero.cta_primary_label_fr,
+        cta_primary_label_en: hero.cta_primary_label_en,
+        cta_primary_link: hero.cta_primary_link,
+        cta_secondary_label_fr: hero.cta_secondary_label_fr,
+        cta_secondary_label_en: hero.cta_secondary_label_en,
+        cta_secondary_link: hero.cta_secondary_link,
+        background_image: hero.background_image,
+        is_published: hero.is_published,
+      });
     }
-  }, [token]);
+  }, [hero]);
 
   useEffect(() => {
-    loadHero();
-  }, [loadHero]);
+    if (queryError) setError((queryError as Error).message);
+  }, [queryError]);
 
   const handleSave = async () => {
     if (!token) return;
@@ -101,9 +99,9 @@ export default function AdminHero() {
       if (hero) {
         await updateHero(token, hero.id, form);
       } else {
-        const created = await createHero(token, form);
-        setHero(created);
+        await createHero(token, form);
       }
+      queryClient.invalidateQueries({ queryKey: ["hero"] });
       setSuccess("Hero saved successfully!");
       setTimeout(() => setSuccess(""), 3000);
     } catch (err: any) {

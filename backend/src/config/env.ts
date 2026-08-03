@@ -7,6 +7,9 @@ export const env = {
   refreshTokenGracePeriodMs: 5_000, // 5s grace window for rotation race conditions
   port: Number(process.env.PORT) || 8000,
   cookieDomain: process.env.COOKIE_DOMAIN || undefined, // e.g. ".oss.org" in production
+  // Decoupled from NODE_ENV so you can run prod-mode code over HTTP locally
+  // (browsers reject Secure cookies on http://). Defaults to secure in prod.
+  cookieSecure: process.env.COOKIE_SECURE === "false" ? false : process.env.NODE_ENV === "production",
   isProduction: process.env.NODE_ENV === "production",
   // Comma-separated list of allowed origins for CORS (e.g. "https://oss.org,https://admin.oss.org")
   // In dev, if empty, defaults to allowing all origins (since Vite proxy makes requests same-origin)

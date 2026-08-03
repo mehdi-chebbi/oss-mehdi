@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
   listAllDepartments,
@@ -8,7 +9,6 @@ import {
   statusLabel,
   yearRange,
   type ProjectData,
-  type DepartmentData,
 } from "../../api/auth";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
 import { Loader2, Plus, Trash2, Pencil, Briefcase, Building2 } from "lucide-react";
@@ -16,54 +16,50 @@ import { Loader2, Plus, Trash2, Pencil, Briefcase, Building2 } from "lucide-reac
 export default function AdminProjects() {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [departments, setDepartments] = useState<DepartmentData[]>([]);
   const [selectedDept, setSelectedDept] = useState<number | null>(null);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [loadingDepts, setLoadingDepts] = useState(true);
-  const [loadingProjects, setLoadingProjects] = useState(false);
   const [error, setError] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<ProjectData | null>(null);
 
-  // Load departments once
+  const {
+    data: departments = [],
+    isLoading: loadingDepts,
+    error: deptsQueryError,
+  } = useQuery({
+    queryKey: ["departments"],
+    queryFn: () => listAllDepartments(token!),
+    enabled: !!token,
+  });
+
+  const {
+    data: projects = [],
+    isLoading: loadingProjects,
+    error: projectsQueryError,
+  } = useQuery({
+    queryKey: ["projects", selectedDept],
+    queryFn: () => listAllProjectsByDept(token!, selectedDept!),
+    enabled: !!token && !!selectedDept,
+  });
+
+  // Initialize selected department from URL (or default to first) once
+  // departments have loaded.
   useEffect(() => {
-    if (!token) return;
-    setLoadingDepts(true);
-    listAllDepartments(token)
-      .then((depts) => {
-        setDepartments(depts);
-        // Pick up ?dept= from URL, else default to first department
-        const fromUrl = searchParams.get("dept");
-        const initial =
-          fromUrl && depts.some((d) => d.id === Number(fromUrl))
-            ? Number(fromUrl)
-            : depts[0]?.id ?? null;
-        setSelectedDept(initial);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoadingDepts(false));
+    if (selectedDept !== null || departments.length === 0) return;
+    const fromUrl = searchParams.get("dept");
+    const initial =
+      fromUrl && departments.some((d) => d.id === Number(fromUrl))
+        ? Number(fromUrl)
+        : departments[0]?.id ?? null;
+    setSelectedDept(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  // Load projects when selected department changes
-  const loadProjects = useCallback(async () => {
-    if (!token || !selectedDept) return;
-    setLoadingProjects(true);
-    setError("");
-    try {
-      const data = await listAllProjectsByDept(token, selectedDept);
-      setProjects(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoadingProjects(false);
-    }
-  }, [token, selectedDept]);
+  }, [departments]);
 
   useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+    if (deptsQueryError) setError((deptsQueryError as Error).message);
+    else if (projectsQueryError) setError((projectsQueryError as Error).message);
+  }, [deptsQueryError, projectsQueryError]);
 
   // Keep ?dept= in sync with the selector so the "Add Project" flow can read it
   const handleDeptChange = (id: number) => {
@@ -73,11 +69,18 @@ export default function AdminProjects() {
     setSearchParams(next, { replace: true });
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteProject(token!, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects", selectedDept] });
+    },
+  });
+
   const handleDelete = async () => {
-    if (!token || !deleteTarget) return;
+    if (!deleteTarget) return;
+    setError("");
     try {
-      await deleteProject(token, deleteTarget.id);
-      setProjects((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message);

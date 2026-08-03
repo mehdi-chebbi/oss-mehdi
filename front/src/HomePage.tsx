@@ -1,31 +1,31 @@
+import { useLoaderData } from "react-router-dom";
 import Hero from './components/home/Hero'
-import Navbar from './components/shared/Navbar'
-import SocialSidebar from './components/shared/SocialSidebar'
 import Stats from './components/home/Stats'
 import Fields from './components/home/Fields'
 import News from './components/home/News'
 import Tools from './components/home/Tools'
 import Partners from './components/home/Partners'
 import Contact from './components/home/Contact'
-import Footer from './components/shared/Footer'
-import Chatbot from './components/shared/Chatbot'
+import type { HomeLoaderData } from './loaders/public'
 
+/**
+ * Home page — all section data is pre-fetched by the `homeLoader` (runs before
+ * the route renders). Each section receives its data as props, so there's no
+ * `useEffect` fetch and no empty-content flash. The shell (Navbar, Footer,
+ * SocialSidebar, Chatbot) is provided by <PublicLayout>.
+ */
 export default function HomePage() {
+  const { hero, fields, latestNews, tools, partners } = useLoaderData() as HomeLoaderData;
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <SocialSidebar />
-      <Navbar overlay />
-      <main className="flex-1">
-        <Hero />
-        <Stats />
-        <Fields />
-        <News />
-        <Tools />
-        <Partners />
-        <Contact />
-      </main>
-      <Footer />
-      <Chatbot />
-    </div>
-  )
+    <>
+      <Hero data={hero} />
+      <Stats />
+      <Fields items={fields} />
+      <News articles={latestNews} />
+      <Tools items={tools} />
+      <Partners items={partners} />
+      <Contact />
+    </>
+  );
 }

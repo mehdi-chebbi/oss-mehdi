@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { getLatestNews, getThumbnail, type NewsData } from '@/api/auth';
+import { getThumbnail, type NewsData } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 
 // Truncate body to ~150 chars at a word boundary for card previews.
@@ -24,20 +23,15 @@ function formatDate(iso: string, locale: Locale): string {
   }
 }
 
-export default function News() {
-  const [articles, setArticles] = useState<NewsData[]>([]);
-  const [loaded, setLoaded] = useState(false);
+interface NewsProps {
+  articles: NewsData[];
+}
+
+export default function News({ articles }: NewsProps) {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
-  useEffect(() => {
-    getLatestNews(4)
-      .then(setArticles)
-      .catch(() => setArticles([]))
-      .finally(() => setLoaded(true));
-  }, []);
-
-  if (!loaded || articles.length === 0) return null;
+  if (articles.length === 0) return null;
 
   const [featured, ...rest] = articles;
 

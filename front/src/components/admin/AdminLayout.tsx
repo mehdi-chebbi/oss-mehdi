@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation, Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import {
   Shield,
@@ -17,6 +17,7 @@ import {
   FolderKanban,
   Building2,
   Briefcase,
+  Loader2,
 } from "lucide-react";
 
 /* ── Sidebar structure ── */
@@ -109,14 +110,44 @@ function PageGroup({
   );
 }
 
-/* ── Layout ── */
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user, logout } = useAuth();
+/* ── Loading skeleton — keeps the sidebar visible during auth bootstrap ── */
+function AdminLoading() {
+  return (
+    <div className="min-h-screen flex bg-[#FAFAF8]">
+      <aside className="w-60 bg-white border-r border-ink/10 flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
+        <div className="h-16 flex items-center gap-2.5 px-5 border-b border-ink/10">
+          <Shield className="w-6 h-6 text-[#489e42]" />
+          <span className="text-lg font-bold text-ink">OSS Admin</span>
+        </div>
+        <div className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="px-3 py-2">
+              <div className="h-4 w-24 bg-ink/5 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </aside>
+      <main className="flex-1 ml-60 overflow-auto flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-ink/30 animate-spin" />
+      </main>
+    </div>
+  );
+}
+
+/* ── Layout route ──
+ * This is a *layout route* — it renders the sidebar + <Outlet/> and stays
+ * mounted across all admin child routes. The auth gate is inline: during
+ * AuthProvider.loading, we show the sidebar skeleton (not bare "Loading…"),
+ * so the sidebar is visually stable across the loading → loaded transition.
+ * If there's no token after loading resolves, we redirect to /login.
+ */
+export default function AdminLayout() {
+  const { user, token, loading, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Auth gate — keep the sidebar visible during bootstrap
+  if (loading) return <AdminLoading />;
+  if (!token) return <Navigate to="/login" replace />;
 
   const visibleTopItems = topItems.filter(
     (item) => !item.adminOnly || user?.role === "admin"
@@ -194,7 +225,9 @@ export default function AdminLayout({
       </aside>
 
       {/* Main content — offset by sidebar width */}
-      <main className="flex-1 ml-60 overflow-auto">{children}</main>
+      <main className="flex-1 ml-60 overflow-auto">
+        <Outlet />
+      </main>
     </div>
   );
 }
