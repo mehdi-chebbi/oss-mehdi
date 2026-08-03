@@ -112,18 +112,30 @@ export async function newsArticleLoader({
   }
 }
 
-// ── Projects list (departments) ──
+// ── Projects list (departments with nested projects) ──
+
+export interface DeptWithProjects {
+  dept: DepartmentData;
+  projects: ProjectData[];
+}
 
 export interface ProjectsListLoaderData {
-  departments: DepartmentData[];
+  departments: DeptWithProjects[];
 }
 
 export async function projectsListLoader(): Promise<ProjectsListLoaderData> {
   const departments = await getPublishedDepartments().catch(() => []);
-  return { departments };
+  // Fetch projects for each department in parallel
+  const withProjects = await Promise.all(
+    departments.map(async (dept) => {
+      const projects = await getPublishedProjectsByDept(dept.slug).catch(() => []);
+      return { dept, projects };
+    }),
+  );
+  return { departments: withProjects };
 }
 
-// ── Department detail ──
+// ── Department detail (kept for direct URL access / backward compat) ──
 
 export interface DepartmentDetailLoaderData {
   dept: DepartmentData | null;

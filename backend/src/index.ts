@@ -15,6 +15,7 @@ import socialsRoutes from "./routes/socials.js";
 import newsRoutes from "./routes/news.js";
 import departmentsRoutes from "./routes/departments.js";
 import projectsRoutes from "./routes/projects.js";
+import teamRoutes from "./routes/team.js";
 import uploadRoutes from "./routes/upload.js";
 
 // ── Fail-fast env validation ──
@@ -142,6 +143,7 @@ app.use("/api/socials", socialsRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/departments", departmentsRoutes);
 app.use("/api/projects", projectsRoutes);
+app.use("/api/team", teamRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Health check

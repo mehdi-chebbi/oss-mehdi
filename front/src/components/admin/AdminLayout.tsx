@@ -17,6 +17,7 @@ import {
   FolderKanban,
   Building2,
   Briefcase,
+  UsersRound,
   Loader2,
 } from "lucide-react";
 
@@ -46,6 +47,13 @@ const pages = [
     sections: [
       { to: "/admin/departments", label: "Departments", icon: Building2, adminOnly: false },
       { to: "/admin/projects", label: "Projects", icon: Briefcase, adminOnly: false },
+    ],
+  },
+  {
+    label: "Team",
+    icon: UsersRound,
+    sections: [
+      { to: "/admin/team", label: "Members", icon: UsersRound, adminOnly: false },
     ],
   },
 ];

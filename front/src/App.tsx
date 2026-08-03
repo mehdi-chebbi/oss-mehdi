@@ -20,12 +20,18 @@ import NewsForm from "./pages/admin/NewsForm";
 import NewsList from "./pages/NewsList";
 import NewsArticle from "./pages/NewsArticle";
 import ProjectsList from "./pages/ProjectsList";
+import About from "./pages/About";
+import Members from "./pages/Members";
+import Governance from "./pages/Governance";
+import Team from "./pages/Team";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import ProjectDetail from "./pages/ProjectDetail";
 import AdminDepartments from "./pages/admin/Departments";
 import DepartmentForm from "./pages/admin/DepartmentForm";
 import AdminProjects from "./pages/admin/Projects";
 import ProjectForm from "./pages/admin/ProjectForm";
+import AdminTeam from "./pages/admin/Team";
+import TeamForm from "./pages/admin/TeamForm";
 import {
   homeLoader,
   newsListLoader,
@@ -78,6 +84,10 @@ export const router = createBrowserRouter([
               { path: "projects", loader: projectsListLoader, element: <ProjectsList /> },
               { path: "projects/:deptSlug", loader: departmentDetailLoader, element: <DepartmentDetail /> },
               { path: "projects/:deptSlug/:projectSlug", loader: projectDetailLoader, element: <ProjectDetail /> },
+              { path: "about", element: <About /> },
+              { path: "members", element: <Members /> },
+              { path: "governance", element: <Governance /> },
+              { path: "team", element: <Team /> },
             ],
           },
         ],
@@ -128,6 +138,11 @@ export const router = createBrowserRouter([
           { path: "projects", element: <AdminProjects /> },
           { path: "projects/new", element: <ProjectForm /> },
           { path: "projects/:id", element: <ProjectForm /> },
+
+          // Team
+          { path: "team", element: <AdminTeam /> },
+          { path: "team/new", element: <TeamForm /> },
+          { path: "team/:id", element: <TeamForm /> },
         ],
       },
       {

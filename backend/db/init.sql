@@ -299,6 +299,22 @@ CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
 CREATE INDEX IF NOT EXISTS idx_projects_published ON projects (is_published);
 
 -- ═══════════════════════════════════════════
+-- Team (Notre équipe)
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS team (
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(255) NOT NULL,
+    title_fr        VARCHAR(255) NOT NULL DEFAULT '',
+    title_en        VARCHAR(255) NOT NULL DEFAULT '',
+    diplomas_fr     TEXT NOT NULL DEFAULT '',
+    diplomas_en     TEXT NOT NULL DEFAULT '',
+    nationality_fr  VARCHAR(255) NOT NULL DEFAULT '',
+    nationality_en  VARCHAR(255) NOT NULL DEFAULT '',
+    image           VARCHAR(500) NOT NULL DEFAULT '',
+    department      VARCHAR(50) NOT NULL DEFAULT 'direction'
+);
+
+-- ═══════════════════════════════════════════
 -- Refresh Tokens (rotation + reuse detection)
 -- ═══════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS refresh_tokens (

@@ -6,7 +6,16 @@ import type { NavItem } from '@/types';
 export function getNavItems(locale: Locale): NavItem[] {
   if (locale === 'en') {
     return [
-      { label: 'About us', href: '#qui-sommes-nous' },
+      {
+        label: 'About us',
+        href: '#qui-sommes-nous',
+        children: [
+          { label: 'About OSS', href: '/en/about' },
+          { label: 'Members & partners', href: '/en/members' },
+          { label: 'Governance', href: '/en/governance' },
+          { label: 'Our team', href: '/en/team' },
+        ],
+      },
       { label: 'Our fields', href: '#nos-domaines' },
       { label: 'Projects', href: '/en/projects' },
       { label: 'Knowledge sharing', href: '#partage' },
@@ -16,7 +25,16 @@ export function getNavItems(locale: Locale): NavItem[] {
     ];
   }
   return [
-    { label: 'Qui sommes-nous', href: '#qui-sommes-nous' },
+    {
+      label: 'Qui sommes-nous',
+      href: '#qui-sommes-nous',
+      children: [
+        { label: "À propos de l'OSS", href: '/fr/about' },
+        { label: 'Membres et partenaires', href: '/fr/members' },
+        { label: 'Gouvernance', href: '/fr/governance' },
+        { label: 'Notre équipe', href: '/fr/team' },
+      ],
+    },
     { label: 'Nos domaines', href: '#nos-domaines' },
     { label: 'Projets', href: '/fr/projects' },
     { label: 'Partage de connaissances', href: '#partage' },

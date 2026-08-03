@@ -839,6 +839,70 @@ export async function deleteProject(token: string, id: number) {
   });
 }
 
+// ── Team CRUD ──
+export interface TeamMemberData {
+  id: number;
+  name: string;
+  title_fr: string;
+  title_en: string;
+  diplomas_fr: string;
+  diplomas_en: string;
+  nationality_fr: string;
+  nationality_en: string;
+  image: string;
+  department: string;
+}
+
+// Public: team members (optionally filtered by department)
+export async function getPublishedTeam(department?: string) {
+  const params = department ? `?department=${encodeURIComponent(department)}` : "";
+  return request<TeamMemberData[]>(`/team${params}`);
+}
+
+// Authenticated: list all team members
+export async function listAllTeam(token: string, department?: string) {
+  const params = department ? `?department=${encodeURIComponent(department)}` : "";
+  return request<TeamMemberData[]>(`/team/all${params}`, { headers: authHeader(token) });
+}
+
+// Authenticated: get single team member
+export async function getTeamMember(token: string, id: number) {
+  return request<TeamMemberData>(`/team/${id}`, { headers: authHeader(token) });
+}
+
+// Authenticated: create team member
+export async function createTeamMember(
+  token: string,
+  data: Partial<TeamMemberData>,
+) {
+  return request<TeamMemberData>("/team", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: update team member
+export async function updateTeamMember(
+  token: string,
+  id: number,
+  data: Partial<TeamMemberData>,
+) {
+  return request<TeamMemberData>(`/team/${id}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: delete team member
+export async function deleteTeamMember(token: string, id: number) {
+  return request<{ message: string }>(`/team/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
 // ── Types ──
 export interface User {
   id: number;
