@@ -25,9 +25,9 @@ export interface ContactInfo {
 // ---- Stats ----
 
 export interface StatItem {
-  value: number;
-  suffix?: string;
-  label: string;
+  value: string;
+  label_fr: string;
+  label_en: string;
 }
 
 // ---- Fields ----

@@ -912,3 +912,46 @@ export interface User {
   created_at?: string;
   updated_at?: string;
 }
+
+// ── Reports ──
+export interface ReportData {
+  id: number;
+  category: string;
+  subject: string;
+  description: string;
+  name: string | null;
+  email: string | null;
+  created_at: string;
+}
+
+// Public: submit a report (no auth required)
+export async function submitReport(data: {
+  category: string;
+  subject: string;
+  description: string;
+  name?: string;
+  email?: string;
+}) {
+  return request<ReportData>("/reports", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+// Authenticated: list all reports (admin)
+export async function listReports(token: string) {
+  return request<ReportData[]>("/reports", { headers: authHeader(token) });
+}
+
+// Authenticated: get single report
+export async function getReport(token: string, id: number) {
+  return request<ReportData>(`/reports/${id}`, { headers: authHeader(token) });
+}
+
+// Authenticated: delete report
+export async function deleteReport(token: string, id: number) {
+  return request<{ message: string }>(`/reports/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}

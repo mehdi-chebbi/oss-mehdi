@@ -24,6 +24,7 @@ import About from "./pages/About";
 import Members from "./pages/Members";
 import Governance from "./pages/Governance";
 import Team from "./pages/Team";
+import Report from "./pages/Report";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import ProjectDetail from "./pages/ProjectDetail";
 import AdminDepartments from "./pages/admin/Departments";
@@ -32,6 +33,7 @@ import AdminProjects from "./pages/admin/Projects";
 import ProjectForm from "./pages/admin/ProjectForm";
 import AdminTeam from "./pages/admin/Team";
 import TeamForm from "./pages/admin/TeamForm";
+import AdminReports from "./pages/admin/Reports";
 import {
   homeLoader,
   newsListLoader,
@@ -88,6 +90,7 @@ export const router = createBrowserRouter([
               { path: "members", element: <Members /> },
               { path: "governance", element: <Governance /> },
               { path: "team", element: <Team /> },
+              { path: "report", element: <Report /> },
             ],
           },
         ],
@@ -143,6 +146,7 @@ export const router = createBrowserRouter([
           { path: "team", element: <AdminTeam /> },
           { path: "team/new", element: <TeamForm /> },
           { path: "team/:id", element: <TeamForm /> },
+          { path: "reports", element: <AdminReports /> },
         ],
       },
       {

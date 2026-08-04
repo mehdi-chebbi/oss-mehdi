@@ -159,7 +159,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
         <ul className="hidden lg:flex items-end gap-0.5 pb-1 ml-auto mr-auto max-w-7xl pr-8">
           {navItems.map((item) =>
             item.children ? (
-              <li key={item.label} className="relative" data-dropdown>
+              <li key={item.label} className="relative" data-dropdown onMouseLeave={() => setOpenDropdown(null)}>
                 <button
                   onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                   onMouseEnter={() => setOpenDropdown(item.label)}
@@ -179,8 +179,9 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                   </svg>
                 </button>
                 <div
-                  className={`absolute left-0 top-full mt-1 min-w-56 bg-white border border-ink/10 rounded-lg shadow-lg overflow-hidden transition-all duration-150 origin-top-left ${openDropdown === item.label ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+                  className={`absolute left-0 top-full pt-1 min-w-56 transition-all duration-150 origin-top-left ${openDropdown === item.label ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
                 >
+                  <div className="bg-white border border-ink/10 rounded-lg shadow-lg overflow-hidden">
                   {item.children.map((child) =>
                     child.href.startsWith('/') ? (
                       <Link
@@ -202,6 +203,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                       </a>
                     )
                   )}
+                  </div>
                 </div>
               </li>
             ) : (

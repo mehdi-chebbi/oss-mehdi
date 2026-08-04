@@ -20,7 +20,6 @@ export function getNavItems(locale: Locale): NavItem[] {
       { label: 'Projects', href: '/en/projects' },
       { label: 'Knowledge sharing', href: '#partage' },
       { label: 'News', href: '/en/news' },
-      { label: 'Opportunities', href: '#opportunites' },
       { label: 'Integrity', href: '#integrite' },
     ];
   }
@@ -39,7 +38,6 @@ export function getNavItems(locale: Locale): NavItem[] {
     { label: 'Projets', href: '/fr/projects' },
     { label: 'Partage de connaissances', href: '#partage' },
     { label: 'Actualités', href: '/fr/news' },
-    { label: 'Opportunités', href: '#opportunites' },
     { label: 'Intégrité', href: '#integrite' },
   ];
 }
@@ -52,6 +50,8 @@ export function getFooterNavLinks(locale: Locale): NavItem[] {
       { label: 'News', href: '/en/news' },
       { label: 'Our tools', href: '#' },
       { label: 'Partners', href: '#partenaires' },
+      { label: 'Opportunities', href: '#opportunites' },
+      { label: 'Report', href: '/en/report' },
       { label: 'Contact', href: '#contact' },
     ];
   }
@@ -61,6 +61,8 @@ export function getFooterNavLinks(locale: Locale): NavItem[] {
     { label: 'Actualités', href: '/fr/news' },
     { label: 'Nos outils', href: '#' },
     { label: 'Partenaires', href: '#partenaires' },
+    { label: 'Opportunités', href: '#opportunites' },
+    { label: 'Signaler', href: '/fr/report' },
     { label: 'Contact', href: '#contact' },
   ];
 }

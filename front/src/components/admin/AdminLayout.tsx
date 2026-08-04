@@ -19,6 +19,7 @@ import {
   Briefcase,
   UsersRound,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 /* ── Sidebar structure ── */
@@ -60,6 +61,7 @@ const pages = [
 
 const topItems = [
   { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
+  { to: "/admin/reports", label: "Reports", icon: AlertCircle, adminOnly: true },
 ];
 
 /* ── Collapsible page group ── */

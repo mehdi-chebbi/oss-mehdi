@@ -330,3 +330,20 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens (user_id);
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_family ON refresh_tokens (family);
+
+-- ═══════════════════════════════════════════
+-- Reports (complaint / integrity submissions)
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS reports (
+    id          SERIAL PRIMARY KEY,
+    category    VARCHAR(50) NOT NULL
+                CHECK (category IN ('complaint', 'misconduct', 'fraud', 'harassment', 'other')),
+    subject     TEXT NOT NULL,
+    description TEXT NOT NULL,
+    name        VARCHAR(255),
+    email       VARCHAR(255),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
+CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);

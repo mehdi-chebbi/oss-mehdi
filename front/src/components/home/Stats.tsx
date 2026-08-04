@@ -1,62 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { stats } from '@/data/stats';
-
-// easeOutExpo — fast start, slow deceleration to the target
-const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
-
-const DURATION = 1800;
+import type { Locale } from '@/context/locale';
 
 export default function Stats() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
-  const startedRef = useRef(false);
+  const { lang } = useParams<{ lang: string }>();
+  const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting && !startedRef.current) {
-            startedRef.current = true;
-            const start = performance.now();
-
-            const tick = (now: number) => {
-              const t = Math.min((now - start) / DURATION, 1);
-              setProgress(easeOutExpo(t));
-              if (t < 1) requestAnimationFrame(tick);
-            };
-
-            requestAnimationFrame(tick);
-            observer.disconnect();
-          }
-        }
-      },
-      { threshold: 0.25 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const label = (s: (typeof stats)[number]) =>
+    locale === 'en' ? s.label_en : s.label_fr;
 
   return (
-    <section ref={sectionRef} className="bg-ink py-16 lg:py-20">
-      <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-6">
-        {stats.map((s) => {
-          const current = Math.round(s.value * progress);
-          return (
-            <div key={s.label} className="text-center">
-              <span className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tabular-nums tracking-tight">
-                {current}{s.suffix}
-              </span>
-              <p className="text-white/35 text-[13px] sm:text-sm mt-2 uppercase tracking-[0.12em]">
-                {s.label}
-              </p>
-            </div>
-          );
-        })}
+    <section className="relative overflow-hidden border-t border-b border-[#d6cfc7] bg-white py-[22px]">
+      {/* Fade edges */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[90px] bg-gradient-to-r from-white to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[90px] bg-gradient-to-l from-white to-transparent" />
+
+      {/* Scrolling track — duplicated for seamless loop */}
+      <div className="flex w-max gap-12 animate-[ticker-scroll_40s_linear_infinite]">
+        {/* First copy */}
+        {stats.map((s) => (
+          <div key={s.label_en} className="flex items-center gap-3 whitespace-nowrap">
+            <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-[#489e42]" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-stone-400">
+              {label(s)}
+            </span>
+            <span className="font-mono text-[13px] font-semibold text-stone-900">
+              {s.value}
+            </span>
+          </div>
+        ))}
+        {/* Duplicate for seamless loop */}
+        {stats.map((s) => (
+          <div key={`dup-${s.label_en}`} className="flex items-center gap-3 whitespace-nowrap">
+            <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-[#489e42]" />
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-stone-400">
+              {label(s)}
+            </span>
+            <span className="font-mono text-[13px] font-semibold text-stone-900">
+              {s.value}
+            </span>
+          </div>
+        ))}
       </div>
+
+      {/* Keyframes injected via style tag — Tailwind can't do arbitrary @keyframes */}
+      <style>{`
+        @keyframes ticker-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 }

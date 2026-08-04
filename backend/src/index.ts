@@ -17,6 +17,7 @@ import departmentsRoutes from "./routes/departments.js";
 import projectsRoutes from "./routes/projects.js";
 import teamRoutes from "./routes/team.js";
 import uploadRoutes from "./routes/upload.js";
+import reportsRoutes from "./routes/reports.js";
 
 // ── Fail-fast env validation ──
 // In production, refuse to boot if secrets are missing or still set to their
@@ -145,6 +146,7 @@ app.use("/api/departments", departmentsRoutes);
 app.use("/api/projects", projectsRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/reports", reportsRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {

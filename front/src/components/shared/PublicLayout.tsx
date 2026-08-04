@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import SocialSidebar from "./SocialSidebar";
@@ -27,6 +28,12 @@ export default function PublicLayout() {
   const location = useLocation();
   // Home page = "/" or "/fr" or "/en" (with optional trailing slash)
   const isHome = /^\/(fr|en)?\/?$/.test(location.pathname);
+
+  // Scroll to top on route change so the new page starts at the top
+  // instead of preserving the scroll position from the previous page.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <LocaleProvider>
