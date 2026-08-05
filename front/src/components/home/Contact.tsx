@@ -19,7 +19,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="bg-bone pt-4 lg:pt-6 pb-20 lg:pb-28">
+    <section id="contact" className="bg-[#E5E1D8] pt-4 lg:pt-6 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 max-w-2xl">
@@ -153,7 +153,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="group self-start inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[#489e42] text-white text-[15px] font-semibold tracking-tight transition-colors hover:bg-[#3fa838] focus:outline-none focus:ring-2 focus:ring-[#489e42]/30 focus:ring-offset-2 focus:ring-offset-bone"
+                  className="group self-start inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[#489e42] text-white text-[15px] font-semibold tracking-tight transition-colors hover:bg-[#3fa838] focus:outline-none focus:ring-2 focus:ring-[#489e42]/30 focus:ring-offset-2 focus:ring-offset-[#E5E1D8]"
                 >
                   Envoyer le message
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

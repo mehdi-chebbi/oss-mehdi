@@ -50,6 +50,15 @@
   }
 }
 
+/* Homepage and About typography are intentionally unified, including elements
+   that otherwise opt into the site's editorial serif or display faces. */
+.home-page,
+.home-page *,
+.about-page,
+.about-page * {
+  font-family: 'Open Sans', sans-serif !important;
+}
+
 /* Marquee animations — track content is duplicated, so translating
    to -50% (or from -50% to 0) produces a seamless infinite loop. */
 @keyframes marquee-left {

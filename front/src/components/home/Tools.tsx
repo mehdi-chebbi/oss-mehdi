@@ -47,6 +47,25 @@ export default function Tools({ items: tools }: ToolsProps) {
   return (
     <>
       <style>{`
+        @keyframes tools-copy-fade-right {
+          from {
+            opacity: 0;
+            transform: translateX(-18px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .tools-copy-title,
+        .tools-copy-description,
+        .tools-copy-button {
+          opacity: 0;
+          animation: tools-copy-fade-right 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .tools-copy-description { animation-delay: 90ms; }
+        .tools-copy-button { animation-delay: 180ms; }
+
         @media (max-width: 750px) {
           .tools-content {
             flex-direction: column-reverse !important;
@@ -71,7 +90,7 @@ export default function Tools({ items: tools }: ToolsProps) {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '24px',
-          background: '#fafaf8',
+          background: '#E5E1D8',
           padding: '0 16px 40px',
         }}
       >
@@ -138,10 +157,12 @@ export default function Tools({ items: tools }: ToolsProps) {
             }}
           >
             <h2
+              key={`title-${active?.id ?? activeIdx}`}
+              className="tools-copy-title"
               style={{
                 margin: '0 0 16px 0',
                 fontWeight: 700,
-                fontSize: '1.6rem',
+                fontSize: 'clamp(1.75rem, 2.2vw, 2rem)',
                 textAlign: 'center',
                 fontFamily: "'Comfortaa', cursive",
                 color: '#000000',
@@ -152,6 +173,8 @@ export default function Tools({ items: tools }: ToolsProps) {
             </h2>
 
             <div
+              key={`description-${active?.id ?? activeIdx}`}
+              className="tools-copy-description"
               style={{
                 flex: 1,
                 minHeight: 0,
@@ -168,8 +191,8 @@ export default function Tools({ items: tools }: ToolsProps) {
                   style={{
                     color: '#1a1f1c',
                     fontWeight: 500,
-                    fontSize: '1rem',
-                    lineHeight: 1.5,
+                    fontSize: '1.05rem',
+                    lineHeight: 1.6,
                     margin: 0,
                   }}
                 >
@@ -218,7 +241,8 @@ export default function Tools({ items: tools }: ToolsProps) {
             </div>
 
             <a
-              className="tools-btn"
+              key={`button-${active?.id ?? activeIdx}`}
+              className="tools-btn tools-copy-button"
               href={link}
               target="_blank"
               rel="noopener noreferrer"

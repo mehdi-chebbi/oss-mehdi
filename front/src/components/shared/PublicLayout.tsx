@@ -37,7 +37,7 @@ export default function PublicLayout() {
 
   return (
     <LocaleProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className={`min-h-screen flex flex-col ${isHome ? 'home-page' : ''}`}>
         <SocialSidebar />
         <Navbar overlay={isHome} />
         <main className="flex-1">

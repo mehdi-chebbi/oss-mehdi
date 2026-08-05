@@ -1,6 +1,28 @@
 import type { PartnerData } from '@/api/auth';
 import { useLocale } from '@/context/locale';
 
+const localLogoByPartnerName: Record<string, string> = {
+  'Adaptation Fund': '/logo/adaptation-fund.png',
+  'Green Climate Fund': '/logo/green-climate-fund.png',
+  GEF: '/logo/gef.avif',
+  FFEM: '/logo/ffem.webp',
+  'World Bank': '/logo/world-bank.webp',
+  'African Union': '/logo/african-union.png',
+  'African Development Bank': '/logo/african-development-bank.png',
+  'African Water Facility': '/logo/awf.png',
+  UNEP: '/logo/unep.png',
+  COOP: '/logo/coop.png',
+  GIZ: '/logo/giz.png',
+  "Ministère de l'Environnement du Climat et de la Biodiversité":
+    '/logo/luxembourg-environment.png',
+  'Swiss Confederation': '/logo/swiss-confederation.svg',
+  'European Union': '/logo/european-union.svg',
+  'Europe et Étranger': '/logo/europe-foreign-affairs.jpg',
+  'Ministère de la Transition Écologique et Solidaire':
+    '/logo/france-ecological-transition.svg',
+  AFD: '/logo/afd.png',
+};
+
 // Edge fade mask — applied to the row viewport (not the track).
 const fadeMask = {
   maskImage:
@@ -10,10 +32,12 @@ const fadeMask = {
 } as React.CSSProperties;
 
 function LogoTile({ name, image }: { name: string; image: string }) {
+  const logoSource = localLogoByPartnerName[name] ?? image;
+
   return (
     <div className="shrink-0 px-8 lg:px-12 flex items-center justify-center h-28">
       <img
-        src={image}
+        src={logoSource}
         alt={name}
         loading="lazy"
         className="
@@ -46,7 +70,7 @@ export default function Partners({ items: partners }: PartnersProps) {
   const row2Track = [...row2, ...row2];
 
   return (
-    <section id="partenaires" className="bg-bone pt-4 lg:pt-6 pb-20 lg:pb-28">
+    <section id="partenaires" className="bg-[#E5E1D8] pt-4 lg:pt-6 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 max-w-2xl">
@@ -55,9 +79,10 @@ export default function Partners({ items: partners }: PartnersProps) {
             {locale === 'fr' ? 'Nos partenaires' : 'Our Partners'}
           </h2>
         </div>
+      </div>
 
-        {/* Marquee rows */}
-        <div className="flex flex-col gap-6 lg:gap-8">
+      {/* Full-width marquee rows */}
+      <div className="flex w-full flex-col gap-6 lg:gap-8">
           {/* Row 1 — scrolls right */}
           {row1Track.length > 0 && (
             <div className="relative overflow-hidden" style={fadeMask}>
@@ -85,7 +110,6 @@ export default function Partners({ items: partners }: PartnersProps) {
               </div>
             </div>
           )}
-        </div>
       </div>
     </section>
   );

@@ -60,25 +60,25 @@ INSERT INTO news (title_fr, title_en, body_fr, body_en, images, thumbnail_index,
 -- ── Partners (top row = row_number 1, bottom row = row_number 2) ──
 INSERT INTO partners (page_id, name, image, row_number, sort_order, is_published) VALUES
   -- Top row
-  (1, 'Adaptation Fund',                'https://ecbi.org/sites/default/files/adaptation-fund-logo.png', 1, 1, true),
-  (1, 'Green Climate Fund',            'https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Green_Climate_Fund.svg/960px-Green_Climate_Fund.svg.png', 1, 2, true),
-  (1, 'GEF',                           'https://www.thegef.org/sites/default/files/2023-04/GEF_logo_main_fullname_RGB_600x270_2023.png', 1, 3, true),
-  (1, 'FFEM',                          'https://www.afd.fr/sites/default/files/styles/large/public/2025-06/ffem_logo_rvb-zoome.png.webp', 1, 4, true),
-  (1, 'World Bank',                    'https://kanoacresal.org/wp-content/uploads/2024/08/world-bank-logo-1-1.webp', 1, 5, true),
-  (1, 'African Union',                 'https://upload.wikimedia.org/wikipedia/commons/2/23/African_Union_logo.png', 1, 6, true),
-  (1, 'African Development Bank',      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Logo_Afrikanische_Entwicklungsbank.svg/1280px-Logo_Afrikanische_Entwicklungsbank.svg.png', 1, 7, true),
-  (1, 'African Water Facility',        'https://archive.africanwaterfacility.org/sites/default/files/AWF-logo-large_300dpi%20transparent%20%281%29_2.png', 1, 8, true),
-  (1, 'UNEP',                          'https://upload.wikimedia.org/wikipedia/en/thumb/9/9b/UNEP_logo.svg/330px-UNEP_logo.svg.png', 1, 9, true),
+  (1, 'Adaptation Fund',                '/logo/adaptation-fund.png', 1, 1, true),
+  (1, 'Green Climate Fund',            '/logo/green-climate-fund.png', 1, 2, true),
+  (1, 'GEF',                           '/logo/gef.avif', 1, 3, true),
+  (1, 'FFEM',                          '/logo/ffem.webp', 1, 4, true),
+  (1, 'World Bank',                    '/logo/world-bank.webp', 1, 5, true),
+  (1, 'African Union',                 '/logo/african-union.png', 1, 6, true),
+  (1, 'African Development Bank',      '/logo/african-development-bank.png', 1, 7, true),
+  (1, 'African Water Facility',        '/logo/awf.png', 1, 8, true),
+  (1, 'UNEP',                          '/logo/unep.png', 1, 9, true),
 
   -- Bottom row
-  (1, 'COOP',                          'https://cl-coop-risktool.org/static/core/logo_coop.4ba0e51e9185.png', 2, 1, true),
-  (1, 'GIZ',                           'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Deutsche_Gesellschaft_f%C3%BCr_Internationale_Zusammenarbeit_Logo.svg/3840px-Deutsche_Gesellschaft_f%C3%BCr_Internationale_Zusammenarbeit_Logo.svg.png', 2, 2, true),
-  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', 'https://adaimpact.lu/sites/default/files/2024-08/GOUV_Ministere_de_lEnvironnement_du_Climat__et_de_la_Biodiversite_Rouge-1024x269.png', 2, 3, true),
-  (1, 'Swiss Confederation',           'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Logo_der_Schweizerischen_Eidgenossenschaft.svg/960px-Logo_der_Schweizerischen_Eidgenossenschaft.svg.png', 2, 4, true),
-  (1, 'European Union',               'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/960px-Flag_of_Europe.svg.png', 2, 5, true),
-  (1, 'Europe et Étranger',           'https://upload.wikimedia.org/wikipedia/commons/1/1d/Logo_europe_etrangere_gouv.jpg', 2, 6, true),
-  (1, 'Ministère de la Transition Écologique et Solidaire', 'https://upload.wikimedia.org/wikipedia/fr/thumb/5/57/Minist%C3%A8re_de_la_Transition_%C3%89cologique_et_Solidaire_%28depuis_2017%29.svg/1920px-Minist%C3%A8re_de_la_Transition_%C3%89cologique_et_Solidaire_%28depuis_2017%29.svg.png', 2, 7, true),
-  (1, 'AFD',                           'https://www.afd.fr/sites/afd/files/logo_0.png', 2, 8, true);
+  (1, 'COOP',                          '/logo/coop.png', 2, 1, true),
+  (1, 'GIZ',                           '/logo/giz.png', 2, 2, true),
+  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', '/logo/luxembourg-environment.png', 2, 3, true),
+  (1, 'Swiss Confederation',           '/logo/swiss-confederation.svg', 2, 4, true),
+  (1, 'European Union',               '/logo/european-union.svg', 2, 5, true),
+  (1, 'Europe et Étranger',           '/logo/europe-foreign-affairs.jpg', 2, 6, true),
+  (1, 'Ministère de la Transition Écologique et Solidaire', '/logo/france-ecological-transition.svg', 2, 7, true),
+  (1, 'AFD',                           '/logo/afd.png', 2, 8, true);
 
 
 -- ── Tools (Nos outils) ──

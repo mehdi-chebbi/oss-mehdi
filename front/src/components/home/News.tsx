@@ -36,7 +36,7 @@ export default function News({ articles }: NewsProps) {
   const [featured, ...rest] = articles;
 
   return (
-    <section id="actualites" className="bg-bone pt-4 lg:pt-6 pb-20 lg:pb-28">
+    <section id="actualites" className="bg-[#E5E1D8] pt-4 lg:pt-6 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 max-w-2xl flex items-end justify-between gap-4">

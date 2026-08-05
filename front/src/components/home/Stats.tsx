@@ -10,7 +10,7 @@ export default function Stats() {
     locale === 'en' ? s.label_en : s.label_fr;
 
   return (
-    <section className="relative overflow-hidden border-t border-b border-[#D9D4CB] bg-[#EFECE5] py-4">
+    <section className="relative overflow-hidden border-t border-b border-[#D9D4CB] bg-[#EFECE5] py-7 lg:py-8">
       {/* Fade edges */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[60px] bg-gradient-to-r from-[#EFECE5] to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[60px] bg-gradient-to-l from-[#EFECE5] to-transparent" />
@@ -20,29 +20,29 @@ export default function Stats() {
         {/* First copy */}
         {stats.map((s) => (
           <div key={s.label_en} className="flex items-center whitespace-nowrap">
-            <span className="flex items-center gap-2">
-              <span className="font-mono text-[13px] uppercase tracking-[0.12em] text-stone-500">
+            <span className="flex items-baseline gap-3">
+              <span className="font-mono text-[16px] lg:text-[18px] uppercase tracking-[0.08em] text-stone-600">
                 {label(s)}
               </span>
-              <span className="font-mono text-[17px] font-bold text-stone-800">
+              <span className="font-mono text-[24px] lg:text-[28px] leading-none font-bold tracking-tight text-stone-800">
                 {s.value}
               </span>
             </span>
-            <span className="mx-6 text-stone-400">|</span>
+            <span className="mx-8 text-xl text-stone-400">|</span>
           </div>
         ))}
         {/* Duplicate for seamless loop */}
         {stats.map((s) => (
           <div key={`dup-${s.label_en}`} className="flex items-center whitespace-nowrap">
-            <span className="flex items-center gap-2">
-              <span className="font-mono text-[13px] uppercase tracking-[0.12em] text-stone-500">
+            <span className="flex items-baseline gap-3">
+              <span className="font-mono text-[16px] lg:text-[18px] uppercase tracking-[0.08em] text-stone-600">
                 {label(s)}
               </span>
-              <span className="font-mono text-[17px] font-bold text-stone-800">
+              <span className="font-mono text-[24px] lg:text-[28px] leading-none font-bold tracking-tight text-stone-800">
                 {s.value}
               </span>
             </span>
-            <span className="mx-6 text-stone-400">|</span>
+            <span className="mx-8 text-xl text-stone-400">|</span>
           </div>
         ))}
       </div>
