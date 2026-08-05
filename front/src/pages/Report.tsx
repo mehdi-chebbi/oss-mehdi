@@ -6,11 +6,11 @@ import { submitReport } from '@/api/auth';
 
 const t = {
   en: {
-    title: 'Report an Issue',
-    subtitle: 'Use this form to report a complaint, misconduct, or any integrity-related concern. All submissions are treated confidentially.',
-    categoryLabel: 'Category',
+    title: 'File a complaint',
+    subtitle: 'Use this form to file a confidential complaint with OSS.',
+    categoryLabel: 'Type of complaint',
     categories: [
-      { value: 'complaint', label: 'Complaint' },
+      { value: 'complaint', label: 'General complaint' },
       { value: 'misconduct', label: 'Misconduct' },
       { value: 'fraud', label: 'Fraud / Corruption' },
       { value: 'harassment', label: 'Harassment' },
@@ -24,17 +24,17 @@ const t = {
     namePlaceholder: 'Jane Doe',
     emailLabel: 'Your email (optional)',
     emailPlaceholder: 'jane@example.com',
-    anonymousNote: 'You may submit this form anonymously. However, providing contact information allows us to follow up.',
-    submit: 'Submit Report',
-    success: 'Your report has been submitted. Thank you.',
+    anonymousNote: 'You may file this complaint anonymously. However, providing contact information allows us to follow up.',
+    submit: 'Submit complaint',
+    success: 'Your complaint has been submitted. Thank you.',
     required: 'Required',
   },
   fr: {
-    title: 'Signaler un problème',
-    subtitle: 'Utilisez ce formulaire pour signaler une plainte, une inconduite ou tout problème lié à l\'intégrité. Toutes les soumissions sont traitées de manière confidentielle.',
-    categoryLabel: 'Catégorie',
+    title: 'Déposer une plainte',
+    subtitle: 'Utilisez ce formulaire pour déposer une plainte en toute confidentialité auprès de l\'OSS.',
+    categoryLabel: 'Nature de la plainte',
     categories: [
-      { value: 'complaint', label: 'Plainte' },
+      { value: 'complaint', label: 'Plainte générale' },
       { value: 'misconduct', label: 'Inconduite' },
       { value: 'fraud', label: 'Fraude / Corruption' },
       { value: 'harassment', label: 'Harcèlement' },
@@ -48,9 +48,9 @@ const t = {
     namePlaceholder: 'Jean Dupont',
     emailLabel: 'Votre email (facultatif)',
     emailPlaceholder: 'jean@example.com',
-    anonymousNote: 'Vous pouvez soumettre ce formulaire anonymement. Toutefois, fournir des coordonnées nous permet de faire un suivi.',
-    submit: 'Envoyer le signalement',
-    success: 'Votre signalement a été envoyé. Merci.',
+    anonymousNote: 'Vous pouvez déposer cette plainte anonymement. Toutefois, fournir des coordonnées nous permet de faire un suivi.',
+    submit: 'Déposer la plainte',
+    success: 'Votre plainte a bien été déposée. Merci.',
     required: 'Obligatoire',
   },
 } as const;

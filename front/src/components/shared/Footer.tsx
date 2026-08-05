@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Send, Check } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, Check, AlertCircle } from 'lucide-react';
 import { socials } from '@/data/socials';
 import { getFooterNavLinks, getLegalLinks } from '@/data/navigation';
 import { contactInfo } from '@/data/contact';
@@ -50,7 +50,7 @@ export default function Footer() {
     <footer className="mt-auto bg-[#f3f2ec] border-t border-[#489e42]/40">
       <div className="max-w-7xl mx-auto px-6">
         {/* ---- Main grid: Brand | Navigation | Contact | Newsletter ---- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 py-14 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 py-10 lg:py-12">
           {/* Column 1 — Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <img
@@ -171,6 +171,23 @@ export default function Footer() {
                 </button>
               </form>
             )}
+            <div className="mt-5 border-t border-ink/10 pt-4">
+              <h3 className="font-serif font-bold text-ink text-base mb-1.5">
+                {locale === 'en' ? 'Complaints' : 'Plaintes'}
+              </h3>
+              <p className="text-[13px] text-ink/60 leading-snug mb-3">
+                {locale === 'en'
+                  ? 'Submit a confidential complaint to OSS.'
+                  : 'Déposez une plainte en toute confidentialité auprès de l’OSS.'}
+              </p>
+              <Link
+                to={`/${locale}/report`}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2.5 text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                <AlertCircle className="h-5 w-5 shrink-0" />
+                {locale === 'en' ? 'File a complaint' : 'Déposer une plainte'}
+              </Link>
+            </div>
           </div>
         </div>
 

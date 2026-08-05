@@ -51,7 +51,6 @@ export function getFooterNavLinks(locale: Locale): NavItem[] {
       { label: 'Our tools', href: '#' },
       { label: 'Partners', href: '#partenaires' },
       { label: 'Opportunities', href: '#opportunites' },
-      { label: 'Report', href: '/en/report' },
       { label: 'Contact', href: '#contact' },
     ];
   }
@@ -62,7 +61,6 @@ export function getFooterNavLinks(locale: Locale): NavItem[] {
     { label: 'Nos outils', href: '#' },
     { label: 'Partenaires', href: '#partenaires' },
     { label: 'Opportunités', href: '#opportunites' },
-    { label: 'Signaler', href: '/fr/report' },
     { label: 'Contact', href: '#contact' },
   ];
 }

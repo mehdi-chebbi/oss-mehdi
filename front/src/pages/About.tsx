@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 
+const pillarNames = ["Terre", "Eau", "Climat", "Biodiversité"] as const;
+type PillarName = (typeof pillarNames)[number];
+
 export default function About() {
   const [activeAxis, setActiveAxis] = useState(0);
   const [isAxisHovered, setIsAxisHovered] = useState(false);
-  const [activePillar, setActivePillar] = useState("Terre");
+  const [activePillar, setActivePillar] = useState<PillarName>("Terre");
+  const [isPillarHovered, setIsPillarHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -41,37 +45,55 @@ export default function About() {
     return () => window.clearTimeout(timer);
   }, [activeAxis, isAxisHovered, axes.length]);
 
+  useEffect(() => {
+    if (isPillarHovered || pillarNames.length < 2) return;
+
+    const timer = window.setTimeout(() => {
+      setActivePillar((current) => {
+        const currentIndex = pillarNames.indexOf(current);
+        return pillarNames[(currentIndex + 1) % pillarNames.length];
+      });
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [activePillar, isPillarHovered]);
+
+
   const pillars = {
     "Terre": {
       color: "#10b981", // Emerald
       bg: "from-emerald-100/70",
       glow: "shadow-[0_24px_80px_rgba(16,185,129,0.10)]",
-      text: "Lutte contre la dégradation des terres et la désertification. Élaboration de concepts dédiés au suivi environnemental et à la gestion durable des terres en zones arides."
+      text: "Lutte contre la dégradation des terres et la désertification. Élaboration de concepts dédiés au suivi environnemental et à la gestion durable des terres en zones arides.",
+      tags: ["Neutralité des terres", "Restauration écologique", "Suivi de la désertification"]
     },
     "Eau": {
       color: "#0ea5e9", // Sky Blue
       bg: "from-sky-100/70",
       glow: "shadow-[0_24px_80px_rgba(14,165,233,0.10)]",
-      text: "Gestion durable des ressources en eau et renforcement de la résilience des populations face aux mutations environnementales et au stress hydrique."
+      text: "Gestion durable des ressources en eau et renforcement de la résilience des populations face aux mutations environnementales et au stress hydrique.",
+      tags: ["Gestion intégrée de l’eau", "Aquifères transfrontaliers", "Aide à la décision"]
     },
     "Climat": {
       color: "#f59e0b", // Amber
       bg: "from-amber-100/70",
       glow: "shadow-[0_24px_80px_rgba(245,158,11,0.10)]",
-      text: "Adaptation au changement climatique. Grâce à ses accréditations GCF et FA, l'OSS soutient les pays dans la mise en œuvre de projets atténuant les impacts climatiques sur les populations."
+      text: "Adaptation au changement climatique. Grâce à ses accréditations GCF et FA, l'OSS soutient les pays dans la mise en œuvre de projets atténuant les impacts climatiques sur les populations.",
+      tags: ["Accrédité GCF", "Accrédité FA", "Adaptation locale"]
     },
     "Biodiversité": {
       color: "#a855f7", // Purple
       bg: "from-purple-100/70",
       glow: "shadow-[0_24px_80px_rgba(168,85,247,0.10)]",
-      text: "Protection du patrimoine biologique et suivi environnemental pour préserver les écosystèmes africains face aux pressions anthropiques et climatiques."
+      text: "Protection du patrimoine biologique et suivi environnemental pour préserver les écosystèmes africains face aux pressions anthropiques et climatiques.",
+      tags: ["Suivi écologique", "Solutions fondées sur la nature", "Conservation des habitats"]
     }
   };
 
   const currentPillar = pillars[activePillar];
 
   return (
-    <div className="about-page min-h-screen bg-[#E5E1D8] text-ink font-sans relative overflow-hidden antialiased selection:bg-emerald-700/20">
+    <div className="about-page min-h-screen bg-[#ffffff] text-ink font-sans relative overflow-hidden antialiased selection:bg-emerald-700/20">
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-24 lg:py-32">
         
@@ -113,7 +135,7 @@ export default function About() {
 
           {/* Right: Membership Treemap */}
           <div className="lg:col-span-5 lg:sticky lg:top-24">
-            <div className={`relative overflow-hidden bg-[#FAF9F6]/95 border border-[#C8C1B5] backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_24px_70px_rgba(26,31,28,0.10)] transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`relative overflow-hidden bg-[#EFECE5] border border-[#C8C1B5] backdrop-blur-xl p-8 md:p-10 rounded-3xl shadow-[0_24px_70px_rgba(26,31,28,0.10)] transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-600/[0.08] blur-3xl" />
               
               <div className="relative flex justify-between items-start mb-9">
@@ -191,8 +213,8 @@ export default function About() {
                 onClick={() => setActiveAxis(i)}
                 className={`group relative flex-1 cursor-pointer border rounded-2xl p-8 transition-all duration-500 ease-in-out overflow-hidden ${
                   activeAxis === i 
-                    ? "md:flex-[3] bg-gradient-to-br from-[#FAF9F6] to-emerald-50/70 border-emerald-600/30 shadow-[0_16px_45px_rgba(26,31,28,0.08)]" 
-                    : "border-[#C8C1B5] bg-[#FAF9F6]/55 hover:bg-[#FAF9F6] hover:border-[#AAA397]"
+                    ? "md:flex-[3] bg-gradient-to-br from-[#EFECE5] to-emerald-50/70 border-emerald-600/30 shadow-[0_16px_45px_rgba(26,31,28,0.08)]"
+                    : "border-[#C8C1B5] bg-[#EFECE5] hover:bg-[#E5E1D8] hover:border-[#AAA397]"
                 }`}
               >
                 {/* Glow on active */}
@@ -246,18 +268,21 @@ export default function About() {
             <div className="absolute -bottom-1/3 -right-1/4 w-[600px] h-[600px] rounded-full blur-[100px] pointer-events-none transition-colors duration-700" style={{ backgroundColor: `${currentPillar.color}15` }}></div>
 
             {/* Left Navigation */}
-            <div className="lg:col-span-4 relative z-10 flex flex-col justify-center gap-2">
-              <p className="text-xs font-mono uppercase tracking-widest text-slate-500 mb-4">Selectionner l'axe :</p>
-              {Object.keys(pillars).map((pillar) => (
+            <div className="lg:col-span-4 relative z-10 flex flex-col justify-center gap-2" onMouseLeave={() => setIsPillarHovered(false)}>
+              {pillarNames.map((pillar) => (
                 <button
                   key={pillar}
                   onClick={() => setActivePillar(pillar)}
+                  onMouseEnter={() => {
+                    setIsPillarHovered(true);
+                    setActivePillar(pillar);
+                  }}
                   className={`group text-left p-5 rounded-xl border transition-all duration-300 relative overflow-hidden ${
                     activePillar === pillar 
-                      ? "bg-white/70 text-ink" 
+                      ? "text-ink"
                       : "bg-transparent text-slate-600 hover:bg-white/40 hover:text-ink border-black/10"
                   }`}
-                  style={activePillar === pillar ? { borderColor: `${pillars[pillar].color}40`, boxShadow: `0 0 30px ${pillars[pillar].color}10` } : {}}
+                  style={activePillar === pillar ? { backgroundColor: `${pillars[pillar].color}18`, borderColor: `${pillars[pillar].color}40`, boxShadow: `0 0 30px ${pillars[pillar].color}10` } : {}}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-serif text-2xl font-medium">{pillar}</span>
@@ -271,16 +296,9 @@ export default function About() {
             </div>
 
             {/* Right Content Area */}
-            <div className="lg:col-span-8 relative z-10 min-h-[400px] flex flex-col justify-center">
+            <div className="lg:col-span-8 relative z-10 min-h-[280px] flex flex-col justify-center">
               
               <div key={activePillar} className="animate-fade-blur-in">
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="h-1 w-12 rounded-full transition-colors duration-700" style={{ backgroundColor: currentPillar.color }}></span>
-                  <span className="text-xs font-mono uppercase tracking-[0.2em] transition-colors duration-700" style={{ color: currentPillar.color }}>
-                    Axe Principal
-                  </span>
-                </div>
-
                 <h3 className="font-serif text-5xl md:text-6xl font-bold text-ink mb-8 tracking-tight">
                   {activePillar}
                 </h3>
@@ -290,27 +308,15 @@ export default function About() {
                 </p>
                 
                 {/* Accreditation & Implementation Tags */}
-                <div className="flex flex-wrap gap-3 mb-10">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/55 border border-black/10 rounded-full text-xs font-mono uppercase tracking-widest text-slate-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    GCF Accrédité
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/55 border border-black/10 rounded-full text-xs font-mono uppercase tracking-widest text-slate-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-                    FA Accrédité
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/55 border border-black/10 rounded-full text-xs font-mono uppercase tracking-widest text-slate-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span>
-                    Transfert de connaissances
-                  </div>
+                <div className="flex flex-wrap gap-3">
+                  {currentPillar.tags.map((tag) => (
+                    <div key={tag} className="flex items-center gap-2 px-4 py-2 bg-white/55 border border-black/10 rounded-full text-xs font-mono uppercase tracking-widest text-slate-600">
+                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: currentPillar.color }} />
+                      {tag}
+                    </div>
+                  ))}
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-black/10">
-                  <h4 className="text-xs font-mono uppercase tracking-widest text-slate-500 mb-4">Mise en œuvre globale</h4>
-                  <p className="text-base text-slate-600 leading-relaxed font-light max-w-2xl">
-                    L'Observatoire vise à aider ses pays membres dans leur lutte contre la désertification, la gestion durable des ressources en eau et le renforcement de la résilience des populations face aux mutations environnementales. Cet engagement s'appuie sur des programmes scientifiques et techniques structurants.
-                  </p>
-                </div>
               </div>
             </div>
           </div>

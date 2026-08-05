@@ -36,10 +36,10 @@ export default function News({ articles }: NewsProps) {
   const [featured, ...rest] = articles;
 
   return (
-    <section id="actualites" className="bg-[#E5E1D8] pt-4 lg:pt-6 pb-20 lg:pb-28">
+    <section id="actualites" className="bg-[#ffffff] pt-4 lg:pt-6 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}
-        <div className="mb-10 lg:mb-12 max-w-2xl flex items-end justify-between gap-4">
+        <div className="mb-10 lg:mb-12 flex w-full items-end justify-between gap-4">
           <div>
             <div className="h-1 w-12 bg-[#489e42] mb-5" />
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight leading-tight">
@@ -106,10 +106,6 @@ export default function News({ articles }: NewsProps) {
           {/* Sidebar — small stories */}
           {rest.length > 0 && (
             <aside className="flex flex-col">
-              <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#b07a48] mb-5">
-                {locale === 'fr' ? "Plus d'actualités" : 'More news'}
-              </div>
-
               <div className="flex-1 flex flex-col justify-between gap-0">
                 {rest.map((h, i) => (
                   <Link
@@ -151,7 +147,7 @@ export default function News({ articles }: NewsProps) {
         </div>
 
         {/* Mobile "view all" link */}
-        <div className="sm:hidden mt-8 flex justify-center">
+        <div className="sm:hidden mt-8 flex justify-end">
           <Link
             to={`/${locale}/news`}
             className="flex items-center gap-1.5 text-sm font-semibold text-[#489e42]"

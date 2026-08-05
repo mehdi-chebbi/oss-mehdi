@@ -90,8 +90,8 @@ export default function Tools({ items: tools }: ToolsProps) {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '24px',
-          background: '#E5E1D8',
-          padding: '0 16px 40px',
+          background: '#ffffff',
+          padding: '72px 16px 88px',
         }}
       >
         {/* Section heading */}
@@ -129,14 +129,15 @@ export default function Tools({ items: tools }: ToolsProps) {
             alignItems: 'stretch',
             gap: '30px',
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.35) 100%)',
+              'linear-gradient(180deg, #F1F5EF 0%, #E8EFE5 100%)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '20px',
+            border: '1px solid rgba(72,158,66,0.14)',
             width: 'min(1300px, calc(100% - 32px))',
             height: '440px',
             boxShadow:
-              '0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
+              '0 14px 40px rgba(39,74,46,0.10), inset 0 1px 0 rgba(255,255,255,0.9)',
             zIndex: 10,
           }}
         >

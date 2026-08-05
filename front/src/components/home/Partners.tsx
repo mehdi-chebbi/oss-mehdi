@@ -70,7 +70,7 @@ export default function Partners({ items: partners }: PartnersProps) {
   const row2Track = [...row2, ...row2];
 
   return (
-    <section id="partenaires" className="bg-[#E5E1D8] pt-4 lg:pt-6 pb-20 lg:pb-28">
+    <section id="partenaires" className="bg-[#ffffff] pt-4 lg:pt-6 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 max-w-2xl">

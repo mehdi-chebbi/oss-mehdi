@@ -52,7 +52,7 @@ const FieldCard = React.forwardRef<HTMLDivElement, FieldCardProps>(
             />
           </div>
 
-          <div className="flex flex-1 flex-col p-6">
+          <div className="flex flex-1 flex-col bg-[#E5E1D8] p-6">
             <h3 className="text-xl font-bold leading-tight tracking-tight text-ink">
               {location}
             </h3>
@@ -88,7 +88,7 @@ export default function Fields({ items: fields }: FieldsProps) {
   return (
     <section
       id="nos-domaines"
-      className="border-t border-[#C9C3B7] bg-[#E5E1D8] py-20 lg:py-28"
+      className="border-t border-[#C9C3B7] bg-[#ffffff] py-20 lg:py-28"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12 lg:mb-16 max-w-2xl">
