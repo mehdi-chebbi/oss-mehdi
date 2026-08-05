@@ -1,7 +1,8 @@
+import { useState, type ReactNode } from 'react';
 import { useLoaderData, useParams, Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Pagination, Navigation } from 'swiper/modules';
-import { ArrowLeft, Clock } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Images } from 'lucide-react';
 import type { Locale } from '@/context/locale';
 import type { NewsArticleLoaderData } from '@/loaders/public';
 
@@ -22,31 +23,24 @@ function formatDate(iso: string, locale: Locale): string {
   }
 }
 
-// Estimate reading time from body length (~200 words per minute).
-function readingTime(body: string, locale: Locale): string {
-  const words = body.trim().split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.round(words / 200));
-  return locale === 'fr' ? `${minutes} min de lecture` : `${minutes} min read`;
-}
 
-// Render plain-text body as paragraphs (split on blank lines).
-// First paragraph gets a drop cap for editorial feel.
-function renderBody(body: string): React.ReactNode {
+function renderBody(body: string): ReactNode {
   if (!body) return null;
   const paragraphs = body
-    .split(/\n\s*\n/) // blank line = paragraph break
-    .map((p) => p.replace(/\s+/g, ' ').trim())
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.replace(/\s+/g, ' ').trim())
     .filter(Boolean);
-  return paragraphs.map((p, i) => (
+
+  return paragraphs.map((paragraph, index) => (
     <p
-      key={i}
-      className={`mb-5 text-ink/75 leading-[1.75] text-[18px] ${
-        i === 0
-          ? 'first-letter:float-left first-letter:font-serif first-letter:text-[64px] first-letter:leading-[0.85] first-letter:mr-2 first-letter:mt-1 first-letter:text-[#489e42] first-letter:font-bold'
+      key={index}
+      className={`mb-8 font-serif text-[19px] leading-[1.85] text-ink/72 md:text-[20px] ${
+        index === 0
+          ? 'first-letter:float-left first-letter:mr-3 first-letter:mt-2 first-letter:font-serif first-letter:text-[76px] first-letter:font-bold first-letter:leading-[0.72] first-letter:text-[#489e42]'
           : ''
       }`}
     >
-      {p}
+      {paragraph}
     </p>
   ));
 }
@@ -55,22 +49,21 @@ export default function NewsArticle() {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
   const { article } = useLoaderData() as NewsArticleLoaderData;
+  const [activeImage, setActiveImage] = useState(0);
 
-  // 404 — article not found. The shell (Navbar, Footer) is still rendered by
-  // PublicLayout, so this just fills the content area.
   if (!article) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-bone py-20">
+      <div className="flex min-h-[60vh] flex-1 items-center justify-center bg-white px-6 py-20">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-ink mb-3">404</h1>
-          <p className="text-ink/50 mb-6">
-            {locale === 'fr' ? 'Article introuvable.' : 'Article not found.'}
+          <span className="font-mono text-xs uppercase tracking-[0.22em] text-[#489e42]">Erreur 404</span>
+          <h1 className="mt-4 font-serif text-4xl font-bold text-ink">
+            {locale === 'fr' ? 'Article introuvable' : 'Article not found'}
+          </h1>
+          <p className="mt-3 text-ink/50">
+            {locale === 'fr' ? 'Cette actualité n’est plus disponible.' : 'This news article is no longer available.'}
           </p>
-          <Link
-            to={`/${locale}/news`}
-            className="inline-flex items-center gap-1.5 text-[#489e42] font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
+          <Link to={`/${locale}/news`} className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#489e42] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#3d7e38]">
+            <ArrowLeft className="h-4 w-4" />
             {locale === 'fr' ? 'Retour aux actualités' : 'Back to news'}
           </Link>
         </div>
@@ -81,122 +74,108 @@ export default function NewsArticle() {
   const title = locale === 'fr' ? article.title_fr : article.title_en;
   const body = locale === 'fr' ? article.body_fr : article.body_en;
   const images = Array.isArray(article.images) ? article.images : [];
+  const date = formatDate(article.date, locale);
+
 
   return (
-    <div className="flex-1 bg-bone pb-20">
-      <article className="max-w-3xl mx-auto px-6">
-        {/* Back link */}
-        <Link
-          to={`/${locale}/news`}
-          className="inline-flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Toutes les actualités' : 'All news'}
-        </Link>
+    <div className="flex-1 bg-white pb-24 text-ink">
+      <article>
+        {/* Editorial masthead */}
+        <header className="px-6 pb-14 pt-12 lg:px-10 lg:pb-20 lg:pt-16">
+          <div className="mx-auto max-w-7xl rounded-[28px] bg-[#EFECE5] px-6 py-8 sm:px-9 sm:py-10 lg:rounded-[36px] lg:px-12 lg:py-12">
 
-        {/* Byline meta row */}
-        <div className="flex items-center gap-3 text-xs uppercase tracking-[0.1em] text-ink/40 mb-4">
-          <span>{formatDate(article.date, locale)}</span>
-          <span className="w-1 h-1 rounded-full bg-ink/20" />
-          <span className="flex items-center gap-1 normal-case tracking-normal">
-            <Clock className="w-3 h-3" />
-            {readingTime(body, locale)}
-          </span>
-        </div>
+            <div className={`grid gap-10 ${images.length > 0 ? 'lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16' : ''}`}>
+              <div className="animate-[news-article-rise_750ms_cubic-bezier(0.16,1,0.3,1)_both]">
+                <h1 className="max-w-3xl font-serif text-4xl font-bold leading-[1.04] tracking-[-0.035em] sm:text-5xl lg:text-[58px]">
+                  {title}
+                </h1>
 
-        {/* Title */}
-        <h1 className="font-serif font-bold text-[clamp(28px,4.5vw,48px)] leading-[1.08] text-ink mb-8">
-          {title}
-        </h1>
-
-        {/* Divider */}
-        <div className="h-px bg-ink/10 mb-8" />
-
-        {/* Image carousel (or single image, or nothing) */}
-        {images.length === 1 && (
-          <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl mb-10">
-            <img
-              src={images[0]}
-              alt={title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-        )}
-        {images.length > 1 && (
-          <div className="article-carousel relative w-full aspect-[16/9] overflow-hidden rounded-xl mb-10 group">
-            <Swiper
-              modules={[Autoplay, EffectFade, Pagination, Navigation]}
-              effect="fade"
-              fadeEffect={{ crossFade: true }}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
-              loop
-              pagination={{
-                clickable: true,
-                bulletClass: 'swiper-pagination-bullet',
-              }}
-              navigation={{
-                nextEl: '.article-carousel-next',
-                prevEl: '.article-carousel-prev',
-              }}
-              className="w-full h-full"
-            >
-              {images.map((url, i) => (
-                <SwiperSlide key={i}>
-                  <div className="relative w-full h-full">
-                    <img
-                      src={url}
-                      alt={`${title} — ${i + 1}`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
+                <div className="mt-9 flex flex-wrap gap-x-7 gap-y-4 border-y border-ink/15 py-5">
+                  <div className="flex items-center gap-2.5">
+                    <CalendarDays className="h-4 w-4 text-[#489e42]" />
+                    <span className="text-sm font-semibold text-ink/65">{date}</span>
                   </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+                  {images.length > 1 && (
+                    <div className="flex items-center gap-2.5">
+                      <Images className="h-4 w-4 text-[#489e42]" />
+                      <span className="text-sm font-semibold text-ink/65">{images.length} images</span>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-            {/* Custom navigation arrows (appear on hover) */}
-            <button
-              className="article-carousel-prev absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-ink/70 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white hover:text-ink"
-              aria-label={locale === 'fr' ? 'Image précédente' : 'Previous image'}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              className="article-carousel-next absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-ink/70 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white hover:text-ink"
-              aria-label={locale === 'fr' ? 'Image suivante' : 'Next image'}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
+              {images.length > 0 && (
+                <div className="animate-[news-article-rise_850ms_cubic-bezier(0.16,1,0.3,1)_160ms_both]">
+                  {images.length === 1 ? (
+                    <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#EFECE5] lg:rounded-[28px]">
+                      <img src={images[0]} alt={title} className="absolute inset-0 h-full w-full object-cover" />
+                    </figure>
+                  ) : (
+                    <div className="news-detail-carousel group relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#EFECE5] lg:rounded-[28px]">
+                      <Swiper
+                        modules={[Autoplay, EffectFade, Pagination, Navigation]}
+                        effect="fade"
+                        fadeEffect={{ crossFade: true }}
+                        autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                        loop
+                        pagination={{ clickable: true }}
+                        navigation={{ nextEl: '.news-carousel-next', prevEl: '.news-carousel-prev' }}
+                        onSlideChange={(swiper) => setActiveImage(swiper.realIndex)}
+                        className="h-full w-full"
+                      >
+                        {images.map((url, index) => (
+                          <SwiperSlide key={`${url}-${index}`}>
+                            <img src={url} alt={`${title} — ${index + 1}`} className="h-full w-full object-cover" />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
 
-            {/* Image counter */}
-            <div className="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur text-white text-xs font-medium">
-              {locale === 'fr' ? 'Image' : 'Photo'} 1 / {images.length}
+                      <button className="news-carousel-prev absolute left-4 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink/70 opacity-100 backdrop-blur transition-all hover:bg-white hover:text-ink md:opacity-0 md:group-hover:opacity-100" aria-label={locale === 'fr' ? 'Image précédente' : 'Previous image'}>
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button className="news-carousel-next absolute right-4 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink/70 opacity-100 backdrop-blur transition-all hover:bg-white hover:text-ink md:opacity-0 md:group-hover:opacity-100" aria-label={locale === 'fr' ? 'Image suivante' : 'Next image'}>
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+
+                      <div className="absolute bottom-4 right-4 z-10 rounded-full bg-black/55 px-3 py-1.5 font-mono text-xs text-white backdrop-blur">
+                        {String(activeImage + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </header>
 
-        {/* Body */}
-        <div className="font-serif">
-          {renderBody(body)}
-        </div>
+        {/* Article body */}
+        <section className="px-6 py-12 lg:px-10 lg:py-20">
+          <div className="mx-auto max-w-[760px]">
+            {renderBody(body)}
+          </div>
+        </section>
 
-        {/* Bottom divider + back-to-news CTA */}
-        <div className="h-px bg-ink/10 mt-12 mb-8" />
-        <Link
-          to={`/${locale}/news`}
-          className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-[#489e42] transition-colors font-medium"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour aux actualités' : 'Back to all news'}
-        </Link>
       </article>
+
+      <style>{`
+        @keyframes news-article-rise {
+          from { opacity: 0; transform: translateY(18px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .news-detail-carousel .swiper-pagination-bullet {
+          background: white;
+          opacity: 0.45;
+        }
+        .news-detail-carousel .swiper-pagination-bullet-active {
+          opacity: 1;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .news-detail-carousel *, [class*="news-article-rise"] {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
