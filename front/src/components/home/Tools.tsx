@@ -28,6 +28,17 @@ export default function Tools({ items: tools }: ToolsProps) {
     setActiveIdx(swiper.realIndex);
   }, []);
 
+  // Belt-and-suspenders: if autoplay ever stops (e.g. it thought it hit the
+  // end of the cards stack before `loop` kicked in), force it back on when
+  // the pointer leaves the carousel.
+  const resumeAutoplay = useCallback(() => {
+    const swiper = swiperRef.current;
+    if (!swiper || !swiper.autoplay) return;
+    if (!swiper.autoplay.running) {
+      swiper.autoplay.start();
+    }
+  }, []);
+
   if (tools.length === 0) return null;
 
   const active = tools[activeIdx] || tools[0];
@@ -65,7 +76,7 @@ export default function Tools({ items: tools }: ToolsProps) {
         }}
       >
         {/* Section heading */}
-        <div style={{ width: 'min(1100px, calc(100% - 32px))' }}>
+        <div style={{ width: 'min(1300px, calc(100% - 32px))' }}>
           <div
             style={{
               height: '4px',
@@ -103,7 +114,7 @@ export default function Tools({ items: tools }: ToolsProps) {
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '20px',
-            width: 'min(1100px, calc(100% - 32px))',
+            width: 'min(1300px, calc(100% - 32px))',
             height: '440px',
             boxShadow:
               '0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
@@ -236,6 +247,7 @@ export default function Tools({ items: tools }: ToolsProps) {
           {/* Right — Swiper cards carousel */}
           <div
             className="tools-carousel"
+            onMouseLeave={resumeAutoplay}
             style={{
               width: '540px',
               height: '330px',
@@ -251,7 +263,7 @@ export default function Tools({ items: tools }: ToolsProps) {
               grabCursor
               initialSlide={Math.min(2, tools.length - 1)}
               speed={500}
-              rewind
+              loop={tools.length > 2}
               mousewheel={{ invert: false }}
               autoplay={{
                 delay: 2500,

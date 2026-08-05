@@ -4,7 +4,7 @@ import { getThumbnail, type NewsData } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 
 // Truncate body to ~150 chars at a word boundary for card previews.
-function truncate(text: string, max = 150): string {
+function truncate(text: string, max = 300): string {
   if (!text) return '';
   const clean = text.replace(/\s+/g, ' ').trim();
   if (clean.length <= max) return clean;
@@ -110,7 +110,7 @@ export default function News({ articles }: NewsProps) {
                 {locale === 'fr' ? "Plus d'actualités" : 'More news'}
               </div>
 
-              <div className="flex flex-col justify-between gap-0">
+              <div className="flex-1 flex flex-col justify-between gap-0">
                 {rest.map((h, i) => (
                   <Link
                     key={h.id}
@@ -120,7 +120,7 @@ export default function News({ articles }: NewsProps) {
                     }`}
                   >
                     <div className="flex flex-col gap-3">
-                      {/* Thumbnail (16:6 letterbox) */}
+                      {/* Thumbnail (16:6 letterbox) with date overlay */}
                       <div className="relative w-full aspect-[16/6] overflow-hidden">
                         {getThumbnail(h) && (
                           <img
@@ -129,18 +129,18 @@ export default function News({ articles }: NewsProps) {
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                           />
                         )}
+                        <span className="absolute bottom-2 right-2 text-[10px] font-medium uppercase tracking-wider text-white/80 bg-black/40 px-1.5 py-0.5 rounded-sm">
+                          {formatDate(h.date, locale)}
+                        </span>
                       </div>
 
-                      {/* Body */}
+                      {/* Title */}
                       <div className="min-w-0">
-                        <h4 className="font-serif font-semibold text-[16.5px] leading-[1.25] text-ink">
+                        <h4 className="font-serif font-semibold text-[15px] leading-[1.25] text-ink">
                           <span className="bg-gradient-to-r from-[#489e42] to-[#489e42] bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
                             {locale === 'fr' ? h.title_fr : h.title_en}
                           </span>
                         </h4>
-                        <p className="text-sm text-ink/45 mt-1">
-                          {formatDate(h.date, locale)}
-                        </p>
                       </div>
                     </div>
                   </Link>
