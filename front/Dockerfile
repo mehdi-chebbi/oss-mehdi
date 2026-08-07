@@ -6,8 +6,7 @@ WORKDIR /app
 # Turnstile site key — passed as a build arg from docker-compose (.env).
 # Vite reads this at build time and bakes it into the JS bundle.
 # Site keys are public by design (they're visible in the browser anyway).
-ARG VITE_TURNSTILE_SITE_KEY
-ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
+ENV VITE_TURNSTILE_SITE_KEY=0x4AAAAAAEEZs14kAL9OcKpf
 
 COPY package.json ./
 RUN npm install

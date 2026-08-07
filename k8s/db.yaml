@@ -1,0 +1,340 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-sql
+  namespace: oss
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS users (
+        id          SERIAL PRIMARY KEY,
+        name        VARCHAR(255) NOT NULL,
+        email       VARCHAR(255) NOT NULL UNIQUE,
+        password    VARCHAR(255) NOT NULL,
+        role        VARCHAR(20)  NOT NULL DEFAULT 'editor'
+                        CHECK (role IN ('admin', 'editor')),
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+    INSERT INTO users (name, email, password, role) VALUES
+        ('Admin', 'admin@oss.org', '$2a$12$ySwsn.8Ox8yaGbV4CFL2IeM2nWeyl3HgKHJorpWyBWLuWsJXdwYw6', 'admin')
+        ON CONFLICT DO NOTHING;
+
+    CREATE TABLE IF NOT EXISTS pages (
+        id          SERIAL PRIMARY KEY,
+        slug        VARCHAR(100) NOT NULL UNIQUE,
+        title_fr    VARCHAR(255) NOT NULL,
+        title_en    VARCHAR(255) NOT NULL,
+        is_published BOOLEAN NOT NULL DEFAULT true,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    INSERT INTO pages (slug, title_fr, title_en) VALUES
+        ('home', 'Accueil', 'Home')
+        ON CONFLICT DO NOTHING;
+
+    CREATE TABLE IF NOT EXISTS hero (
+        id                      SERIAL PRIMARY KEY,
+        page_id                 INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        title_fr                TEXT NOT NULL,
+        title_en                TEXT NOT NULL,
+        subtitle_fr             TEXT NOT NULL,
+        subtitle_en             TEXT NOT NULL,
+        cta_primary_label_fr    VARCHAR(255) NOT NULL,
+        cta_primary_label_en    VARCHAR(255) NOT NULL,
+        cta_primary_link        VARCHAR(500) NOT NULL DEFAULT '#',
+        cta_secondary_label_fr  VARCHAR(255) NOT NULL,
+        cta_secondary_label_en  VARCHAR(255) NOT NULL,
+        cta_secondary_link      VARCHAR(500) NOT NULL DEFAULT '#',
+        background_image        VARCHAR(500) NOT NULL DEFAULT '/hero.jpg',
+        is_published            BOOLEAN NOT NULL DEFAULT true,
+        created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS stats (
+        id          SERIAL PRIMARY KEY,
+        page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        label_fr    VARCHAR(255) NOT NULL,
+        label_en    VARCHAR(255) NOT NULL,
+        value       VARCHAR(50) NOT NULL,
+        suffix      VARCHAR(50) NOT NULL DEFAULT '',
+        sort_order  INT NOT NULL DEFAULT 0,
+        is_published BOOLEAN NOT NULL DEFAULT true,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS fields (
+        id              SERIAL PRIMARY KEY,
+        page_id         INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        title_fr        VARCHAR(255) NOT NULL,
+        title_en        VARCHAR(255) NOT NULL,
+        description_fr  TEXT NOT NULL,
+        description_en  TEXT NOT NULL,
+        image           VARCHAR(500) NOT NULL,
+        gradient_hue    INT NOT NULL DEFAULT 120,
+        sort_order      INT NOT NULL DEFAULT 0,
+        is_published    BOOLEAN NOT NULL DEFAULT true,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS news (
+        id              SERIAL PRIMARY KEY,
+        title_fr        TEXT NOT NULL,
+        title_en        TEXT NOT NULL,
+        body_fr         TEXT NOT NULL DEFAULT '',
+        body_en         TEXT NOT NULL DEFAULT '',
+        images          JSONB NOT NULL DEFAULT '[]',
+        thumbnail_index INT NOT NULL DEFAULT 0,
+        date            DATE NOT NULL DEFAULT CURRENT_DATE,
+        slug            VARCHAR(200) NOT NULL UNIQUE,
+        is_published    BOOLEAN NOT NULL DEFAULT false,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
+    CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
+    CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
+
+    CREATE TABLE IF NOT EXISTS tools (
+        id              SERIAL PRIMARY KEY,
+        page_id         INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        title_fr        VARCHAR(255) NOT NULL,
+        title_en        VARCHAR(255) NOT NULL,
+        description_fr  TEXT NOT NULL,
+        description_en  TEXT NOT NULL,
+        image           VARCHAR(500) NOT NULL,
+        link            VARCHAR(500) NOT NULL DEFAULT '#',
+        sort_order      INT NOT NULL DEFAULT 0,
+        is_published    BOOLEAN NOT NULL DEFAULT true,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS partners (
+        id          SERIAL PRIMARY KEY,
+        page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        name        VARCHAR(255) NOT NULL,
+        image       VARCHAR(500) NOT NULL,
+        row_number  INT NOT NULL DEFAULT 1,
+        sort_order  INT NOT NULL DEFAULT 0,
+        is_published BOOLEAN NOT NULL DEFAULT true,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS contact_info (
+        id          SERIAL PRIMARY KEY,
+        page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+        label_fr    VARCHAR(255) NOT NULL,
+        label_en    VARCHAR(255) NOT NULL,
+        value       TEXT NOT NULL,
+        icon        VARCHAR(100) NOT NULL DEFAULT '',
+        sort_order  INT NOT NULL DEFAULT 0,
+        is_published BOOLEAN NOT NULL DEFAULT true,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS socials (
+        id          SERIAL PRIMARY KEY,
+        platform    VARCHAR(50) NOT NULL UNIQUE,
+        url         VARCHAR(500) NOT NULL,
+        icon_svg    TEXT NOT NULL DEFAULT '',
+        icon_file   VARCHAR(500) NOT NULL DEFAULT '',
+        sort_order  INT NOT NULL DEFAULT 0,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS navigation (
+        id          SERIAL PRIMARY KEY,
+        label_fr    VARCHAR(255) NOT NULL,
+        label_en    VARCHAR(255) NOT NULL,
+        url         VARCHAR(500) NOT NULL,
+        sort_order  INT NOT NULL DEFAULT 0,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS site_settings (
+        id          SERIAL PRIMARY KEY,
+        key         VARCHAR(100) NOT NULL UNIQUE,
+        value_fr    TEXT NOT NULL,
+        value_en    TEXT NOT NULL,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS media (
+        id              SERIAL PRIMARY KEY,
+        filename        VARCHAR(255) NOT NULL,
+        original_name   VARCHAR(255) NOT NULL,
+        mime_type       VARCHAR(100) NOT NULL,
+        size            INT NOT NULL,
+        url             VARCHAR(500) NOT NULL,
+        uploaded_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS preview_tokens (
+        id          SERIAL PRIMARY KEY,
+        token       VARCHAR(255) NOT NULL UNIQUE,
+        section     VARCHAR(50) NOT NULL,
+        item_id     INT NOT NULL,
+        expires_at  TIMESTAMPTZ NOT NULL,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_preview_tokens_token ON preview_tokens (token);
+
+    CREATE TABLE IF NOT EXISTS departments (
+        id              SERIAL PRIMARY KEY,
+        title_fr        TEXT NOT NULL,
+        title_en        TEXT NOT NULL,
+        description_fr  TEXT NOT NULL DEFAULT '',
+        description_en  TEXT NOT NULL DEFAULT '',
+        image           VARCHAR(500) NOT NULL DEFAULT '',
+        slug            VARCHAR(200) NOT NULL UNIQUE,
+        sort_order      INT NOT NULL DEFAULT 0,
+        is_published    BOOLEAN NOT NULL DEFAULT false,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
+    CREATE INDEX IF NOT EXISTS idx_departments_published ON departments (is_published);
+
+    CREATE TABLE IF NOT EXISTS projects (
+        id              SERIAL PRIMARY KEY,
+        department_id   INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+        title_fr        TEXT NOT NULL,
+        title_en        TEXT NOT NULL,
+        description_fr  TEXT NOT NULL DEFAULT '',
+        description_en  TEXT NOT NULL DEFAULT '',
+        image           VARCHAR(500) NOT NULL DEFAULT '',
+        year_start      INT,
+        year_end        INT,
+        status          VARCHAR(20) NOT NULL DEFAULT 'en_cours'
+                        CHECK (status IN ('en_cours', 'cloture')),
+        budget          VARCHAR(100) NOT NULL DEFAULT '',
+        slug            VARCHAR(200) NOT NULL UNIQUE,
+        sort_order      INT NOT NULL DEFAULT 0,
+        is_published    BOOLEAN NOT NULL DEFAULT false,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_projects_department ON projects (department_id);
+    CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
+    CREATE INDEX IF NOT EXISTS idx_projects_published ON projects (is_published);
+
+    CREATE TABLE IF NOT EXISTS team (
+        id              SERIAL PRIMARY KEY,
+        name            VARCHAR(255) NOT NULL,
+        title_fr        VARCHAR(255) NOT NULL DEFAULT '',
+        title_en        VARCHAR(255) NOT NULL DEFAULT '',
+        diplomas_fr     TEXT NOT NULL DEFAULT '',
+        diplomas_en     TEXT NOT NULL DEFAULT '',
+        nationality_fr  VARCHAR(255) NOT NULL DEFAULT '',
+        nationality_en  VARCHAR(255) NOT NULL DEFAULT '',
+        image           VARCHAR(500) NOT NULL DEFAULT '',
+        department      VARCHAR(50) NOT NULL DEFAULT 'direction'
+    );
+
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id          SERIAL PRIMARY KEY,
+        user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token_hash  VARCHAR(64) NOT NULL UNIQUE,
+        family      UUID NOT NULL,
+        expires_at  TIMESTAMPTZ NOT NULL,
+        revoked_at  TIMESTAMPTZ,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens (user_id);
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_family ON refresh_tokens (family);
+
+    CREATE TABLE IF NOT EXISTS reports (
+        id          SERIAL PRIMARY KEY,
+        category    VARCHAR(50) NOT NULL
+                    CHECK (category IN ('complaint', 'misconduct', 'fraud', 'harassment', 'other')),
+        subject     TEXT NOT NULL,
+        description TEXT NOT NULL,
+        name        VARCHAR(255),
+        email       VARCHAR(255),
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
+    CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: oss
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: oss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DB_NAME
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: db-pvc
+        - name: init-sql
+          configMap:
+            name: db-init-sql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  namespace: oss
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 5432
+      targetPort: 5432

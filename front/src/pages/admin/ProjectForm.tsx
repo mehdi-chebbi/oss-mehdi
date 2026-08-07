@@ -8,8 +8,10 @@ import {
   createProject,
   updateProject,
   type DepartmentData,
+  type ProjectResultFile,
 } from "../../api/auth";
 import ImageUpload from "../../components/admin/ImageUpload";
+import ProjectResultsFiles from "../../components/admin/ProjectResultsFiles";
 import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
 
 type Lang = "fr" | "en";
@@ -45,6 +47,9 @@ const emptyForm = {
   title_en: "",
   description_fr: "",
   description_en: "",
+  results_fr: "",
+  results_en: "",
+  result_files: [] as ProjectResultFile[],
   image: "",
   year_start: "" as string | number,
   year_end: "" as string | number,
@@ -87,6 +92,9 @@ export default function ProjectForm() {
             title_en: project.title_en || "",
             description_fr: project.description_fr || "",
             description_en: project.description_en || "",
+            results_fr: project.results_fr || "",
+            results_en: project.results_en || "",
+            result_files: project.result_files || [],
             image: project.image || "",
             year_start: project.year_start ?? "",
             year_end: project.year_end ?? "",
@@ -270,6 +278,37 @@ export default function ProjectForm() {
               placeholder="Project description…"
             />
           </div>
+
+          {/* Results narrative */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-ink/80 mb-1.5">
+              Results and deliverables ({lang.toUpperCase()})
+            </label>
+            <textarea
+              value={lang === "fr" ? form.results_fr : form.results_en}
+              onChange={(e) =>
+                set(lang === "fr" ? "results_fr" : "results_en", e.target.value)
+              }
+              rows={6}
+              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-y"
+              placeholder={
+                lang === "fr"
+                  ? "Résultats, réalisations et livrables du projet..."
+                  : "Project results, achievements, and deliverables..."
+              }
+            />
+          </div>
+        </div>
+
+        {/* Result documents */}
+        <div className="border-t border-ink/5 pt-5">
+          <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
+            Result documents
+          </h4>
+          <ProjectResultsFiles
+            value={form.result_files}
+            onChange={(files) => set("result_files", files)}
+          />
         </div>
 
         {/* Image */}

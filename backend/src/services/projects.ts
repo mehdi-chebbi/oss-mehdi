@@ -7,6 +7,9 @@ export interface ProjectRow {
   title_en: string;
   description_fr: string;
   description_en: string;
+  results_fr: string;
+  results_en: string;
+  result_files: ProjectResultFile[];
   image: string;
   year_start: number | null;
   year_end: number | null;
@@ -17,6 +20,41 @@ export interface ProjectRow {
   is_published: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProjectResultFile {
+  name_fr: string;
+  name_en: string;
+  url: string;
+  mime_type?: string;
+  size?: number;
+}
+
+function normalizeResultFiles(value: unknown): ProjectResultFile[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .slice(0, 50)
+    .map((item) => {
+      const file = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
+      const url = typeof file.url === "string" ? file.url.trim().slice(0, 1000) : "";
+      const isAllowedUrl =
+        url.startsWith("/uploads/project-results/") ||
+        /^https?:\/\//i.test(url);
+
+      return {
+        name_fr: typeof file.name_fr === "string" ? file.name_fr.trim().slice(0, 255) : "",
+        name_en: typeof file.name_en === "string" ? file.name_en.trim().slice(0, 255) : "",
+        url: isAllowedUrl ? url : "",
+        mime_type:
+          typeof file.mime_type === "string" ? file.mime_type.trim().slice(0, 150) : "",
+        size:
+          typeof file.size === "number" && Number.isFinite(file.size) && file.size >= 0
+            ? file.size
+            : undefined,
+      };
+    })
+    .filter((file) => file.url);
 }
 
 // ── Slug generation ──
@@ -93,6 +131,9 @@ export async function createProject(data: {
   title_en: string;
   description_fr?: string;
   description_en?: string;
+  results_fr?: string;
+  results_en?: string;
+  result_files?: ProjectResultFile[];
   image?: string;
   year_start?: number | null;
   year_end?: number | null;
@@ -102,9 +143,10 @@ export async function createProject(data: {
   is_published?: boolean;
 }) {
   const result = await query(
-    `INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image,
-     year_start, year_end, status, budget, slug, sort_order, is_published)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    `INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en,
+     results_fr, results_en, result_files, image, year_start, year_end, status, budget, slug,
+     sort_order, is_published)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11, $12, $13, $14, $15, $16)
      RETURNING *`,
     [
       data.department_id,
@@ -112,6 +154,9 @@ export async function createProject(data: {
       data.title_en,
       data.description_fr || "",
       data.description_en || "",
+      data.results_fr || "",
+      data.results_en || "",
+      JSON.stringify(normalizeResultFiles(data.result_files)),
       data.image || "",
       data.year_start ?? null,
       data.year_end ?? null,
@@ -144,6 +189,9 @@ export async function updateProject(id: number, data: Partial<ProjectRow>) {
     "title_en",
     "description_fr",
     "description_en",
+    "results_fr",
+    "results_en",
+    "result_files",
     "image",
     "year_start",
     "year_end",
@@ -155,8 +203,12 @@ export async function updateProject(id: number, data: Partial<ProjectRow>) {
 
   for (const key of allowed) {
     if ((data as any)[key] !== undefined) {
-      fields.push(`${key} = $${idx++}`);
-      values.push((data as any)[key]);
+      fields.push(`${key} = $${idx++}${key === "result_files" ? "::jsonb" : ""}`);
+      values.push(
+        key === "result_files"
+          ? JSON.stringify(normalizeResultFiles((data as any)[key]))
+          : (data as any)[key],
+      );
     }
   }
 

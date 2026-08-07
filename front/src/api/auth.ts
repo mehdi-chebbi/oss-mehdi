@@ -747,6 +747,14 @@ export async function deleteDepartment(token: string, id: number) {
 // ── Projects CRUD ──
 export type ProjectStatus = "en_cours" | "cloture";
 
+export interface ProjectResultFile {
+  name_fr: string;
+  name_en: string;
+  url: string;
+  mime_type?: string;
+  size?: number;
+}
+
 export interface ProjectData {
   id: number;
   department_id: number;
@@ -754,6 +762,9 @@ export interface ProjectData {
   title_en: string;
   description_fr: string;
   description_en: string;
+  results_fr: string;
+  results_en: string;
+  result_files: ProjectResultFile[];
   image: string;
   year_start: number | null;
   year_end: number | null;
