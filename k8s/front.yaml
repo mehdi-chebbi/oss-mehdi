@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: front
-          image: oss-front:latest
+          image: mehdino123/oss-site-front:latest1
           ports:
             - containerPort: 80
 ---

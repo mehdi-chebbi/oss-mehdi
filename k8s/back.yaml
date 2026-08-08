@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: oss-back:latest
+          image: mehdino123/oss-site-back:latest1
           ports:
             - containerPort: 8000
           envFrom:
