@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db-init-sql
-  namespace: oss
+  namespace: oss-site
 data:
   init.sql: |
     CREATE TABLE IF NOT EXISTS users (
@@ -211,6 +211,9 @@ data:
         title_en        TEXT NOT NULL,
         description_fr  TEXT NOT NULL DEFAULT '',
         description_en  TEXT NOT NULL DEFAULT '',
+        results_fr      TEXT NOT NULL DEFAULT '',
+        results_en      TEXT NOT NULL DEFAULT '',
+        result_files    JSONB NOT NULL DEFAULT '[]'::jsonb,
         image           VARCHAR(500) NOT NULL DEFAULT '',
         year_start      INT,
         year_end        INT,
@@ -270,7 +273,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: db-pvc
-  namespace: oss
+  namespace: oss-site
 spec:
   accessModes:
     - ReadWriteOnce
@@ -282,7 +285,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
-  namespace: oss
+  namespace: oss-site
 spec:
   replicas: 1
   selector:
@@ -331,7 +334,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
-  namespace: oss
+  namespace: oss-site
 spec:
   selector:
     app: db

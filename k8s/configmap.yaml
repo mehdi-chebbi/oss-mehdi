@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: app-config
-  namespace: oss
+  namespace: oss-site
 data:
   # ── Database ──
   DB_HOST: "db"
@@ -23,6 +23,6 @@ data:
   NODE_ENV: "production"
   COOKIE_SECURE: "false"
   COOKIE_DOMAIN: ""
-  CSRF_ORIGIN: "http://localhost:3000"
-  ALLOWED_ORIGINS: "http://localhost:3000"
+  CSRF_ORIGIN: ""
+  ALLOWED_ORIGINS: ""
   TRUST_PROXY: "true"
