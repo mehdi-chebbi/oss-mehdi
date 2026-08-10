@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 @theme {
+  --color-oss-blue: #0079bc;
+  --color-oss-blue-dark: #12355b;
+  --color-oss-blue-light: #78add8;
+  --color-oss-ochre: #ffbc34;
+  --color-oss-green: #2f7d4a;
+  --color-oss-teal: #4ebbb2;
+  --color-oss-paper: #f7f8f6;
+  --color-oss-line: #d9e0e5;
   --color-forest-50: #f0f5f2;
   --color-forest-100: #dce8e1;
   --color-forest-200: #b9d1c4;
@@ -24,12 +32,13 @@
   --color-sand-800: #7a4f34;
   --color-sand-900: #66432e;
 
-  --color-bone: #FAFAF8;
-  --color-ink: #1A1F1C;
+  --color-bone: #f7f8f6;
+  --color-ink: #263238;
 
   --font-sans: 'Geist', sans-serif;
   --font-mono: 'Geist Mono', monospace;
   --font-serif: 'Fraunces', Georgia, serif;
+  --font-oss: 'Frutiger', 'Frutiger LT Std', 'Segoe UI', Arial, sans-serif;
 }
 
 @layer base {
@@ -50,13 +59,70 @@
   }
 }
 
-/* Homepage and About typography are intentionally unified, including elements
-   that otherwise opt into the site's editorial serif or display faces. */
+/* Frutiger is the OSS charter face. The fallback stack keeps its clear,
+   humanist character when the licensed family is not installed. */
 .home-page,
-.home-page *,
-.about-page,
-.about-page * {
-  font-family: 'Open Sans', sans-serif !important;
+.home-page * {
+  font-family: var(--font-oss);
+}
+
+.oss-section-title {
+  color: var(--color-oss-blue);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.oss-kicker {
+  color: var(--color-oss-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.oss-bands {
+  position: relative;
+  height: 18px;
+  overflow: hidden;
+}
+
+.oss-bands > span {
+  position: absolute;
+  left: -2%;
+  width: 104%;
+  height: 8px;
+  transform-origin: center;
+}
+
+.oss-bands > span:nth-child(1) {
+  top: 0;
+  background: var(--color-oss-blue);
+  transform: skewY(-0.7deg);
+}
+
+.oss-bands > span:nth-child(2) {
+  top: 6px;
+  background: var(--color-oss-green);
+  transform: skewY(0.8deg);
+}
+
+.oss-bands > span:nth-child(3) {
+  top: 12px;
+  background: var(--color-oss-ochre);
+  transform: skewY(-0.55deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Marquee animations — track content is duplicated, so translating

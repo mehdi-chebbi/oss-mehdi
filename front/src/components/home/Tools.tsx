@@ -1,14 +1,10 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards, Mousewheel, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import type { ToolData } from '@/api/auth';
-import { useLocale, localized } from '@/context/locale';
-
+import { localized, useLocale } from '@/context/locale';
 import 'swiper/css';
-import 'swiper/css/effect-cards';
-
-// ---- Component ----
 
 interface ToolsProps {
   items: ToolData[];
@@ -17,343 +13,83 @@ interface ToolsProps {
 export default function Tools({ items: tools }: ToolsProps) {
   const { locale } = useLocale();
   const [activeIdx, setActiveIdx] = useState(0);
-  const swiperRef = useRef<SwiperType | null>(null);
-
-  const onSwiperInit = useCallback((swiper: SwiperType) => {
-    swiperRef.current = swiper;
-    setActiveIdx(swiper.realIndex);
-  }, []);
-
-  const onSlideChange = useCallback((swiper: SwiperType) => {
-    setActiveIdx(swiper.realIndex);
-  }, []);
-
-  // Belt-and-suspenders: if autoplay ever stops (e.g. it thought it hit the
-  // end of the cards stack before `loop` kicked in), force it back on when
-  // the pointer leaves the carousel.
-  const resumeAutoplay = useCallback(() => {
-    const swiper = swiperRef.current;
-    if (!swiper || !swiper.autoplay) return;
-    if (!swiper.autoplay.running) {
-      swiper.autoplay.start();
-    }
-  }, []);
-
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
   if (tools.length === 0) return null;
 
-  const active = tools[activeIdx] || tools[0];
-  const link = active?.link || '#';
+  const active = tools[activeIdx] ?? tools[0];
 
   return (
-    <>
-      <style>{`
-        @keyframes tools-copy-fade-right {
-          from {
-            opacity: 0;
-            transform: translateX(-18px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .tools-copy-title,
-        .tools-copy-description,
-        .tools-copy-button {
-          opacity: 0;
-          animation: tools-copy-fade-right 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .tools-copy-description { animation-delay: 90ms; }
-        .tools-copy-button { animation-delay: 180ms; }
-
-        @media (max-width: 750px) {
-          .tools-content {
-            flex-direction: column-reverse !important;
-            height: auto !important;
-            padding: 20px 0;
-          }
-          .tools-btn {
-            margin: 10px auto 40px !important;
-          }
-          .tools-carousel {
-            width: min(420px, calc(100vw - 64px)) !important;
-            height: 260px !important;
-          }
-        }
-      `}</style>
-
-      <section
-        style={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '24px',
-          background: '#ffffff',
-          padding: '72px 16px 88px',
-        }}
-      >
-        {/* Section heading */}
-        <div style={{ width: 'min(1300px, calc(100% - 32px))' }}>
-          <div
-            style={{
-              height: '4px',
-              width: '48px',
-              background: '#489e42',
-              margin: '0 0 16px',
-              borderRadius: '2px',
-            }}
-          />
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 'clamp(1.875rem, 4vw, 3rem)',
-              fontWeight: 700,
-              color: '#000000',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.1,
-              fontFamily: "'Fraunces', Georgia, serif",
-            }}
-          >
-            {locale === 'fr' ? 'Nos outils' : 'Our Tools'}
+    <section className="overflow-hidden bg-oss-paper py-10 lg:py-12">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+        <div className="mb-12 max-w-3xl">
+          <p className="oss-kicker mb-4">
+            {locale === 'fr' ? 'Connaissance et décision' : 'Knowledge and decisions'}
+          </p>
+          <h2 className="oss-section-title">
+            {locale === 'fr' ? 'Nos outils' : 'Our tools'}
           </h2>
         </div>
 
-        <div
-          className="tools-content"
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'stretch',
-            gap: '30px',
-            background:
-              'linear-gradient(180deg, #F1F5EF 0%, #E8EFE5 100%)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: '20px',
-            border: '1px solid rgba(72,158,66,0.14)',
-            width: 'min(1300px, calc(100% - 32px))',
-            height: '440px',
-            boxShadow:
-              '0 14px 40px rgba(39,74,46,0.10), inset 0 1px 0 rgba(255,255,255,0.9)',
-            zIndex: 10,
-          }}
-        >
-          {/* Left — info panel */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'flex-start',
-              alignItems: 'stretch',
-              flex: '1 1 450px',
-              maxWidth: '450px',
-              padding: '35px',
-              textAlign: 'justify',
-              fontFamily: "'Comfortaa', cursive",
-              height: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            <h2
-              key={`title-${active?.id ?? activeIdx}`}
-              className="tools-copy-title"
-              style={{
-                margin: '0 0 16px 0',
-                fontWeight: 700,
-                fontSize: 'clamp(1.75rem, 2.2vw, 2rem)',
-                textAlign: 'center',
-                fontFamily: "'Comfortaa', cursive",
-                color: '#000000',
-                lineHeight: 1.2,
-              }}
-            >
-              {active ? localized(active, 'title', locale) : (locale === 'fr' ? 'Nos outils' : 'Our Tools')}
-            </h2>
-
-            <div
-              key={`description-${active?.id ?? activeIdx}`}
-              className="tools-copy-description"
-              style={{
-                flex: 1,
-                minHeight: 0,
-                overflowY: 'auto',
-                paddingRight: '8px',
-                marginBottom: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              {active ? (
-                <p
-                  style={{
-                    color: '#1a1f1c',
-                    fontWeight: 500,
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    margin: 0,
-                  }}
-                >
-                  {localized(active, 'description', locale)}
-                </p>
-              ) : (
-                <p
-                  style={{
-                    color: '#1a1f1c',
-                    fontWeight: 500,
-                    fontSize: '1rem',
-                    lineHeight: 1.5,
-                    margin: 0,
-                  }}
-                >
-                  {locale === 'fr'
-                    ? <>Découvrez les{' '}
-                      <span
-                        style={{
-                          background:
-                            'linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%)',
-                          padding: '0 4px',
-                          borderRadius: '4px',
-                          color: '#fff',
-                        }}
-                      >
-                        outils numériques
-                      </span>{' '}
-                      de l'OSS, dédiés au suivi de l'environnement et à l'aide à la
-                      décision.</>
-                    : <>Discover the{' '}
-                      <span
-                        style={{
-                          background:
-                            'linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%)',
-                          padding: '0 4px',
-                          borderRadius: '4px',
-                          color: '#fff',
-                        }}
-                      >
-                        digital tools
-                      </span>{' '}
-                      of OSS, dedicated to environmental monitoring and decision support.</>}
-                </p>
-              )}
+        <div className="grid items-stretch gap-8 border border-oss-blue/15 bg-oss-blue/5 p-5 sm:p-8 lg:grid-cols-[0.85fr_1.4fr] lg:gap-14 lg:p-10">
+          <div className="flex flex-col justify-between border border-oss-line border-l-4 border-l-oss-ochre bg-white p-7 sm:p-9">
+            <div>
+              <div className="mb-5 text-xs font-bold uppercase tracking-[0.12em] text-oss-blue">
+                {String(activeIdx + 1).padStart(2, '0')} / {String(tools.length).padStart(2, '0')}
+              </div>
+              <h3 className="text-2xl font-bold leading-tight text-oss-blue-dark sm:text-3xl">
+                {localized(active, 'title', locale)}
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-ink/65">
+                {localized(active, 'description', locale)}
+              </p>
             </div>
 
-            <a
-              key={`button-${active?.id ?? activeIdx}`}
-              className="tools-btn tools-copy-button"
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'block',
-                padding: '10px 40px',
-                margin: '0 auto 0',
-                alignSelf: 'center',
-                fontSize: '1.1rem',
-                fontWeight: 700,
-                borderRadius: '4px',
-                outline: 'none',
-                textDecoration: 'none',
-                color: '#fff',
-                background: '#3183d4',
-                boxShadow: '0 6px 24px rgba(49, 131, 212, 0.35)',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: "'Comfortaa', cursive",
-              }}
-            >
-              {locale === 'fr' ? "Visiter l'outil" : 'Visit Tool'}
-            </a>
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+              <a
+                href={active.link || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center gap-2 bg-oss-ochre px-5 py-3 text-sm font-bold text-oss-blue-dark transition-colors hover:bg-white"
+              >
+                {locale === 'fr' ? "Visiter l'outil" : 'Visit tool'}
+                <ExternalLink className="h-4 w-4" />
+              </a>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => swiper?.slidePrev()} className="grid h-11 w-11 place-items-center border border-oss-blue/25 text-oss-blue transition-colors hover:border-oss-blue hover:bg-oss-blue hover:text-white" aria-label="Précédent">
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+                <button type="button" onClick={() => swiper?.slideNext()} className="grid h-11 w-11 place-items-center border border-oss-blue/25 text-oss-blue transition-colors hover:border-oss-blue hover:bg-oss-blue hover:text-white" aria-label="Suivant">
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* Right — Swiper cards carousel */}
-          <div
-            className="tools-carousel"
-            onMouseLeave={resumeAutoplay}
-            style={{
-              width: '540px',
-              height: '330px',
-              display: 'flex',
-              alignItems: 'center',
-              margin: 'auto 0',
-            }}
-          >
+          <div className="min-w-0">
             <Swiper
-              modules={[EffectCards, Mousewheel, Autoplay]}
-              effect="cards"
-              cardsEffect={{ rotate: true }}
-              grabCursor
-              initialSlide={Math.min(2, tools.length - 1)}
-              speed={500}
+              slidesPerView={1}
+              spaceBetween={18}
               loop={tools.length > 2}
-              mousewheel={{ invert: false }}
-              autoplay={{
-                delay: 2500,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
-              onSwiper={onSwiperInit}
-              onSlideChange={onSlideChange}
-              style={{ width: '100%', height: '100%', padding: '30px 20px' }}
+              speed={450}
+              onSwiper={(instance) => setSwiper(instance)}
+              onSlideChange={(instance) => setActiveIdx(instance.realIndex)}
+              className="h-full"
             >
-              {tools.map((t) => (
-                <SwiperSlide
-                  key={t.id}
-                  style={{
-                    position: 'relative',
-                    boxShadow: '0 15px 50px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '10px',
-                    userSelect: 'none',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <img
-                    src={t.image}
-                    alt={localized(t, 'title', locale)}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      background:
-                        'linear-gradient(to top, #0f2027, transparent, transparent)',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: 'cover',
-                    }}
-                  />
-                  <h2
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      color: '#fff',
-                      fontWeight: 400,
-                      fontSize: '1.1rem',
-                      lineHeight: 1.4,
-                      margin: '0 0 20px 20px',
-                      fontFamily: "'Comfortaa', cursive",
-                    }}
-                  >
-                    {localized(t, 'title', locale)}
-                  </h2>
+              {tools.map((tool) => (
+                <SwiperSlide key={tool.id} className="h-auto">
+                  <article className="group relative min-h-[360px] overflow-hidden border-b-4 border-oss-ochre sm:min-h-[430px]">
+                    <img src={tool.image} alt={localized(tool, 'title', locale)} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-oss-blue-dark/90 via-oss-blue-dark/20 to-transparent" />
+                    <h4 className="absolute inset-x-0 bottom-0 p-6 text-xl font-bold leading-tight text-white sm:p-8 sm:text-2xl">
+                      {localized(tool, 'title', locale)}
+                    </h4>
+                  </article>
                 </SwiperSlide>
               ))}
             </Swiper>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

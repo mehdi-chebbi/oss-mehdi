@@ -1,55 +1,36 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { AlertCircle, ChevronDown, Globe2, Menu, Search, X } from 'lucide-react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getNavItems } from '@/data/navigation';
 import type { Locale } from '@/context/locale';
+import BrandBands from './BrandBands';
 
 const languages = [
   { code: 'fr', label: 'Français', display: 'FR' },
   { code: 'en', label: 'English', display: 'EN' },
 ];
 
-/**
- * `overlay` — when true, the navbar floats over the content below it (no
- * spacer is rendered). Use this on pages with a full-bleed hero (e.g. the
- * homepage). On all other pages, omit it and a constant-height spacer is
- * rendered so content sits cleanly below the fixed navbar without any
- * page-level padding hacks.
- */
 export default function Navbar({ overlay = false }: { overlay?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { lang } = useParams<{ lang: string }>();
-
   const currentLang: Locale = lang === 'en' ? 'en' : 'fr';
   const navItems = getNavItems(currentLang);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const onClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMobileOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, [mobileOpen]);
+    setMobileOpen(false);
+    setLangOpen(false);
+    setOpenDropdown(null);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!langOpen) return;
-    const onClick = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+    const onClick = (event: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
         setLangOpen(false);
       }
     };
@@ -57,277 +38,150 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
     return () => document.removeEventListener('mousedown', onClick);
   }, [langOpen]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    if (!openDropdown) return;
-    const onClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('[data-dropdown]')) {
-        setOpenDropdown(null);
-      }
-    };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, [openDropdown]);
-
-  // Switch language while preserving the current path (e.g. /fr/news → /en/news)
   const switchLang = (code: string) => {
-    setLangOpen(false);
     const newPath = location.pathname.replace(/^\/(fr|en)(\/|$)/, `/${code}$2`);
     navigate(newPath + location.search + location.hash);
   };
 
-  const displayLang = languages.find((l) => l.code === currentLang)?.display || 'FR';
+  const renderLink = (href: string, label: string, className: string, key?: string) =>
+    href.startsWith('/') ? (
+      <Link key={key} to={href} className={className}>{label}</Link>
+    ) : (
+      <a key={key} href={href} className={className}>{label}</a>
+    );
 
   return (
     <>
-    <header
-      className={`
-        fixed top-0 left-0 right-0 z-50 border-b border-ink/10 bg-white
-        transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-        ${scrolled ? 'shadow-sm' : ''}
-      `}
-    >
-      {/* Top-right controls */}
-      <div className="absolute top-3 right-4 lg:right-6 flex items-center gap-2 z-10">
-        {/* Search */}
-        <div className="relative">
-          <svg
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink/35 pointer-events-none"
-            width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-          >
-            <circle cx="7" cy="7" r="5" />
-            <path d="M11 11l3.5 3.5" />
-          </svg>
-          <input
-            type="text"
-            placeholder={currentLang === 'en' ? 'Search...' : 'Rechercher...'}
-            className="w-36 lg:w-44 pl-8 pr-3 py-1.5 text-[13px] bg-ink/[0.04] border border-ink/[0.08] rounded-lg text-ink placeholder:text-ink/30 focus:outline-none focus:border-ink/20 focus:bg-white transition-colors"
-          />
-        </div>
-
-        {/* Language selector */}
-        <div ref={langRef}>
-        <button
-          onClick={() => setLangOpen((v) => !v)}
-          className="flex items-center gap-1.5 text-[13px] text-ink/50 hover:text-ink transition-colors px-2 py-1 rounded-md"
-          aria-label="Change language"
-          aria-expanded={langOpen}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="8" cy="8" r="6.5" />
-            <path d="M1.5 8h13M8 1.5c-1.5 2-2.3 4-2.3 6.5s.8 4.5 2.3 6.5c1.5-2 2.3-4 2.3-6.5S9.5 3.5 8 1.5z" />
-          </svg>
-          {displayLang}
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <path d="M3 4.5l3 3 3-3" />
-          </svg>
-        </button>
-        <div
-          className={`absolute right-0 top-full mt-1 w-28 bg-white border border-ink/10 rounded-lg shadow-lg overflow-hidden transition-all duration-150 origin-top-right ${langOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
-        >
-          {languages.map((l) => (
-            <button
-              key={l.code}
-              onClick={() => switchLang(l.code)}
-              className={`w-full text-left px-3 py-2 text-[13px] transition-colors ${currentLang === l.code ? 'text-ink font-medium bg-ink/[0.04]' : 'text-ink/60 hover:text-ink hover:bg-ink/[0.04]'}`}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      </div>
-
-      <nav
-        className={`flex items-end transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          scrolled ? 'h-20' : 'h-36'
-        }`}
+      <header
+        className="font-oss fixed inset-x-0 top-0 z-50 border-b border-oss-blue/15 bg-white/95 shadow-[0_8px_28px_rgba(18,53,91,0.08)] backdrop-blur-md"
       >
-        {/* Logo */}
-        <a href={`/${currentLang}`} className="shrink-0 self-center pl-4 lg:pl-8">
-          <img
-            src="/logo-h.webp"
-            alt="OSS"
-            className={`w-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              scrolled ? 'h-14' : 'h-25'
-            }`}
-          />
-        </a>
+        <BrandBands className="h-[6px] [&>span]:h-[3px] [&>span:nth-child(2)]:top-[2px] [&>span:nth-child(3)]:top-[4px]" />
 
-        {/* Links */}
-        <ul className="hidden lg:flex items-end gap-0.5 pb-1 ml-auto mr-auto max-w-7xl pr-8">
-          {navItems.map((item) =>
-            item.children ? (
-              <li key={item.label} className="relative" data-dropdown onMouseLeave={() => setOpenDropdown(null)}>
-                <button
-                  onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                  onMouseEnter={() => setOpenDropdown(item.label)}
-                  className="
-                    flex items-center gap-1 px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
-                    hover:text-ink hover:bg-ink/[0.04]
-                    transition-colors duration-150
-                  "
-                >
-                  {item.label}
-                  <svg
-                    width="14" height="14" viewBox="0 0 14 14" fill="none"
-                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    className={`transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''}`}
-                  >
-                    <path d="M3.5 5.25l3.5 3.5 3.5-3.5" />
-                  </svg>
-                </button>
-                <div
-                  className={`absolute left-0 top-full pt-1 min-w-56 transition-all duration-150 origin-top-left ${openDropdown === item.label ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
-                >
-                  <div className="bg-white border border-ink/10 rounded-lg shadow-lg overflow-hidden">
-                  {item.children.map((child) =>
-                    child.href.startsWith('/') ? (
-                      <Link
-                        key={child.href}
-                        to={child.href}
-                        className="block px-4 py-2.5 text-[14px] text-ink/60 hover:text-ink hover:bg-ink/[0.04] transition-colors duration-150"
-                        onClick={() => setOpenDropdown(null)}
-                      >
-                        {child.label}
-                      </Link>
-                    ) : (
-                      <a
-                        key={child.href}
-                        href={child.href}
-                        className="block px-4 py-2.5 text-[14px] text-ink/60 hover:text-ink hover:bg-ink/[0.04] transition-colors duration-150"
-                        onClick={() => setOpenDropdown(null)}
-                      >
-                        {child.label}
-                      </a>
-                    )
-                  )}
-                  </div>
-                </div>
-              </li>
-            ) : (
-              <li key={item.href}>
-                {item.href.startsWith('/') ? (
-                  <Link
-                    to={item.href}
-                    className="
-                      block px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
-                      hover:text-ink hover:bg-ink/[0.04]
-                      transition-colors duration-150
-                    "
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <a
-                    href={item.href}
-                    className="
-                      block px-3 py-1 text-[18px] font-semibold text-ink/75 rounded-md
-                      hover:text-ink hover:bg-ink/[0.04]
-                      transition-colors duration-150
-                    "
-                  >
-                    {item.label}
-                  </a>
+        <nav className="mx-auto flex h-[74px] max-w-[1400px] items-center gap-5 px-4 sm:px-6 lg:px-8" aria-label="Navigation principale">
+          <Link to={`/${currentLang}`} className="shrink-0" aria-label="OSS - Accueil">
+            <img src="/logo-h.webp" alt="OSS" className="h-12 w-auto sm:h-14" />
+          </Link>
+
+          <ul className="ml-auto hidden items-center lg:flex">
+            {navItems.map((item) => (
+              <li
+                key={item.label}
+                className="relative"
+                onMouseLeave={() => item.children && setOpenDropdown(null)}
+              >
+                {item.children ? (
+                  <>
+                    <button
+                      type="button"
+                      onMouseEnter={() => setOpenDropdown(item.label)}
+                      onClick={() => setOpenDropdown((value) => value === item.label ? null : item.label)}
+                      className="flex items-center gap-1 px-2.5 py-3 text-[14px] font-semibold text-oss-blue-dark transition-colors hover:text-oss-blue xl:px-3"
+                      aria-expanded={openDropdown === item.label}
+                    >
+                      {item.label}
+                      <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`absolute left-0 top-full min-w-64 border-t-2 border-oss-ochre bg-white p-2 shadow-[0_16px_36px_rgba(18,53,91,0.15)] transition-all ${openDropdown === item.label ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0'}`}>
+                      {item.children.map((child) => renderLink(
+                        child.href,
+                        child.label,
+                        'block px-3 py-2.5 text-sm text-ink/75 transition-colors hover:bg-oss-blue/5 hover:text-oss-blue',
+                        child.href,
+                      ))}
+                    </div>
+                  </>
+                ) : renderLink(
+                  item.href,
+                  item.label,
+                  'block px-2.5 py-3 text-[14px] font-semibold text-oss-blue-dark transition-colors hover:text-oss-blue xl:px-3',
                 )}
               </li>
-            )
-          )}
-        </ul>
-
-        {/* Mobile toggle */}
-        <button
-          onClick={() => setMobileOpen((v) => !v)}
-          className="lg:hidden p-2 -mr-2 rounded-md hover:bg-ink/[0.04] transition-colors self-center"
-          aria-label={mobileOpen ? (currentLang === 'en' ? 'Close menu' : 'Fermer le menu') : (currentLang === 'en' ? 'Open menu' : 'Ouvrir le menu')}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? (
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M4 4l10 10M14 4L4 14" />
-            </svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M3 5h12M3 9h12M3 13h12" />
-            </svg>
-          )}
-        </button>
-      </nav>
-
-      {/* Mobile drawer */}
-      <div
-        ref={menuRef}
-        className={`
-          lg:hidden overflow-hidden transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${mobileOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}
-        `}
-      >
-        <div className="px-6 pb-5 pt-1 border-t border-ink/5 bg-white">
-          <ul className="flex flex-col">
-            {navItems.map((item) =>
-              item.children ? (
-                <li key={item.label}>
-                  <span className="block px-2 py-2.5 text-[14px] font-semibold text-ink/75">
-                    {item.label}
-                  </span>
-                  <ul className="pl-4">
-                    {item.children.map((child) => (
-                      <li key={child.href}>
-                        {child.href.startsWith('/') ? (
-                          <Link
-                            to={child.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block px-2 py-2 text-[13px] text-ink/55 hover:text-ink transition-colors duration-150"
-                          >
-                            {child.label}
-                          </Link>
-                        ) : (
-                          <a
-                            href={child.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block px-2 py-2 text-[13px] text-ink/55 hover:text-ink transition-colors duration-150"
-                          >
-                            {child.label}
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ) : (
-                <li key={item.href}>
-                  {item.href.startsWith('/') ? (
-                    <Link
-                      to={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-2 py-2.5 text-[14px] text-ink/55 hover:text-ink transition-colors duration-150"
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-2 py-2.5 text-[14px] text-ink/55 hover:text-ink transition-colors duration-150"
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                </li>
-              )
-            )}
+            ))}
           </ul>
+
+          <div className="ml-auto hidden items-center gap-2 lg:ml-0 lg:flex">
+            <button type="button" className="grid h-9 w-9 place-items-center border border-oss-blue/20 text-oss-blue transition-colors hover:bg-oss-blue hover:text-white" aria-label={currentLang === 'en' ? 'Search' : 'Rechercher'}>
+              <Search className="h-4 w-4" />
+            </button>
+            <div className="relative" ref={langRef}>
+              <button
+                type="button"
+                onClick={() => setLangOpen((value) => !value)}
+                className="flex h-9 items-center gap-1.5 border border-oss-blue/20 px-3 text-xs font-bold text-oss-blue-dark transition-colors hover:border-oss-blue"
+                aria-expanded={langOpen}
+              >
+                <Globe2 className="h-4 w-4 text-oss-blue" />
+                {currentLang.toUpperCase()}
+                <ChevronDown className="h-3 w-3" />
+              </button>
+              <div className={`absolute right-0 top-full mt-2 w-32 border-t-2 border-oss-ochre bg-white p-1 shadow-lg transition-all ${langOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
+                {languages.map((language) => (
+                  <button
+                    key={language.code}
+                    type="button"
+                    onClick={() => switchLang(language.code)}
+                    className={`block w-full px-3 py-2 text-left text-sm transition-colors hover:bg-oss-blue/5 ${currentLang === language.code ? 'font-bold text-oss-blue' : 'text-ink/70'}`}
+                  >
+                    {language.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Link
+              to={`/${currentLang}/report`}
+              className="inline-flex h-9 items-center gap-2 bg-oss-ochre px-3 text-xs font-bold text-oss-blue-dark transition-colors hover:bg-oss-blue hover:text-white"
+            >
+              <AlertCircle className="h-4 w-4" />
+              {currentLang === 'en' ? 'Complaints' : 'Plaintes'}
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((value) => !value)}
+            className="ml-auto grid h-10 w-10 place-items-center bg-oss-blue text-white lg:hidden"
+            aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+
+        <div className={`overflow-y-auto border-t border-oss-blue/10 bg-white transition-[max-height,opacity] duration-200 lg:hidden ${mobileOpen ? 'max-h-[calc(100dvh-80px)] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="mx-auto max-w-7xl px-5 py-4">
+            {navItems.map((item) => (
+              <div key={item.label} className="border-b border-oss-blue/10 py-1">
+                {item.children ? (
+                  <>
+                    <div className="py-2 text-sm font-bold text-oss-blue-dark">{item.label}</div>
+                    <div className="grid gap-1 pb-2 pl-3">
+                      {item.children.map((child) => renderLink(child.href, child.label, 'py-1.5 text-sm text-ink/65 hover:text-oss-blue', child.href))}
+                    </div>
+                  </>
+                ) : renderLink(item.href, item.label, 'block py-2 text-sm font-bold text-oss-blue-dark')}
+              </div>
+            ))}
+            <div className="flex items-center justify-between pt-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-ink/45">Langue</span>
+              <div className="flex gap-2">
+                {languages.map((language) => (
+                  <button key={language.code} type="button" onClick={() => switchLang(language.code)} className={`border px-3 py-1.5 text-xs font-bold ${currentLang === language.code ? 'border-oss-blue bg-oss-blue text-white' : 'border-oss-blue/20 text-oss-blue'}`}>
+                    {language.display}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Link
+              to={`/${currentLang}/report`}
+              className="mt-4 flex min-h-11 items-center justify-center gap-2 bg-oss-ochre px-4 text-sm font-bold text-oss-blue-dark"
+            >
+              <AlertCircle className="h-4 w-4" />
+              {currentLang === 'en' ? 'File a complaint' : 'Déposer une plainte'}
+            </Link>
+          </div>
         </div>
-      </div>
-    </header>
-    {/* Constant-height spacer — pushes content below the fixed navbar so
-        pages never need their own top-padding hack. Always sized to the
-        navbar's EXPANDED height (144px = h-36); when the navbar shrinks on
-        scroll, the gap shows the body's bone background (same as content),
-        so it's imperceptible. Skipped when `overlay` is set (full-bleed
-        hero pages). */}
-    {!overlay && <div className="h-36" aria-hidden="true" />}
+      </header>
+      {!overlay && <div className="h-20" aria-hidden="true" />}
     </>
   );
 }

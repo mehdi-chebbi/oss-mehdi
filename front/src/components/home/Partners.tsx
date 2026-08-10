@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { PartnerData } from '@/api/auth';
 import { useLocale } from '@/context/locale';
 
@@ -13,41 +14,24 @@ const localLogoByPartnerName: Record<string, string> = {
   UNEP: '/logo/unep.png',
   COOP: '/logo/coop.png',
   GIZ: '/logo/giz.png',
-  "Ministère de l'Environnement du Climat et de la Biodiversité":
-    '/logo/luxembourg-environment.png',
+  "Ministère de l'Environnement du Climat et de la Biodiversité": '/logo/luxembourg-environment.png',
   'Swiss Confederation': '/logo/swiss-confederation.svg',
   'European Union': '/logo/european-union.svg',
   'Europe et Étranger': '/logo/europe-foreign-affairs.jpg',
-  'Ministère de la Transition Écologique et Solidaire':
-    '/logo/france-ecological-transition.svg',
+  'Ministère de la Transition Écologique et Solidaire': '/logo/france-ecological-transition.svg',
   AFD: '/logo/afd.png',
 };
 
-// Edge fade mask — applied to the row viewport (not the track).
-const fadeMask = {
-  maskImage:
-    'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-  WebkitMaskImage:
-    'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-} as React.CSSProperties;
-
 function LogoTile({ name, image }: { name: string; image: string }) {
-  const logoSource = localLogoByPartnerName[name] ?? image;
-
   return (
-    <div className="shrink-0 px-8 lg:px-12 flex items-center justify-center h-28">
+    <div className="group relative flex h-28 w-60 shrink-0 items-center justify-center overflow-hidden border-r border-oss-line bg-white px-6 py-5 transition-colors duration-300 hover:bg-oss-blue/5 lg:h-32 lg:w-72">
       <img
-        src={logoSource}
+        src={localLogoByPartnerName[name] ?? image}
         alt={name}
         loading="lazy"
-        className="
-          h-16 lg:h-20 w-auto max-w-[280px] object-contain
-          opacity-70
-          transition-all duration-300 ease-out
-          hover:opacity-100 hover:scale-105
-          select-none
-        "
+        className="h-14 w-auto max-w-[190px] select-none object-contain transition-transform duration-300 ease-out group-hover:scale-[1.15] lg:h-16"
       />
+      <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-oss-ochre transition-transform duration-300 ease-out group-hover:scale-x-100" aria-hidden="true" />
     </div>
   );
 }
@@ -58,58 +42,64 @@ interface PartnersProps {
 
 export default function Partners({ items: partners }: PartnersProps) {
   const { locale } = useLocale();
-
+  const [paused, setPaused] = useState(false);
   if (partners.length === 0) return null;
 
-  const row1 = partners.filter((p) => p.row_number === 1);
-  const row2 = partners.filter((p) => p.row_number === 2);
-
-  // Duplicate each list once -> track is exactly 2x content, so the
-  // -50% translate yields a seamless loop.
+  const configuredRow1 = partners.filter((partner) => partner.row_number === 1);
+  const configuredRow2 = partners.filter((partner) => partner.row_number === 2);
+  const row1 = configuredRow1.length > 0 ? configuredRow1 : partners.filter((_, index) => index % 2 === 0);
+  const row2 = configuredRow2.length > 0 ? configuredRow2 : partners.filter((_, index) => index % 2 === 1);
   const row1Track = [...row1, ...row1];
   const row2Track = [...row2, ...row2];
 
+  const fadeMask = {
+    maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+    WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+  };
+
   return (
-    <section id="partenaires" className="bg-[#ffffff] pt-4 lg:pt-6 pb-20 lg:pb-28">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section heading */}
-        <div className="mb-10 lg:mb-12 max-w-2xl">
-          <div className="h-1 w-12 bg-[#489e42] mb-5" />
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight leading-tight">
-            {locale === 'fr' ? 'Nos partenaires' : 'Our Partners'}
+    <section id="partenaires" className="bg-oss-paper py-10 lg:py-12">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+        <div className="mb-10 max-w-2xl lg:mb-12">
+          <p className="oss-kicker mb-4">{locale === 'fr' ? 'Coopération' : 'Cooperation'}</p>
+          <h2 className="oss-section-title">
+            {locale === 'fr' ? 'Nos partenaires' : 'Our partners'}
           </h2>
         </div>
       </div>
 
-      {/* Full-width marquee rows */}
-      <div className="flex w-full flex-col gap-6 lg:gap-8">
-          {/* Row 1 — scrolls right */}
-          {row1Track.length > 0 && (
-            <div className="relative overflow-hidden" style={fadeMask}>
-              <div
-                className="flex w-max group hover:[animation-play-state:paused]"
-                style={{ animation: 'marquee-right 50s linear infinite' }}
-              >
-                {row1Track.map((p, i) => (
-                  <LogoTile key={`r1-${i}`} name={p.name} image={p.image} />
-                ))}
-              </div>
+      <div
+        className="grid gap-3"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocusCapture={() => setPaused(true)}
+        onBlurCapture={() => setPaused(false)}
+      >
+        {row1.length > 0 && (
+          <div className="overflow-hidden" style={fadeMask}>
+            <div
+              className="flex w-max motion-reduce:[animation:none]"
+              style={{ animation: 'marquee-right 48s linear infinite', animationPlayState: paused ? 'paused' : 'running' }}
+            >
+              {row1Track.map((partner, index) => (
+                <LogoTile key={`row-1-${partner.id}-${index}`} name={partner.name} image={partner.image} />
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Row 2 — scrolls left */}
-          {row2Track.length > 0 && (
-            <div className="relative overflow-hidden" style={fadeMask}>
-              <div
-                className="flex w-max group hover:[animation-play-state:paused]"
-                style={{ animation: 'marquee-left 60s linear infinite' }}
-              >
-                {row2Track.map((p, i) => (
-                  <LogoTile key={`r2-${i}`} name={p.name} image={p.image} />
-                ))}
-              </div>
+        {row2.length > 0 && (
+          <div className="overflow-hidden" style={fadeMask}>
+            <div
+              className="flex w-max motion-reduce:[animation:none]"
+              style={{ animation: 'marquee-left 54s linear infinite', animationPlayState: paused ? 'paused' : 'running' }}
+            >
+              {row2Track.map((partner, index) => (
+                <LogoTile key={`row-2-${partner.id}-${index}`} name={partner.name} image={partner.image} />
+              ))}
             </div>
-          )}
+          </div>
+        )}
       </div>
     </section>
   );

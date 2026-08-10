@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ArrowRight, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { ArrowRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import { contactInfo } from '@/data/contact';
+import type { Locale } from '@/context/locale';
 
-// Map label to icon component
 const iconMap: Record<string, React.ElementType> = {
   Adresse: MapPin,
   Téléphone: Phone,
@@ -12,48 +13,35 @@ const iconMap: Record<string, React.ElementType> = {
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const { lang } = useParams<{ lang: string }>();
+  const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+  const labels = locale === 'en'
+    ? { title: 'Contact us', intro: 'A question, partnership proposal or information request? Our team is ready to help.', name: 'Full name', namePlaceholder: 'Your name', subject: 'Subject', subjectPlaceholder: 'Subject of your message', message: 'Message', messagePlaceholder: 'Your message...', send: 'Send message', sent: 'Message sent', thanks: 'Thank you for your message. Our team will reply as soon as possible.' }
+    : { title: 'Contactez-nous', intro: 'Une question, une proposition de partenariat ou une demande d’information ? Notre équipe est à votre écoute.', name: 'Nom complet', namePlaceholder: 'Votre nom', subject: 'Sujet', subjectPlaceholder: 'Objet de votre message', message: 'Message', messagePlaceholder: 'Votre message...', send: 'Envoyer le message', sent: 'Message envoyé', thanks: 'Merci pour votre message. Notre équipe vous répondra dans les meilleurs délais.' };
 
   return (
-    <section id="contact" className="bg-[#ffffff] pt-4 lg:pt-6 pb-20 lg:pb-28">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section heading */}
-        <div className="mb-10 lg:mb-12 max-w-2xl">
-          <div className="h-1 w-12 bg-[#489e42] mb-5" />
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight leading-tight">
-            Contactez-nous
-          </h2>
+    <section id="contact" className="bg-oss-paper pb-20 pt-10 lg:pb-24 lg:pt-12">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+        <div className="mb-12 max-w-2xl">
+          <p className="oss-kicker mb-4">{locale === 'en' ? 'Get in touch' : 'Échangeons'}</p>
+          <h2 className="oss-section-title">{labels.title}</h2>
         </div>
 
-        {/* Two-column: info + form */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16">
-          {/* Left — contact info */}
-          <div className="flex flex-col gap-8">
-            <p className="font-serif text-[19px] text-ink/55 leading-[1.5]">
-              Une question, une proposition de partenariat ou une demande
-              d&apos;information ? Écrivez-nous, notre équipe vous répondra dans les
-              meilleurs délais.
-            </p>
-
-            <ul className="flex flex-col gap-6">
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.4fr] lg:gap-16">
+          <div className="bg-oss-blue-dark p-7 text-white sm:p-9">
+            <p className="border-l-4 border-oss-ochre pl-5 text-lg leading-relaxed text-white/80">{labels.intro}</p>
+            <ul className="mt-9 grid gap-6">
               {contactInfo.map((item) => {
-                const Icon = iconMap[item.label];
+                const Icon = iconMap[item.label] ?? MapPin;
                 return (
                   <li key={item.label} className="flex items-start gap-4">
-                    <span className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-[#489e42]/10 text-[#489e42]">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center bg-oss-blue text-white">
                       <Icon className="h-4 w-4" />
                     </span>
-                    <div className="min-w-0">
-                      <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-ink/40 mb-1">
-                        {item.label}
-                      </div>
-                      <div className="text-[15px] text-ink leading-snug">
-                        {item.value}
-                      </div>
+                    <div>
+                      <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-oss-ochre">{item.label}</div>
+                      <div className="mt-1 text-sm leading-relaxed text-white/78">{item.value}</div>
                     </div>
                   </li>
                 );
@@ -61,106 +49,38 @@ export default function Contact() {
             </ul>
           </div>
 
-          {/* Right — form */}
-          <div>
-            {submitted ? (
-              <div className="flex flex-col items-center justify-center text-center h-full min-h-[400px] p-8 rounded-2xl border border-[#489e42]/20 bg-[#489e42]/5">
-                <div className="w-14 h-14 rounded-full bg-[#489e42] flex items-center justify-center text-white mb-5">
-                  <ArrowRight className="h-6 w-6 -rotate-45" />
-                </div>
-                <h3 className="font-serif text-2xl font-bold text-ink mb-2">
-                  Message envoyé
-                </h3>
-                <p className="text-ink/55 text-sm max-w-sm">
-                  Merci pour votre message. Notre équipe vous répondra dans les
-                  meilleurs délais.
-                </p>
+          {submitted ? (
+            <div className="flex min-h-[400px] flex-col items-start justify-center border border-oss-blue/20 bg-oss-blue/5 p-8">
+              <div className="grid h-12 w-12 place-items-center bg-oss-blue text-white"><ArrowRight className="h-5 w-5 -rotate-45" /></div>
+              <h3 className="mt-6 text-2xl font-bold text-oss-blue-dark">{labels.sent}</h3>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-ink/65">{labels.thanks}</p>
+            </div>
+          ) : (
+            <form onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }} className="grid gap-5" noValidate>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark" htmlFor="name">
+                  {labels.name}
+                  <input id="name" name="name" type="text" required placeholder={labels.namePlaceholder} className="min-h-12 border border-oss-blue/25 bg-white px-4 text-[15px] font-normal normal-case tracking-normal text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-oss-blue focus:ring-2 focus:ring-oss-blue/10" />
+                </label>
+                <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark" htmlFor="email">
+                  Email
+                  <input id="email" name="email" type="email" required placeholder="vous@exemple.com" className="min-h-12 border border-oss-blue/25 bg-white px-4 text-[15px] font-normal normal-case tracking-normal text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-oss-blue focus:ring-2 focus:ring-oss-blue/10" />
+                </label>
               </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-5"
-                noValidate
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="flex flex-col gap-2">
-                    <label
-                      htmlFor="name"
-                      className="text-[12px] font-semibold tracking-wide uppercase text-ink/60"
-                    >
-                      Nom complet
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      placeholder="Votre nom"
-                      className="px-4 py-3 rounded-lg border border-ink/15 bg-white text-ink placeholder:text-ink/30 text-[15px] focus:outline-none focus:border-[#489e42] focus:ring-2 focus:ring-[#489e42]/15 transition-colors"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label
-                      htmlFor="email"
-                      className="text-[12px] font-semibold tracking-wide uppercase text-ink/60"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      placeholder="vous@exemple.com"
-                      className="px-4 py-3 rounded-lg border border-ink/15 bg-white text-ink placeholder:text-ink/30 text-[15px] focus:outline-none focus:border-[#489e42] focus:ring-2 focus:ring-[#489e42]/15 transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="subject"
-                    className="text-[12px] font-semibold tracking-wide uppercase text-ink/60"
-                  >
-                    Sujet
-                  </label>
-                  <input
-                    id="subject"
-                    name="subject"
-                    type="text"
-                    required
-                    placeholder="Objet de votre message"
-                    className="px-4 py-3 rounded-lg border border-ink/15 bg-white text-ink placeholder:text-ink/30 text-[15px] focus:outline-none focus:border-[#489e42] focus:ring-2 focus:ring-[#489e42]/15 transition-colors"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="message"
-                    className="text-[12px] font-semibold tracking-wide uppercase text-ink/60"
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={6}
-                    placeholder="Votre message..."
-                    className="px-4 py-3 rounded-lg border border-ink/15 bg-white text-ink placeholder:text-ink/30 text-[15px] focus:outline-none focus:border-[#489e42] focus:ring-2 focus:ring-[#489e42]/15 transition-colors resize-y min-h-[140px]"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="group self-start inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[#489e42] text-white text-[15px] font-semibold tracking-tight transition-colors hover:bg-[#3fa838] focus:outline-none focus:ring-2 focus:ring-[#489e42]/30 focus:ring-offset-2 focus:ring-offset-[#ffffff]"
-                >
-                  Envoyer le message
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
-              </form>
-            )}
-          </div>
+              <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark" htmlFor="subject">
+                {labels.subject}
+                <input id="subject" name="subject" type="text" required placeholder={labels.subjectPlaceholder} className="min-h-12 border border-oss-blue/25 bg-white px-4 text-[15px] font-normal normal-case tracking-normal text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-oss-blue focus:ring-2 focus:ring-oss-blue/10" />
+              </label>
+              <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark" htmlFor="message">
+                {labels.message}
+                <textarea id="message" name="message" required rows={6} placeholder={labels.messagePlaceholder} className="min-h-36 resize-y border border-oss-blue/25 bg-white px-4 py-3 text-[15px] font-normal normal-case tracking-normal text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-oss-blue focus:ring-2 focus:ring-oss-blue/10" />
+              </label>
+              <button type="submit" className="inline-flex min-h-12 w-fit items-center gap-2 bg-oss-blue px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark focus:outline-none focus:ring-2 focus:ring-oss-blue focus:ring-offset-2">
+                {labels.send}
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>

@@ -19,7 +19,7 @@ export default function SocialSidebar() {
 
   return (
     <aside className="fixed left-0 top-[55%] -translate-y-1/2 z-40 hidden lg:flex flex-col items-center">
-      <div className="flex flex-col items-center gap-3 py-3 px-2 bg-[#489e42]">
+      <div className="flex flex-col items-center gap-3 bg-oss-blue px-2 py-3">
         {socials.map((s) => (
           <a
             key={s.id}

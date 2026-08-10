@@ -36,19 +36,19 @@ export default function News({ articles }: NewsProps) {
   const [featured, ...rest] = articles;
 
   return (
-    <section id="actualites" className="bg-[#ffffff] pt-4 lg:pt-6 pb-20 lg:pb-28">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="actualites" className="bg-oss-paper py-10 lg:py-12">
+      <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 flex w-full items-end justify-between gap-4">
           <div>
-            <div className="h-1 w-12 bg-[#489e42] mb-5" />
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight leading-tight">
+            <p className="oss-kicker mb-4">{locale === 'fr' ? 'À la une' : 'Highlights'}</p>
+            <h2 className="oss-section-title">
               {locale === 'fr' ? 'Actualités' : 'News'}
             </h2>
           </div>
           <Link
             to={`/${locale}/news`}
-            className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-[#489e42] hover:gap-2.5 transition-all whitespace-nowrap"
+            className="hidden items-center gap-2 border-b-2 border-oss-ochre pb-1 text-sm font-bold text-oss-blue transition-colors hover:text-oss-blue-dark sm:flex"
           >
             {locale === 'fr' ? 'Toutes les actualités' : 'All news'}
             <ArrowRight className="w-4 h-4" />
@@ -59,10 +59,10 @@ export default function News({ articles }: NewsProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-10 lg:gap-12">
           {/* Featured story */}
           {featured && (
-            <article className="lg:border-r lg:border-ink/10 lg:pr-12 lg:pb-0 pb-10 lg:border-b-0 border-b border-ink/10">
+            <article className="border-b border-oss-line pb-10 lg:border-b-0 lg:border-r lg:pr-12">
               <Link to={`/${locale}/news/${featured.slug}`} className="group block">
                 {/* Featured image (16:9) */}
-                <div className="relative w-full aspect-[16/9] overflow-hidden mb-5">
+                <div className="relative mb-6 aspect-[16/9] w-full overflow-hidden border-b-4 border-oss-ochre">
                   {getThumbnail(featured) && (
                     <img
                       src={getThumbnail(featured)}
@@ -70,31 +70,24 @@ export default function News({ articles }: NewsProps) {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                   )}
-                  <div
-                    className="absolute inset-0 opacity-30 pointer-events-none"
-                    style={{
-                      backgroundImage:
-                        'repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 10px)',
-                    }}
-                  />
                 </div>
 
                 {/* Headline */}
-                <h3 className="font-serif font-bold text-[clamp(28px,3.4vw,42px)] leading-[1.08] text-ink mb-4 transition-colors">
-                  <span className="bg-gradient-to-r from-[#489e42] to-[#489e42] bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
+                <h3 className="mb-4 text-[clamp(28px,3.4vw,42px)] font-bold leading-[1.08] text-oss-blue-dark transition-colors">
+                  <span className="bg-gradient-to-r from-oss-blue to-oss-blue bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
                     {locale === 'fr' ? featured.title_fr : featured.title_en}
                   </span>
                 </h3>
 
                 {/* Dek (truncated body) */}
-                <p className="font-serif text-[19px] text-ink/55 leading-[1.5] mb-5">
+                <p className="mb-5 text-[17px] leading-[1.6] text-ink/65">
                   {truncate(locale === 'fr' ? featured.body_fr : featured.body_en)}
                 </p>
 
                 {/* Byline */}
-                <div className="text-[12px] uppercase tracking-[0.08em] text-ink/45 border-t border-ink/10 pt-3 flex items-center justify-between">
+                <div className="flex items-center justify-between border-t border-oss-line pt-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-ink/50">
                   <span>{formatDate(featured.date, locale)}</span>
-                  <span className="flex items-center gap-1.5 text-[#489e42] font-semibold normal-case tracking-normal">
+                  <span className="flex items-center gap-1.5 font-bold normal-case tracking-normal text-oss-blue">
                     {locale === 'fr' ? 'Lire' : 'Read'}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
@@ -125,15 +118,15 @@ export default function News({ articles }: NewsProps) {
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                           />
                         )}
-                        <span className="absolute bottom-2 right-2 text-[10px] font-medium uppercase tracking-wider text-white/80 bg-black/40 px-1.5 py-0.5 rounded-sm">
+                        <span className="absolute bottom-2 right-2 bg-oss-blue-dark/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                           {formatDate(h.date, locale)}
                         </span>
                       </div>
 
                       {/* Title */}
                       <div className="min-w-0">
-                        <h4 className="font-serif font-semibold text-[15px] leading-[1.25] text-ink">
-                          <span className="bg-gradient-to-r from-[#489e42] to-[#489e42] bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
+                        <h4 className="text-[16px] font-bold leading-[1.3] text-oss-blue-dark">
+                          <span className="bg-gradient-to-r from-oss-blue to-oss-blue bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
                             {locale === 'fr' ? h.title_fr : h.title_en}
                           </span>
                         </h4>
@@ -150,7 +143,7 @@ export default function News({ articles }: NewsProps) {
         <div className="sm:hidden mt-8 flex justify-end">
           <Link
             to={`/${locale}/news`}
-            className="flex items-center gap-1.5 text-sm font-semibold text-[#489e42]"
+            className="flex items-center gap-1.5 text-sm font-bold text-oss-blue"
           >
             {locale === 'fr' ? 'Toutes les actualités' : 'All news'}
             <ArrowRight className="w-4 h-4" />

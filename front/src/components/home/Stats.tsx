@@ -6,54 +6,22 @@ export default function Stats() {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
-  const label = (s: (typeof stats)[number]) =>
-    locale === 'en' ? s.label_en : s.label_fr;
-
   return (
-    <section className="relative overflow-hidden border-t border-b border-[#D9D4CB] bg-[#EFECE5] py-7 lg:py-8">
-      {/* Fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[60px] bg-gradient-to-r from-[#EFECE5] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[60px] bg-gradient-to-l from-[#EFECE5] to-transparent" />
-
-      {/* Scrolling track — duplicated for seamless loop */}
-      <div className="flex w-max animate-[ticker-scroll_28s_linear_infinite]">
-        {/* First copy */}
-        {stats.map((s) => (
-          <div key={s.label_en} className="flex items-center whitespace-nowrap">
-            <span className="flex items-baseline gap-3">
-              <span className="font-mono text-[16px] lg:text-[18px] uppercase tracking-[0.08em] text-stone-600">
-                {label(s)}
-              </span>
-              <span className="font-mono text-[24px] lg:text-[28px] leading-none font-bold tracking-tight text-stone-800">
-                {s.value}
-              </span>
-            </span>
-            <span className="mx-8 text-xl text-stone-400">|</span>
-          </div>
-        ))}
-        {/* Duplicate for seamless loop */}
-        {stats.map((s) => (
-          <div key={`dup-${s.label_en}`} className="flex items-center whitespace-nowrap">
-            <span className="flex items-baseline gap-3">
-              <span className="font-mono text-[16px] lg:text-[18px] uppercase tracking-[0.08em] text-stone-600">
-                {label(s)}
-              </span>
-              <span className="font-mono text-[24px] lg:text-[28px] leading-none font-bold tracking-tight text-stone-800">
-                {s.value}
-              </span>
-            </span>
-            <span className="mx-8 text-xl text-stone-400">|</span>
+    <section className="bg-oss-paper" aria-label={locale === 'en' ? 'OSS key figures' : 'L’OSS en chiffres'}>
+      <div className="mx-auto grid max-w-[1400px] grid-cols-2 px-6 sm:px-8 lg:grid-cols-4 lg:px-12">
+        {stats.map((stat, index) => (
+          <div
+            key={stat.label_en}
+            className={`relative py-8 sm:py-10 ${index % 2 === 0 ? 'pr-5' : 'border-l border-oss-line pl-5'} ${index > 1 ? 'border-t lg:border-t-0' : ''} lg:border-l lg:px-8 lg:first:border-l-0 lg:first:pl-0`}
+          >
+            <div className="text-3xl font-bold leading-none text-oss-blue sm:text-4xl">{stat.value}</div>
+            <div className="mt-2 max-w-[15rem] text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark/65 sm:text-sm">
+              {locale === 'en' ? stat.label_en : stat.label_fr}
+            </div>
+            <span className={`absolute bottom-0 left-0 h-1 w-12 ${index % 3 === 0 ? 'bg-oss-blue' : index % 3 === 1 ? 'bg-oss-green' : 'bg-oss-ochre'}`} aria-hidden="true" />
           </div>
         ))}
       </div>
-
-      {/* Keyframes injected via style tag — Tailwind can't do arbitrary @keyframes */}
-      <style>{`
-        @keyframes ticker-scroll {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-      `}</style>
     </section>
   );
 }
