@@ -13,6 +13,7 @@ import {
 import { statusLabel } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { ProjectDetailLoaderData } from '@/loaders/public';
+import BrandBands from '@/components/shared/BrandBands';
 
 function renderDescription(body: string): React.ReactNode {
   if (!body) return null;
@@ -24,7 +25,7 @@ function renderDescription(body: string): React.ReactNode {
   return paragraphs.map((p, i) => (
     <p
       key={i}
-      className="mb-6 text-[16.5px] leading-[1.85] text-ink/75 last:mb-0 sm:text-[17px]"
+      className="mb-6 text-[16.5px] leading-[1.8] text-ink/70 last:mb-0 sm:text-[17px]"
     >
       {p}
     </p>
@@ -39,7 +40,7 @@ function renderSidebarDescription(body: string): React.ReactNode {
     .filter(Boolean);
 
   return paragraphs.map((p, i) => (
-    <p key={i} className="mb-4 text-sm leading-[1.75] text-ink/65 last:mb-0">
+    <p key={i} className="mb-4 text-sm leading-[1.7] text-ink/65 last:mb-0">
       {p}
     </p>
   ));
@@ -82,20 +83,21 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="flex min-h-[60vh] flex-1 items-center justify-center bg-bone px-5 py-20">
-        <div className="w-full max-w-md rounded-2xl border border-ink/10 bg-white p-8 text-center shadow-[0_20px_55px_rgba(28,55,39,0.06)]">
-          <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-forest-700" />
-          <h1 className="mb-3 font-serif text-3xl font-bold text-ink">404</h1>
+      <div className="font-oss flex min-h-[60vh] flex-1 items-center justify-center bg-oss-paper px-5 py-20">
+        <div className="relative w-full max-w-md overflow-hidden border border-oss-line bg-white p-8 pb-11 text-center">
+          <div className="mx-auto mb-5 h-1 w-10 bg-oss-ochre" />
+          <h1 className="mb-3 text-4xl font-bold text-oss-blue-dark">404</h1>
           <p className="mb-7 text-ink/55">
             {locale === 'fr' ? 'Projet introuvable.' : 'Project not found.'}
           </p>
           <Link
             to={`/${locale}/projects`}
-            className="inline-flex items-center gap-2 rounded-lg border border-forest-700/20 bg-forest-50 px-4 py-2.5 text-sm font-semibold text-forest-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-forest-700/35 hover:bg-white hover:shadow-sm"
+            className="inline-flex items-center gap-2 bg-oss-blue px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark"
           >
             <ArrowLeft className="h-4 w-4" />
             {locale === 'fr' ? 'Retour aux projets' : 'Back to projects'}
           </Link>
+          <BrandBands className="absolute inset-x-0 bottom-0" />
         </div>
       </div>
     );
@@ -111,88 +113,45 @@ export default function ProjectDetail() {
   const hasResults = Boolean(results || resultFiles.length);
 
   return (
-    <div className="relative overflow-hidden bg-bone pb-24">
+    <div className="font-oss relative overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
       <style>{`
         @keyframes projectFadeUp {
           from { opacity: 0; transform: translateY(14px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes projectFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
         }
         @media (prefers-reduced-motion: reduce) {
           .project-motion { animation: none !important; }
         }
       `}</style>
 
-      {/* Quiet institutional header band */}
-      <div className="border-b border-ink/8 bg-white/75">
-        <div className="mx-auto max-w-6xl px-5 py-4 sm:px-6 lg:px-8">
-          <nav
-            aria-label="Breadcrumb"
-            className="project-motion flex flex-wrap items-center gap-2 text-sm text-ink/45 [animation:projectFadeIn_.45s_ease-out_both]"
-          >
-            <Link
-              to={`/${locale}/projects`}
-              className="transition-colors duration-200 hover:text-forest-700"
-            >
-              {locale === 'fr' ? 'Projets' : 'Projects'}
-            </Link>
-            <span aria-hidden="true" className="text-ink/20">/</span>
-            <Link
-              to={`/${locale}/projects/${deptSlugValue}`}
-              className="font-medium text-ink/60 transition-colors duration-200 hover:text-forest-700"
-            >
-              {deptTitle}
-            </Link>
-          </nav>
-        </div>
-      </div>
-
-      <article className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-        {/* Project heading */}
-        <header className="project-motion pb-10 pt-10 sm:pb-12 sm:pt-12 [animation:projectFadeUp_.55s_ease-out_both]">
-          <Link
-            to={`/${locale}/projects/${deptSlugValue}`}
-            className="group mb-7 inline-flex items-center gap-2 text-sm font-medium text-ink/50 transition-colors duration-200 hover:text-forest-700"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
-            {locale === 'fr' ? 'Tous les projets' : 'All projects'}
-          </Link>
-
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-px w-10 bg-forest-700" />
-            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-forest-700">
-              {deptTitle}
-            </span>
-          </div>
-
-          <h1 className="max-w-4xl font-serif text-[clamp(30px,4vw,48px)] font-bold leading-[1.12] tracking-[-0.02em] text-ink">
+      <article className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+        <header className="project-motion pb-10 pt-12 sm:pb-12 sm:pt-16 [animation:projectFadeUp_.55s_ease-out_both]">
+          <h1 className="max-w-5xl text-[clamp(32px,4.2vw,56px)] font-bold leading-[1.08] tracking-[-0.03em] text-oss-blue-dark">
             {title}
           </h1>
         </header>
 
-        <div className="grid grid-cols-1 gap-9 lg:grid-cols-[minmax(0,1fr)_332px] lg:items-start lg:gap-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_350px] lg:items-start lg:gap-10">
           {/* Main content */}
           <div className="order-2 min-w-0 lg:order-1">
             {project.image && (
-              <figure className="project-motion group relative mb-10 overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-[0_18px_45px_rgba(35,64,46,0.07)] [animation:projectFadeUp_.6s_.08s_ease-out_both]">
-                <div className="aspect-[16/9] overflow-hidden bg-ink/5">
+              <figure className="project-motion group relative mb-8 overflow-hidden bg-oss-blue-dark [animation:projectFadeUp_.6s_.08s_ease-out_both]">
+                <div className="aspect-[16/9] overflow-hidden">
                   <img
                     src={project.image}
                     alt={title}
                     className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
                   />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/25 to-transparent opacity-60" />
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-oss-blue-dark/55 to-transparent" />
+                <BrandBands className="absolute inset-x-0 bottom-0" />
               </figure>
             )}
 
             {!project.image && !description && (
-              <div className="project-motion mb-10 flex aspect-[16/9] items-center justify-center rounded-2xl border border-ink/8 bg-white shadow-[0_18px_45px_rgba(35,64,46,0.05)] [animation:projectFadeUp_.6s_.08s_ease-out_both]">
-                <div className="flex flex-col items-center gap-3 text-ink/30">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-forest-50 text-forest-700/50">
+              <div className="project-motion mb-8 flex aspect-[16/9] items-center justify-center bg-oss-blue-dark [animation:projectFadeUp_.6s_.08s_ease-out_both]">
+                <div className="flex flex-col items-center gap-3 text-white/42">
+                  <div className="flex h-14 w-14 items-center justify-center border border-white/15 text-oss-blue-light">
                     <Briefcase className="h-6 w-6" />
                   </div>
                   <span className="text-sm font-medium">
@@ -205,25 +164,25 @@ export default function ProjectDetail() {
             {description && (
               <section
                 aria-labelledby="project-overview"
-                className="project-motion rounded-2xl border border-ink/8 bg-white p-6 shadow-[0_16px_42px_rgba(35,64,46,0.05)] sm:p-8 [animation:projectFadeUp_.6s_.12s_ease-out_both]"
+                className="project-motion border-l-4 border-oss-ochre bg-white p-6 sm:p-8 [animation:projectFadeUp_.6s_.12s_ease-out_both]"
               >
                 <div className="mb-7 flex items-center gap-3">
-                  <span className="h-8 w-1 rounded-full bg-forest-700" />
+                  <span className="h-8 w-1 bg-oss-blue" />
                   <h2
                     id="project-overview"
-                    className="font-serif text-2xl font-bold text-ink sm:text-[28px]"
+                    className="text-2xl font-bold text-oss-blue-dark sm:text-[28px]"
                   >
                     {locale === 'fr' ? 'Présentation du projet' : 'Project overview'}
                   </h2>
                 </div>
-                <div className="font-serif">{renderDescription(description)}</div>
+                <div>{renderDescription(description)}</div>
               </section>
             )}
 
-            <div className="mt-10 border-t border-ink/10 pt-7">
+            <div className="mt-8 border-t border-oss-line pt-7">
               <Link
                 to={`/${locale}/projects/${deptSlugValue}`}
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-ink/55 transition-colors duration-200 hover:text-forest-700"
+                className="group inline-flex items-center gap-2 text-sm font-bold text-ink/55 transition-colors duration-200 hover:text-oss-blue"
               >
                 <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
                 {locale === 'fr' ? 'Retour à tous les projets' : 'Back to all projects'}
@@ -233,19 +192,19 @@ export default function ProjectDetail() {
 
           {/* Project facts */}
           <aside className="order-1 space-y-5 lg:order-2 lg:sticky lg:top-24">
-            <section className="project-motion overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-[0_18px_48px_rgba(35,64,46,0.07)] [animation:projectFadeUp_.55s_.08s_ease-out_both]">
-              <div className="border-b border-ink/8 bg-forest-700 px-6 py-5 text-white">
-                <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/65">
+            <section className="project-motion overflow-hidden border border-oss-line bg-white [animation:projectFadeUp_.55s_.08s_ease-out_both]">
+              <div className="border-b border-white/10 bg-oss-blue-dark px-6 py-5 text-white">
+                <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.1em] text-oss-blue-light">
                   {locale === 'fr' ? 'Fiche projet' : 'Project record'}
                 </div>
-                <h2 className="text-lg font-semibold">
+                <h2 className="text-lg font-bold">
                   {locale === 'fr' ? 'Informations du projet' : 'Project information'}
                 </h2>
               </div>
 
-              <dl className="divide-y divide-ink/8 px-6">
+              <dl className="divide-y divide-oss-line px-6">
                 <div className="flex items-start gap-3 py-5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-forest-50 text-forest-700">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-blue/10 text-oss-blue">
                     <CircleDot className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -254,10 +213,10 @@ export default function ProjectDetail() {
                     </dt>
                     <dd>
                       <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-sm font-semibold ${
+                        className={`inline-flex px-2.5 py-1 text-xs font-bold uppercase tracking-[0.05em] ${
                           project.status === 'en_cours'
-                            ? 'bg-forest-50 text-forest-700'
-                            : 'bg-ink/[0.05] text-ink/65'
+                            ? 'bg-oss-blue text-white'
+                            : 'bg-oss-paper text-ink/65'
                         }`}
                       >
                         {statusLabel(project.status, locale)}
@@ -267,24 +226,24 @@ export default function ProjectDetail() {
                 </div>
 
                 <div className="flex items-start gap-3 py-5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-forest-50 text-forest-700">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-blue/10 text-oss-blue">
                     <CalendarDays className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
                     <dt className="mb-1 text-xs font-medium text-ink/45">
                       {locale === 'fr' ? 'Durée' : 'Duration'}
                     </dt>
-                    <dd className="font-semibold tabular-nums text-ink">{duration}</dd>
+                    <dd className="font-bold tabular-nums text-oss-blue-dark">{duration}</dd>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 py-5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-forest-50 text-forest-700">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-ochre/20 text-oss-blue-dark">
                     <Wallet className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
                     <dt className="mb-1 text-xs font-medium text-ink/45">Budget</dt>
-                    <dd className="break-words font-semibold leading-snug text-ink">
+                    <dd className="break-words font-bold leading-snug text-oss-blue-dark">
                       {project.budget ||
                         (locale === 'fr' ? 'Non renseigné' : 'Not specified')}
                     </dd>
@@ -292,7 +251,7 @@ export default function ProjectDetail() {
                 </div>
 
                 <div className="flex items-start gap-3 py-5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-forest-50 text-forest-700">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-green/10 text-oss-green">
                     <Building2 className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
@@ -302,7 +261,7 @@ export default function ProjectDetail() {
                     <dd>
                       <Link
                         to={`/${locale}/projects/${deptSlugValue}`}
-                        className="group inline-flex items-center gap-1.5 font-semibold leading-snug text-ink transition-colors duration-200 hover:text-forest-700"
+                        className="group inline-flex items-center gap-1.5 font-bold leading-snug text-oss-blue-dark transition-colors duration-200 hover:text-oss-blue"
                       >
                         <span>{deptTitle}</span>
                         <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
@@ -316,10 +275,10 @@ export default function ProjectDetail() {
             {hasResults && (
               <section
                 aria-labelledby="project-results"
-                className="project-motion overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-[0_18px_48px_rgba(35,64,46,0.07)] [animation:projectFadeUp_.55s_.14s_ease-out_both]"
+                className="project-motion overflow-hidden border border-oss-line bg-white [animation:projectFadeUp_.55s_.14s_ease-out_both]"
               >
-                <div className="border-b border-ink/8 px-6 py-5">
-                  <h2 id="project-results" className="text-lg font-semibold text-ink">
+                <div className="border-b border-oss-line border-t-4 border-t-oss-ochre px-6 py-5">
+                  <h2 id="project-results" className="text-lg font-bold text-oss-blue-dark">
                     {locale === 'fr' ? 'Résultats et livrables' : 'Results and deliverables'}
                   </h2>
                 </div>
@@ -328,8 +287,8 @@ export default function ProjectDetail() {
                   {results && <div>{renderSidebarDescription(results)}</div>}
 
                   {resultFiles.length > 0 && (
-                    <div className={results ? 'mt-5 border-t border-ink/10 pt-5' : ''}>
-                      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/45">
+                    <div className={results ? 'mt-5 border-t border-oss-line pt-5' : ''}>
+                      <h3 className="mb-3 text-[10px] font-bold uppercase tracking-[0.1em] text-oss-blue/58">
                         {locale === 'fr' ? 'Documents associés' : 'Related documents'}
                       </h3>
 
@@ -348,13 +307,13 @@ export default function ProjectDetail() {
                               href={file.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="group flex items-start gap-3 rounded-xl border border-ink/8 bg-bone/55 p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-forest-700/25 hover:bg-white hover:shadow-[0_8px_22px_rgba(35,64,46,0.07)]"
+                              className="group flex items-start gap-3 border border-oss-line bg-oss-paper p-3.5 transition-colors duration-200 hover:border-oss-blue/35 hover:bg-oss-blue/5"
                             >
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-forest-700/10 bg-white text-forest-700 shadow-sm">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-blue text-white">
                                 <FileText className="h-4 w-4" />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="text-sm font-semibold leading-snug text-ink transition-colors duration-200 group-hover:text-forest-700">
+                                <p className="text-sm font-bold leading-snug text-oss-blue-dark transition-colors duration-200 group-hover:text-oss-blue">
                                   {label}
                                 </p>
                                 <p className="mt-1.5 text-[11px] font-medium tracking-wide text-ink/40">
@@ -362,7 +321,7 @@ export default function ProjectDetail() {
                                   {size ? ` · ${size}` : ''}
                                 </p>
                               </div>
-                              <Download className="mt-1 h-4 w-4 shrink-0 text-ink/25 transition-all duration-200 group-hover:translate-y-0.5 group-hover:text-forest-700" />
+                              <Download className="mt-1 h-4 w-4 shrink-0 text-ink/25 transition-all duration-200 group-hover:translate-y-0.5 group-hover:text-oss-blue" />
                             </a>
                           );
                         })}

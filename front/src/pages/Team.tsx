@@ -10,31 +10,30 @@ const DEPARTMENTS = [
   { key: "appui", label: "Appui", labelEn: "Support" },
 ] as const;
 
-function MemberCard({ m, locale }: { m: TeamMemberData; locale: "fr" | "en" }) {
+function MemberCard({ m, locale, featured = false }: { m: TeamMemberData; locale: "fr" | "en"; featured?: boolean }) {
   const title = locale === "en" ? m.title_en : m.title_fr;
   const diplomas = locale === "en" ? m.diplomas_en : m.diplomas_fr;
   const nationality = locale === "en" ? m.nationality_en : m.nationality_fr;
 
   return (
-    <div className="bg-white rounded-xl border border-ink/[0.08] overflow-hidden hover:shadow-md transition-shadow duration-200 w-full max-w-[280px]">
-      <div className="flex justify-center pt-6 px-6">
-        <div className="w-[200px] h-[234px] rounded-lg overflow-hidden bg-ink/[0.04]">
-          {m.image ? (
-            <img src={m.image} alt={m.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-ink/15 text-5xl font-bold font-serif">{m.name.charAt(0)}</span>
-            </div>
-          )}
-        </div>
+    <article className={`group relative w-full overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/35 hover:bg-oss-blue/5 ${featured ? 'max-w-[340px]' : ''}`}>
+      <span className={`absolute inset-x-0 top-0 z-10 h-1.5 ${featured ? 'bg-oss-ochre' : 'bg-oss-blue'}`} aria-hidden="true" />
+      <div className={`overflow-hidden bg-oss-paper ${featured ? 'aspect-[1/1.08]' : 'aspect-[1/1.12]'}`}>
+        {m.image ? (
+          <img src={m.image} alt={m.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-oss-blue-dark">
+            <span className="text-6xl font-bold text-white/18">{m.name.charAt(0)}</span>
+          </div>
+        )}
       </div>
-      <div className="px-6 py-5 text-center">
-        <h3 className="text-base font-bold text-ink mb-1">{m.name}</h3>
-        {title && <p className="text-sm font-medium text-ink/70 mb-1">{title}</p>}
-        {nationality && <p className="text-xs font-medium text-forest-700 mb-1.5">{nationality}</p>}
-        {diplomas && <p className="text-xs text-ink/60 leading-relaxed">{diplomas}</p>}
+      <div className="min-h-40 p-5 sm:p-6">
+        <h3 className="text-lg font-bold leading-tight text-oss-blue-dark">{m.name}</h3>
+        {title && <p className="mt-2 text-sm font-medium leading-snug text-ink/68">{title}</p>}
+        {nationality && <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.07em] text-oss-blue">{nationality}</p>}
+        {diplomas && <p className="mt-3 border-t border-oss-line pt-3 text-xs leading-relaxed text-ink/52">{diplomas}</p>}
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -54,55 +53,70 @@ export default function Team() {
   }, [activeDept]);
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 lg:px-8">
-      <h1 className="text-3xl font-bold text-ink mb-8 font-serif">
-        {locale === "en" ? "Our Team" : "Notre équipe"}
-      </h1>
-
-      {/* Tabs */}
-      <div className="flex gap-1 mb-10 border-b border-ink/10">
-        {DEPARTMENTS.map((d) => (
-          <button
-            key={d.key}
-            onClick={() => setActiveDept(d.key)}
-            className={`px-5 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              activeDept === d.key
-                ? "border-forest-700 text-forest-700"
-                : "border-transparent text-ink/50 hover:text-ink/70"
-            }`}
-          >
-            {locale === "en" ? d.labelEn : d.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Grid */}
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-6 h-6 text-ink/30 animate-spin" />
+    <div className="font-oss min-h-screen overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
+      <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
+        <div>
+          <p className="oss-kicker mb-5">{locale === "en" ? "People and expertise" : "Capital humain & expertise"}</p>
+          <h1 className="text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">
+            {locale === "en" ? "Our Team" : "Notre équipe"}
+          </h1>
+          <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">
+            {locale === "en"
+              ? "A multicultural and multidisciplinary team working alongside member countries to turn environmental knowledge into action."
+              : "Une équipe multiculturelle et multidisciplinaire qui accompagne les pays membres pour transformer la connaissance environnementale en action."}
+          </p>
         </div>
-      ) : members.length === 0 ? (
-        <p className="text-ink/40 text-center py-16">
-          {locale === "en" ? "No members yet." : "Aucun membre pour le moment."}
-        </p>
-      ) : (
-        <>
-          {/* Direction: first member centered, rest in 3-col grid */}
-          {activeDept === "direction" && members.length > 0 && (
-            <div className="flex justify-center mb-6">
-              <MemberCard
-                m={members[0]}
-                locale={locale}
-              />
-            </div>
-          )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(activeDept === "direction" ? members.slice(1) : members).map((m) => (
-              <MemberCard key={m.id} m={m} locale={locale} />
-            ))}
+
+      </section>
+
+      <section className="mx-auto max-w-[1400px] px-6 pb-24 pt-2 sm:px-8 lg:px-12 lg:pb-28">
+        <div className="mb-10 grid border border-oss-line bg-white sm:grid-cols-2 lg:grid-cols-4" role="tablist" aria-label={locale === "en" ? "Team departments" : "Départements de l'équipe"}>
+          {DEPARTMENTS.map((department, index) => (
+            <button
+              key={department.key}
+              type="button"
+              role="tab"
+              aria-selected={activeDept === department.key}
+              onClick={() => setActiveDept(department.key)}
+              className={`relative min-h-16 px-5 py-4 text-left text-sm font-bold transition-colors duration-300 lg:border-l lg:first:border-l-0 ${activeDept === department.key ? "bg-oss-blue text-white" : "border-oss-line text-ink/52 hover:bg-oss-blue/5 hover:text-oss-blue-dark"}`}
+            >
+              <span className={`mr-3 text-xs ${activeDept === department.key ? 'text-oss-ochre' : 'text-oss-blue/48'}`}>0{index + 1}</span>
+              {locale === "en" ? department.labelEn : department.label}
+              {activeDept === department.key && <span className="absolute inset-x-0 bottom-0 h-1 bg-oss-ochre" aria-hidden="true" />}
+            </button>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="flex min-h-72 items-center justify-center bg-white">
+            <Loader2 className="h-7 w-7 animate-spin text-oss-blue" />
           </div>
-        </>
-      )}
+        ) : members.length === 0 ? (
+          <div className="flex min-h-72 items-center justify-center bg-white px-6 text-center text-ink/42">
+            {locale === "en" ? "No members yet." : "Aucun membre pour le moment."}
+          </div>
+        ) : (
+          <div key={activeDept} className="animate-[team-grid-in_500ms_cubic-bezier(0.16,1,0.3,1)]">
+            {activeDept === "direction" && members.length > 0 && (
+              <div className="mb-8 flex justify-center">
+                <MemberCard m={members[0]} locale={locale} featured />
+              </div>
+            )}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {(activeDept === "direction" ? members.slice(1) : members).map((member) => (
+                <MemberCard key={member.id} m={member} locale={locale} />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <style>{`
+        @keyframes team-grid-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

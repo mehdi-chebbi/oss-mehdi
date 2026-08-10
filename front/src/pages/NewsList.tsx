@@ -66,32 +66,31 @@ export default function NewsList() {
   const total = data.total;
 
   return (
-    <div className="bg-bone pb-20 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Heading */}
-        <div className="mb-10 max-w-2xl">
-          <div className="h-1 w-12 bg-[#489e42] mb-5" />
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+    <div className="font-oss relative min-h-screen overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
+      <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
+        <div className="max-w-3xl">
+          <p className="oss-kicker mb-5">{locale === 'fr' ? 'Information & événements' : 'Information & events'}</p>
+          <h1 className="text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">
             {locale === 'fr' ? 'Actualités' : 'News'}
           </h1>
-          <p className="text-ink/55 text-base lg:text-lg mt-4 leading-relaxed font-light">
+          <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">
             {locale === 'fr'
               ? 'Toutes les actualités et nouveautés de l\u2019OSS.'
               : 'All the latest news and updates from OSS.'}
           </p>
         </div>
+      </section>
 
-        {/* Filters bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          {/* Year filter */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-ink/50 whitespace-nowrap">
+      <section className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
+        <div className="mb-8 flex flex-col gap-4 border-y border-oss-line bg-white p-4 sm:flex-row sm:items-center sm:p-5">
+          <div className="flex items-center gap-3">
+            <label className="whitespace-nowrap text-xs font-bold uppercase tracking-[0.07em] text-oss-blue/65">
               {locale === 'fr' ? 'Année' : 'Year'}:
             </label>
             <select
               value={year || ''}
               onChange={(e) => updateParam('year', e.target.value || undefined)}
-              className="px-3 py-2 border border-ink/15 rounded-lg bg-white text-sm text-ink focus:outline-none focus:ring-2 focus:ring-[#489e42]"
+              className="border border-oss-line bg-oss-paper px-3 py-2.5 text-sm font-medium text-oss-blue-dark outline-none transition-colors focus:border-oss-blue"
             >
               <option value="">{locale === 'fr' ? 'Toutes' : 'All'}</option>
               {years.map((y) => (
@@ -100,16 +99,15 @@ export default function NewsList() {
             </select>
           </div>
 
-          {/* Search */}
-          <form onSubmit={handleSearch} className="flex items-center gap-2 flex-1 max-w-md">
+          <form onSubmit={handleSearch} className="flex max-w-xl flex-1 items-center gap-2 sm:ml-auto">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/30" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-oss-blue/45" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={locale === 'fr' ? 'Rechercher…' : 'Search…'}
-                className="w-full pl-9 pr-3 py-2 border border-ink/15 rounded-lg bg-white text-sm text-ink focus:outline-none focus:ring-2 focus:ring-[#489e42]"
+                className="w-full border border-oss-line bg-oss-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-oss-blue"
               />
             </div>
             {(q || year) && (
@@ -119,7 +117,7 @@ export default function NewsList() {
                   setSearchInput('');
                   setSearchParams(new URLSearchParams());
                 }}
-                className="px-3 py-2 text-sm text-ink/50 hover:text-ink border border-ink/15 rounded-lg transition-colors"
+                className="border border-oss-line px-3 py-2.5 text-sm font-bold text-ink/50 transition-colors hover:border-oss-blue/35 hover:text-oss-blue"
               >
                 {locale === 'fr' ? 'Effacer' : 'Clear'}
               </button>
@@ -127,14 +125,13 @@ export default function NewsList() {
           </form>
         </div>
 
-        {/* Results count */}
-        <p className="text-sm text-ink/40 mb-6">
+        <p className="mb-6 text-xs font-bold uppercase tracking-[0.07em] text-ink/40">
           {total} {locale === 'fr' ? (total > 1 ? 'articles' : 'article') : (total !== 1 ? 'articles' : 'article')}
         </p>
 
         {/* Empty state */}
         {items.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-12 text-center text-ink/40">
+          <div className="flex min-h-64 items-center justify-center bg-white p-12 text-center text-ink/40">
             {locale === 'fr'
               ? 'Aucun article trouvé.'
               : 'No articles found.'}
@@ -143,40 +140,41 @@ export default function NewsList() {
 
         {/* Articles grid */}
         {items.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((article) => (
               <Link
                 key={article.id}
                 to={`/${locale}/news/${article.slug}`}
-                className="group block bg-white rounded-xl shadow-sm border border-ink/5 overflow-hidden hover:shadow-md transition-shadow"
+                className="group flex h-full flex-col overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/40"
               >
-                {/* Image */}
-                {getThumbnail(article) && (
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-oss-blue-dark">
+                  {getThumbnail(article) ? (
                     <img
                       src={getThumbnail(article)}
                       alt={locale === 'fr' ? article.title_fr : article.title_en}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs font-bold uppercase tracking-[0.12em] text-white/35">OSS · News</span>
+                    </div>
+                  )}
+                  <span className="absolute inset-x-0 bottom-0 h-1 bg-oss-ochre" aria-hidden="true" />
+                </div>
 
-                {/* Content */}
-                <div className="p-5">
-                  <p className="text-xs uppercase tracking-wider text-ink/40 mb-2">
+                <div className="flex min-h-[245px] flex-1 flex-col p-5 sm:p-6">
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.08em] text-oss-blue/58">
                     {formatDate(article.date, locale)}
                   </p>
-                  <h3 className="font-serif font-bold text-lg leading-snug text-ink mb-2">
-                    <span className="bg-gradient-to-r from-[#489e42] to-[#489e42] bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
-                      {locale === 'fr' ? article.title_fr : article.title_en}
-                    </span>
+                  <h3 className="text-lg font-bold leading-snug text-oss-blue-dark transition-colors duration-300 group-hover:text-oss-blue">
+                    {locale === 'fr' ? article.title_fr : article.title_en}
                   </h3>
-                  <p className="text-sm text-ink/55 leading-relaxed">
+                  <p className="mt-3 text-sm leading-relaxed text-ink/55">
                     {truncate(locale === 'fr' ? article.body_fr : article.body_en)}
                   </p>
-                  <div className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-[#489e42]">
+                  <div className="mt-auto flex items-center gap-1.5 pt-5 text-sm font-bold text-oss-blue">
                     {locale === 'fr' ? 'Lire la suite' : 'Read more'}
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
                 </div>
               </Link>
@@ -186,37 +184,37 @@ export default function NewsList() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-12">
+          <div className="mt-12 flex items-center justify-center gap-2">
             <button
               onClick={() => updateParam('page', page > 1 ? String(page - 1) : undefined)}
               disabled={page <= 1}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-ink/15 rounded-lg text-ink/60 hover:text-ink hover:border-ink/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 border border-oss-line bg-white px-4 py-2.5 text-sm font-bold text-ink/60 transition-colors hover:border-oss-blue hover:text-oss-blue disabled:cursor-not-allowed disabled:opacity-30"
             >
               <ArrowLeft className="w-4 h-4" />
               {locale === 'fr' ? 'Précédent' : 'Previous'}
             </button>
 
-            <span className="px-4 py-2 text-sm text-ink/50">
+            <span className="bg-oss-blue px-4 py-2.5 text-sm font-bold text-white">
               {page} / {totalPages}
             </span>
 
             <button
               onClick={() => updateParam('page', String(page + 1))}
               disabled={page >= totalPages}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-ink/15 rounded-lg text-ink/60 hover:text-ink hover:border-ink/30 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 border border-oss-line bg-white px-4 py-2.5 text-sm font-bold text-ink/60 transition-colors hover:border-oss-blue hover:text-oss-blue disabled:cursor-not-allowed disabled:opacity-30"
             >
               {locale === 'fr' ? 'Suivant' : 'Next'}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
-      </div>
+      </section>
 
       {/* Subtle reloading overlay — shows when filters change and the loader
           is re-running. Old data stays visible underneath (no flash). */}
       {isReloading && (
-        <div className="absolute inset-0 bg-bone/40 backdrop-blur-[1px] flex items-start justify-center pt-32 z-10">
-          <Loader2 className="w-5 h-5 text-[#489e42] animate-spin" />
+        <div className="absolute inset-0 z-10 flex items-start justify-center bg-oss-paper/55 pt-32 backdrop-blur-[1px]">
+          <Loader2 className="h-5 w-5 animate-spin text-oss-blue" />
         </div>
       )}
     </div>

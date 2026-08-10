@@ -23,31 +23,34 @@ export default function ProjectsList() {
   };
 
   return (
-    <div className="bg-bone pb-20">
-      <div className="max-w-5xl mx-auto px-6">
-        {/* Heading */}
-        <div className="mb-10 max-w-2xl">
-          <div className="h-1 w-12 bg-[#489e42] mb-5" />
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-            {locale === 'fr' ? 'Projets' : 'Projects'}
+    <div className="font-oss min-h-screen overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
+      <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
+        <div>
+          <p className="oss-kicker mb-5">{locale === 'fr' ? 'Portefeuille d’intervention' : 'Intervention portfolio'}</p>
+          <h1 className="text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">
+            {locale === 'fr' ? 'Nos projets' : 'Our projects'}
           </h1>
-          <p className="text-ink/55 text-base lg:text-lg mt-4 leading-relaxed font-light">
+          <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">
             {locale === 'fr'
-              ? 'Découvrez nos projets, regroupés par département.'
-              : 'Explore our projects, grouped by department.'}
+              ? 'Découvrez les projets portés par l’OSS, organisés par département et domaines d’expertise.'
+              : 'Explore OSS projects, organized by department and areas of expertise.'}
           </p>
         </div>
 
-        {/* Empty state */}
+      </section>
+
+      <section className="mx-auto max-w-[1400px] px-6 pt-2 sm:px-8 lg:px-12">
+        <div className="mb-9 max-w-2xl">
+          <p className="oss-kicker mb-3">{locale === 'fr' ? 'Explorer le portefeuille' : 'Explore the portfolio'}</p>
+          <h2 className="oss-section-title">{locale === 'fr' ? 'Projets par département' : 'Projects by department'}</h2>
+        </div>
+
         {departments.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-12 text-center text-ink/40">
-            {locale === 'fr'
-              ? 'Aucun département publié pour le moment.'
-              : 'No departments published yet.'}
+          <div className="flex min-h-64 items-center justify-center bg-white p-10 text-center text-ink/42">
+            {locale === 'fr' ? 'Aucun département publié pour le moment.' : 'No departments published yet.'}
           </div>
         )}
 
-        {/* Accordion */}
         <div className="space-y-3">
           {departments.map(({ dept, projects }) => {
             const title = locale === 'fr' ? dept.title_fr : dept.title_en;
@@ -57,51 +60,50 @@ export default function ProjectsList() {
             return (
               <div
                 key={dept.id}
-                className="bg-white rounded-xl border border-ink/[0.08] overflow-hidden"
+                className={`overflow-hidden border bg-white transition-colors duration-300 ${isOpen ? 'border-oss-blue/35' : 'border-oss-line'}`}
               >
-                {/* Toggle button */}
                 <button
+                  type="button"
                   onClick={() => toggle(dept.slug)}
-                  className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-ink/[0.02] transition-colors"
+                  aria-expanded={isOpen}
+                  className={`flex w-full items-center justify-between px-6 py-5 text-left transition-colors duration-300 sm:px-7 ${isOpen ? 'bg-oss-blue-dark text-white' : 'hover:bg-oss-blue/5'}`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <h3 className="font-serif font-bold text-lg text-ink truncate">
+                  <div className="flex min-w-0 items-center gap-4">
+                    <span className={`h-8 w-1 shrink-0 ${isOpen ? 'bg-oss-ochre' : 'bg-oss-blue'}`} aria-hidden="true" />
+                    <h3 className={`truncate text-lg font-bold ${isOpen ? 'text-white' : 'text-oss-blue-dark'}`}>
                       {title}
                     </h3>
-                    <span className="shrink-0 text-xs font-medium text-ink/40 bg-ink/[0.04] px-2 py-0.5 rounded-full">
-                      {projects.length}
+                    <span className={`shrink-0 px-2.5 py-1 text-xs font-bold ${isOpen ? 'bg-white/10 text-oss-blue-light' : 'bg-oss-paper text-ink/42'}`}>
+                      {String(projects.length).padStart(2, '0')}
                     </span>
                   </div>
                   <ChevronDown
-                    className={`w-5 h-5 text-ink/40 shrink-0 ml-4 transition-transform duration-300 ${
+                    className={`ml-4 h-5 w-5 shrink-0 transition-transform duration-500 ${
                       isOpen ? 'rotate-180' : ''
-                    }`}
+                    } ${isOpen ? 'text-oss-ochre' : 'text-oss-blue/55'}`}
                   />
                 </button>
 
-                {/* Collapsible content */}
                 <div
-                  className={`transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     isOpen ? 'max-h-[4000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
                   }`}
                 >
-                  {/* Department description */}
                   {desc && (
-                    <p className="px-6 pb-4 text-sm text-ink/60 leading-relaxed border-b border-ink/5">
+                    <p className="border-b border-oss-line bg-oss-blue/5 px-6 py-5 text-sm leading-relaxed text-ink/62 sm:px-7">
                       {desc}
                     </p>
                   )}
 
-                  {/* Projects grid */}
-                  <div className="p-6">
+                  <div className="bg-oss-paper p-4 sm:p-6">
                     {projects.length === 0 ? (
-                      <p className="text-ink/40 text-sm text-center py-6">
+                      <p className="py-8 text-center text-sm text-ink/40">
                         {locale === 'fr'
                           ? 'Aucun projet publié.'
                           : 'No published projects.'}
                       </p>
                     ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {projects.map((project) => {
                           const pTitle = locale === 'fr' ? project.title_fr : project.title_en;
                           const pDesc = locale === 'fr' ? project.description_fr : project.description_en;
@@ -111,49 +113,48 @@ export default function ProjectsList() {
                             <Link
                               key={project.id}
                               to={`/${locale}/projects/${dept.slug}/${project.slug}`}
-                              className="group block bg-bone rounded-xl border border-ink/[0.06] overflow-hidden hover:shadow-md transition-shadow"
+                              className="group block overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/40"
                             >
-                              {/* Image */}
-                              <div className="relative w-full aspect-[16/9] overflow-hidden bg-ink/5">
+                              <div className="relative aspect-[16/9] w-full overflow-hidden bg-oss-blue-dark">
                                 {project.image ? (
                                   <img
                                     src={project.image}
                                     alt={pTitle}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
                                   />
                                 ) : (
                                   <div className="absolute inset-0 flex items-center justify-center">
-                                    <Briefcase className="w-8 h-8 text-ink/20" />
+                                    <Briefcase className="h-8 w-8 text-white/22" />
                                   </div>
                                 )}
                                 <span
-                                  className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur ${
+                                  className={`absolute left-3 top-3 inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] ${
                                     project.status === 'en_cours'
-                                      ? 'bg-blue-50/90 text-blue-600'
-                                      : 'bg-white/90 text-ink/60'
+                                      ? 'bg-oss-blue text-white'
+                                      : 'bg-white text-oss-blue-dark'
                                   }`}
                                 >
                                   {statusLabel(project.status, locale)}
                                 </span>
+                                <span className="absolute inset-x-0 bottom-0 h-1 bg-oss-ochre" aria-hidden="true" />
                               </div>
 
-                              {/* Content */}
-                              <div className="p-4">
-                                <p className="text-xs uppercase tracking-wider text-ink/40 mb-1.5">
+                              <div className="flex min-h-[210px] flex-col p-5">
+                                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.08em] text-oss-blue/58">
                                   {yrs}
                                   {project.budget ? ` · ${project.budget}` : ''}
                                 </p>
-                                <h4 className="font-serif font-bold text-[15px] leading-snug text-ink mb-1.5 group-hover:text-forest-700 transition-colors">
+                                <h4 className="text-base font-bold leading-snug text-oss-blue-dark transition-colors group-hover:text-oss-blue">
                                   {pTitle}
                                 </h4>
                                 {pDesc && (
-                                  <p className="text-xs text-ink/55 leading-relaxed">
+                                  <p className="mt-3 text-xs leading-relaxed text-ink/55">
                                     {truncate(pDesc)}
                                   </p>
                                 )}
-                                <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#489e42]">
+                                <div className="mt-auto flex items-center gap-1.5 pt-5 text-xs font-bold text-oss-blue">
                                   {locale === 'fr' ? 'Voir le projet' : 'View project'}
-                                  <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" />
+                                  <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
                                 </div>
                               </div>
                             </Link>
@@ -167,7 +168,7 @@ export default function ProjectsList() {
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

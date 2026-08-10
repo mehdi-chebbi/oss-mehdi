@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import type { Locale } from '@/context/locale';
 import { submitReport } from '@/api/auth';
 
@@ -8,6 +8,13 @@ const t = {
   en: {
     title: 'File a complaint',
     subtitle: 'Use this form to file a confidential complaint with OSS.',
+    kicker: 'Ethics & integrity',
+    privacyTitle: 'Confidentiality',
+    privacyPoints: [
+      { title: 'Confidential handling', text: 'The information provided is intended solely for reviewing and following up on your complaint.' },
+      { title: 'Anonymous submission', text: 'No name or email address is required to submit this form.' },
+      { title: 'Optional follow-up', text: 'If you provide contact details, they may be used to request clarification about your complaint.' },
+    ],
     categoryLabel: 'Type of complaint',
     categories: [
       { value: 'complaint', label: 'General complaint' },
@@ -32,6 +39,13 @@ const t = {
   fr: {
     title: 'Déposer une plainte',
     subtitle: 'Utilisez ce formulaire pour déposer une plainte en toute confidentialité auprès de l\'OSS.',
+    kicker: 'Éthique & intégrité',
+    privacyTitle: 'Confidentialité',
+    privacyPoints: [
+      { title: 'Traitement confidentiel', text: 'Les informations transmises sont exclusivement destinées à l’examen et au suivi de votre plainte.' },
+      { title: 'Dépôt anonyme', text: 'Aucun nom ni aucune adresse email ne sont exigés pour envoyer ce formulaire.' },
+      { title: 'Suivi facultatif', text: 'Si vous fournissez vos coordonnées, elles pourront servir à demander des précisions sur votre plainte.' },
+    ],
     categoryLabel: 'Nature de la plainte',
     categories: [
       { value: 'complaint', label: 'Plainte générale' },
@@ -91,127 +105,99 @@ export default function Report() {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-16 lg:px-8 text-center">
-        <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-[#489e42]/10 mb-6">
-          <AlertCircle className="h-7 w-7 text-[#489e42]" />
+      <div className="font-oss flex min-h-[60vh] items-center justify-center bg-oss-paper px-6 py-20 text-center">
+        <div className="relative w-full max-w-xl overflow-hidden border-l-4 border-oss-green bg-white p-8 sm:p-12">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center bg-oss-green/10">
+            <CheckCircle2 className="h-7 w-7 text-oss-green" />
+          </div>
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.1em] text-oss-green">{l.privacyTitle}</p>
+          <h1 className="text-2xl font-bold leading-snug text-oss-blue-dark sm:text-3xl">{l.success}</h1>
         </div>
-        <h1 className="text-2xl font-bold font-serif text-ink mb-3">{l.success}</h1>
       </div>
     );
   }
 
   const inputCls =
-    'w-full rounded-md border border-ink/15 bg-white px-3.5 py-2.5 text-[15px] text-ink placeholder:text-ink/40 focus:border-[#489e42] focus:outline-none focus:ring-1 focus:ring-[#489e42] transition-colors';
-  const labelCls = 'block text-[14px] font-medium text-ink/80 mb-1.5';
+    'w-full border border-oss-line bg-oss-paper px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-oss-blue focus:bg-white';
+  const labelCls = 'mb-2 block text-[13px] font-bold text-oss-blue-dark';
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-12 lg:px-8">
-      <h1 className="text-3xl font-bold font-serif text-ink mb-3">{l.title}</h1>
-      <p className="text-[15px] text-ink/65 leading-relaxed mb-10">{l.subtitle}</p>
+    <div className="font-oss min-h-screen overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
+      <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
+        <p className="oss-kicker mb-5">{l.kicker}</p>
+        <h1 className="text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">{l.title}</h1>
+        <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">{l.subtitle}</p>
+      </section>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Category */}
-        <div>
-          <label htmlFor="category" className={labelCls}>
-            {l.categoryLabel} <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="category"
-            required
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className={inputCls}
-          >
-            <option value="">—</option>
-            {l.categories.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
+      <section className="mx-auto grid max-w-[1400px] px-6 sm:px-8 lg:grid-cols-[0.62fr_1.38fr] lg:px-12">
+        <aside className="relative overflow-hidden bg-oss-blue-dark p-7 text-white sm:p-9 lg:p-10">
+          <ShieldCheck className="h-9 w-9 text-oss-ochre" />
+          <p className="mt-12 text-xs font-bold uppercase tracking-[0.1em] text-oss-blue-light">{l.privacyTitle}</p>
+          <p className="mt-4 max-w-sm text-base leading-relaxed text-white/70">{l.anonymousNote}</p>
+          <div className="mt-9 space-y-6 border-t border-white/15 pt-7">
+            {l.privacyPoints.map((point, index) => (
+              <div key={point.title} className="grid grid-cols-[2rem_1fr] gap-3">
+                <span className="text-xs font-bold text-oss-ochre">0{index + 1}</span>
+                <div>
+                  <h2 className="text-sm font-bold text-white">{point.title}</h2>
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/58">{point.text}</p>
+                </div>
+              </div>
             ))}
-          </select>
-        </div>
+          </div>
+          <div className="absolute inset-x-0 bottom-0 grid h-2 grid-cols-3" aria-hidden="true">
+            <span className="bg-oss-blue" />
+            <span className="bg-oss-green" />
+            <span className="bg-oss-ochre" />
+          </div>
+        </aside>
 
-        {/* Subject */}
-        <div>
-          <label htmlFor="subject" className={labelCls}>
-            {l.subjectLabel} <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="subject"
-            type="text"
-            required
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder={l.subjectPlaceholder}
-            className={inputCls}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-7 sm:p-9 lg:p-10">
+          <p className="text-xs font-bold uppercase tracking-[0.07em] text-ink/38"><span className="text-red-600">*</span> {l.required}</p>
 
-        {/* Description */}
-        <div>
-          <label htmlFor="description" className={labelCls}>
-            {l.descriptionLabel} <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            id="description"
-            required
-            rows={6}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={l.descriptionPlaceholder}
-            className={inputCls + ' resize-y'}
-          />
-        </div>
-
-        {/* Name & Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="name" className={labelCls}>
-              {l.nameLabel}
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={l.namePlaceholder}
-              className={inputCls}
-            />
+            <label htmlFor="category" className={labelCls}>{l.categoryLabel} <span className="text-red-600">*</span></label>
+            <select id="category" required value={category} onChange={(e) => setCategory(e.target.value)} className={inputCls}>
+              <option value="">—</option>
+              {l.categories.map((categoryOption) => (
+                <option key={categoryOption.value} value={categoryOption.value}>{categoryOption.label}</option>
+              ))}
+            </select>
           </div>
+
           <div>
-            <label htmlFor="email" className={labelCls}>
-              {l.emailLabel}
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={l.emailPlaceholder}
-              className={inputCls}
-            />
+            <label htmlFor="subject" className={labelCls}>{l.subjectLabel} <span className="text-red-600">*</span></label>
+            <input id="subject" type="text" required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={l.subjectPlaceholder} className={inputCls} />
           </div>
-        </div>
 
-        {/* Anonymous note */}
-        <p className="text-[13px] text-ink/50 italic leading-relaxed">{l.anonymousNote}</p>
-
-        {/* Error */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
-            {error}
+          <div>
+            <label htmlFor="description" className={labelCls}>{l.descriptionLabel} <span className="text-red-600">*</span></label>
+            <textarea id="description" required rows={7} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={l.descriptionPlaceholder} className={`${inputCls} resize-y`} />
           </div>
-        )}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex items-center justify-center rounded-md bg-[#489e42] px-6 py-3 text-[15px] font-semibold text-white hover:bg-[#3d7e38] transition-colors duration-200 disabled:opacity-50"
-        >
-          {submitting ? '…' : l.submit}
-        </button>
-      </form>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label htmlFor="name" className={labelCls}>{l.nameLabel}</label>
+              <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={l.namePlaceholder} className={inputCls} />
+            </div>
+            <div>
+              <label htmlFor="email" className={labelCls}>{l.emailLabel}</label>
+              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={l.emailPlaceholder} className={inputCls} />
+            </div>
+          </div>
+
+          {error && (
+            <div className="flex items-start gap-3 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <button type="submit" disabled={submitting} className="inline-flex min-h-12 items-center justify-center bg-oss-blue px-7 py-3 text-[15px] font-bold text-white transition-colors duration-200 hover:bg-oss-blue-dark disabled:cursor-not-allowed disabled:opacity-50">
+            {submitting ? '…' : l.submit}
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
