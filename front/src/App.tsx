@@ -25,6 +25,12 @@ import Members from "./pages/Members";
 import Governance from "./pages/Governance";
 import Team from "./pages/Team";
 import Report from "./pages/Report";
+import Biodiversity from "./pages/Biodiversity";
+import Climate from "./pages/Climate";
+import Water from "./pages/Water";
+import Land from "./pages/Land";
+import Integrity from "./pages/Integrity";
+import KnowledgeSharing from "./pages/KnowledgeSharing";
 import DepartmentDetail from "./pages/DepartmentDetail";
 import ProjectDetail from "./pages/ProjectDetail";
 import AdminDepartments from "./pages/admin/Departments";
@@ -34,6 +40,8 @@ import ProjectForm from "./pages/admin/ProjectForm";
 import AdminTeam from "./pages/admin/Team";
 import TeamForm from "./pages/admin/TeamForm";
 import AdminReports from "./pages/admin/Reports";
+import AdminResources from "./pages/admin/Resources";
+import ResourceForm from "./pages/admin/ResourceForm";
 import {
   homeLoader,
   newsListLoader,
@@ -41,6 +49,11 @@ import {
   projectsListLoader,
   departmentDetailLoader,
   projectDetailLoader,
+  biodiversityLoader,
+  climateLoader,
+  waterLoader,
+  landLoader,
+  knowledgeSharingLoader,
 } from "./loaders/public";
 
 /** Redirect /admin → /admin/hero (content editors) or /admin/users (admins) */
@@ -91,6 +104,12 @@ export const router = createBrowserRouter([
               { path: "governance", element: <Governance /> },
               { path: "team", element: <Team /> },
               { path: "report", element: <Report /> },
+              { path: "domains/biodiversity", loader: biodiversityLoader, element: <Biodiversity /> },
+              { path: "domains/climate", loader: climateLoader, element: <Climate /> },
+              { path: "domains/water", loader: waterLoader, element: <Water /> },
+              { path: "domains/land", loader: landLoader, element: <Land /> },
+              { path: "knowledge-sharing", loader: knowledgeSharingLoader, element: <KnowledgeSharing /> },
+              { path: "integrity", element: <Integrity /> },
             ],
           },
         ],
@@ -147,6 +166,10 @@ export const router = createBrowserRouter([
           { path: "team/new", element: <TeamForm /> },
           { path: "team/:id", element: <TeamForm /> },
           { path: "reports", element: <AdminReports /> },
+
+          // Knowledge resources
+          { path: "resources", element: <AdminResources /> },
+          { path: "resources/:id", element: <ResourceForm /> },
         ],
       },
       {

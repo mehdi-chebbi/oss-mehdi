@@ -18,6 +18,7 @@ import projectsRoutes from "./routes/projects.js";
 import teamRoutes from "./routes/team.js";
 import uploadRoutes from "./routes/upload.js";
 import reportsRoutes from "./routes/reports.js";
+import resourcesRoutes from "./routes/resources.js";
 
 // ── Fail-fast env validation ──
 // In production, refuse to boot if secrets are missing or still set to their
@@ -75,7 +76,20 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Serve uploaded files statically
+// Public knowledge PDFs are always downloads. Express static supports byte
+// ranges, so large PDFs can be resumed without loading them into memory.
+app.use(
+  "/uploads/resources/files",
+  express.static(path.resolve(process.cwd(), "uploads", "resources", "files"), {
+    setHeaders: (res, filePath) => {
+      const filename = path.basename(filePath).replace(/["\\]/g, "");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.setHeader("X-Content-Type-Options", "nosniff");
+    },
+  }),
+);
+
+// Serve all other uploaded files, including generated resource covers.
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 // Request logging
@@ -147,6 +161,7 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/resources", resourcesRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {

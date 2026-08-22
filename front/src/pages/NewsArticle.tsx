@@ -3,6 +3,7 @@ import { useLoaderData, useParams, Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Pagination, Navigation } from 'swiper/modules';
 import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Images } from 'lucide-react';
+import { newsCategoryLabel } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { NewsArticleLoaderData } from '@/loaders/public';
 
@@ -91,6 +92,9 @@ export default function NewsArticle() {
                 </h1>
 
                 <div className="mt-9 flex flex-wrap gap-x-7 gap-y-4 border-y border-oss-line py-5">
+                  <span className="bg-oss-blue px-3 py-1.5 text-xs font-bold text-white">
+                    {newsCategoryLabel(article.category, locale)}
+                  </span>
                   <div className="flex items-center gap-2.5">
                     <CalendarDays className="h-4 w-4 text-oss-blue" />
                     <span className="text-sm font-bold text-ink/65">{date}</span>

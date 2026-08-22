@@ -117,6 +117,8 @@ CREATE TABLE IF NOT EXISTS news (
     title_en        TEXT NOT NULL,
     body_fr         TEXT NOT NULL DEFAULT '',
     body_en         TEXT NOT NULL DEFAULT '',
+    category        VARCHAR(30) NOT NULL DEFAULT 'institutional'
+                    CHECK (category IN ('partnership', 'event', 'project', 'institutional', 'publication', 'opportunity')),
     images          JSONB NOT NULL DEFAULT '[]',       -- array of image URL strings
     thumbnail_index INT NOT NULL DEFAULT 0,            -- which image to use as the card thumbnail
     date            DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -129,6 +131,7 @@ CREATE TABLE IF NOT EXISTS news (
 CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
 CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
 CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
+CREATE INDEX IF NOT EXISTS idx_news_category ON news (category);
 
 -- ═══════════════════════════════════════════
 -- Tools (Nos outils)
@@ -350,3 +353,49 @@ CREATE TABLE IF NOT EXISTS reports (
 
 CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
 CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
+
+-- ═══════════════════════════════════════════
+-- Knowledge resources (public document library)
+-- Files are stored locally under uploads/resources and served publicly.
+-- A resource may provide a French PDF, an English PDF, or both.
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS resources (
+    id                      UUID PRIMARY KEY,
+    title_fr                TEXT NOT NULL,
+    title_en                TEXT NOT NULL,
+    summary_fr              TEXT NOT NULL DEFAULT '',
+    summary_en              TEXT NOT NULL DEFAULT '',
+    document_type           VARCHAR(40) NOT NULL
+                            CHECK (document_type IN (
+                                'report',
+                                'study',
+                                'guide',
+                                'atlas',
+                                'policy_brief',
+                                'newsletter',
+                                'conference_document',
+                                'strategy',
+                                'other'
+                            )),
+    fields                  TEXT[] NOT NULL DEFAULT '{}',
+    publication_date        DATE NOT NULL,
+    cover_image_path        VARCHAR(1000) NOT NULL DEFAULT '',
+    cover_is_custom         BOOLEAN NOT NULL DEFAULT false,
+    file_fr_path            VARCHAR(1000),
+    file_fr_original_name   VARCHAR(500),
+    file_fr_size            INT,
+    file_en_path            VARCHAR(1000),
+    file_en_original_name   VARCHAR(500),
+    file_en_size            INT,
+    is_published            BOOLEAN NOT NULL DEFAULT false,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK (cardinality(fields) > 0),
+    CHECK (fields <@ ARRAY['biodiversity', 'climate', 'water', 'land', 'institutional']::TEXT[]),
+    CHECK (file_fr_path IS NOT NULL OR file_en_path IS NOT NULL)
+);
+
+CREATE INDEX IF NOT EXISTS idx_resources_publication_date ON resources (publication_date DESC);
+CREATE INDEX IF NOT EXISTS idx_resources_document_type ON resources (document_type);
+CREATE INDEX IF NOT EXISTS idx_resources_fields ON resources USING GIN (fields);
+CREATE INDEX IF NOT EXISTS idx_resources_published ON resources (is_published);

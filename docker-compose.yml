@@ -53,11 +53,11 @@ services:
       # Backend is behind nginx in docker → trust proxy so req.ip is real client IP
       TRUST_PROXY: "true"
     volumes:
-      - uploads:/app/uploads
+      # Bind mount keeps uploaded PDFs and generated covers when `down -v` is used.
+      - ./storage/uploads:/app/uploads
     depends_on:
       - postgres
     restart: unless-stopped
 
 volumes:
   pgdata:
-  uploads:

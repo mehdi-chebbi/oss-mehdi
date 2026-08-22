@@ -17,3 +17,6 @@ npm-debug.log*
 .idea
 .DS_Store
 *.swp
+
+# Runtime uploads are persistent local data, not source files
+storage/uploads/

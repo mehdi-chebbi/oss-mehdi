@@ -31,30 +31,30 @@ INSERT INTO fields (page_id, title_fr, title_en, description_fr, description_en,
 
 
 -- ── News (Actualités) ──
-INSERT INTO news (title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, slug, is_published) VALUES
+INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, is_published) VALUES
   ('L''OSS et l''ICARDA renforcent leur coopération en faveur des zones arides',
    'OSS and ICARDA strengthen cooperation in favor of drylands',
    'L''Observatoire du Sahara et du Sahel (OSS) et le Centre international de recherche agricole dans les zones arides (ICARDA) ont renforcé leur coopération afin de répondre aux défis communs liés à la gestion durable des ressources naturelles dans les zones arides d''Afrique. Ce partenariat vise à développer des approches innovantes pour l''adaptation au changement climatique et la lutte contre la désertification.',
    'The Sahara and Sahel Observatory (OSS) and the International Center for Agricultural Research in the Dry Areas (ICARDA) have strengthened their cooperation to address common challenges related to sustainable natural resource management in Africa''s drylands. This partnership aims to develop innovative approaches for climate change adaptation and combating desertification.',
-   '["/act1.jpg"]', 0, '2025-01-15', 'oss-icarda-cooperation-zones-arides', true),
+   'partnership', '["/act1.jpg"]', 0, '2025-01-15', 'oss-icarda-cooperation-zones-arides', true),
 
   ('L''OSS a pris part à la session de renforcement et de mobilisation des financements pour promouvoir l''agroécologie',
    'OSS took part in the session on strengthening and mobilizing financing to promote agroecology',
    'L''OSS a participé activement à la session dédiée au renforcement des capacités et à la mobilisation des financements en faveur de l''agroécologie. Cette initiative s''inscrit dans le cadre des efforts continus de l''Observatoire pour promouvoir des pratiques agricoles durables et résilientes face aux défis environnementaux en Afrique.',
    'OSS actively participated in the session dedicated to capacity building and financing mobilization in favor of agroecology. This initiative is part of the Observatory''s ongoing efforts to promote sustainable and resilient agricultural practices in the face of environmental challenges in Africa.',
-   '["/act2.jpg"]', 0, '2025-01-10', 'oss-session-mobilisation-financements-agroecologie', true),
+   'event', '["/act2.jpg"]', 0, '2025-01-10', 'oss-session-mobilisation-financements-agroecologie', true),
 
   ('De l''engagement à l''action : renforcer la résilience climatique en Guinée-Bissau',
    'From commitment to action: strengthening climate resilience in Guinea-Bissau',
    'En collaboration avec ses partenaires, l''OSS accompagne la Guinée-Bissau dans le renforcement de sa résilience climatique. Ce projet illustre la transition d''engagements politiques vers des actions concrètes sur le terrain, intégrant les communautés locales dans l''adaptation aux impacts du changement climatique.',
    'In collaboration with its partners, OSS supports Guinea-Bissau in strengthening its climate resilience. This project illustrates the transition from political commitments to concrete actions on the ground, integrating local communities in adapting to the impacts of climate change.',
-   '["/act3.jpg"]', 0, '2025-01-05', 'engagement-action-resilience-climatique-guinee-bissau', true),
+   'project', '["/act3.jpg"]', 0, '2025-01-05', 'engagement-action-resilience-climatique-guinee-bissau', true),
 
   ('Deuxième réunion du Comité de pilotage du processus d''élaboration du premier rapport national sur la mise en œuvre du Protocole de Nagoya en Tunisie',
    'Second meeting of the Steering Committee for the development of the first national report on the implementation of the Nagoya Protocol in Tunisia',
    'La deuxième réunion du Comité de pilotage s''est tenue pour faire le point sur l''avancement du processus d''élaboration du premier rapport national tunisien sur la mise en œuvre du Protocole de Nagoya. Les participants ont examiné les progrès réalisés et défini les prochaines étapes pour finaliser ce rapport stratégique.',
    'The second Steering Committee meeting was held to review progress on developing Tunisia''s first national report on the implementation of the Nagoya Protocol. Participants examined the progress made and defined the next steps to finalize this strategic report.',
-   '["/act4.jpg"]', 0, '2024-12-20', 'comite-pilotage-rapport-national-protocole-nagoya-tunisie', true);
+   'institutional', '["/act4.jpg"]', 0, '2024-12-20', 'comite-pilotage-rapport-national-protocole-nagoya-tunisie', true);
 
 
 -- ── Partners (top row = row_number 1, bottom row = row_number 2) ──
@@ -360,6 +360,29 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    '',
    'strategy-2030-mid-term-evaluation',
    9,
+   true);
+
+
+-- ── Department - Land and Biodiversity ──
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+  ('Département Terre et Biodiversité',
+   'Land and Biodiversity Department',
+   'Préserver la biodiversité, restaurer les écosystèmes et renforcer la résilience des territoires et des communautés.',
+   'Preserving biodiversity, restoring ecosystems and strengthening the resilience of territories and communities.',
+   '',
+   'land-biodiversity-department',
+   3,
+   true);
+
+-- ── Department - Water ──
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+  ('Département Eau',
+   'Water Department',
+   'Améliorer la connaissance, la gouvernance et la gestion durable des ressources en eau souterraines et de surface.',
+   'Improving knowledge, governance and sustainable management of groundwater and surface water resources.',
+   '',
+   'water-department',
+   4,
    true);
 
 

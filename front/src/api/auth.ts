@@ -125,6 +125,43 @@ function authHeader(token: string) {
   return { Authorization: `Bearer ${token}` };
 }
 
+async function multipartRequest<T>(
+  path: string,
+  token: string,
+  method: "POST" | "PATCH",
+  body: FormData,
+): Promise<T> {
+  const send = (accessToken: string) => fetch(`${API_BASE}${path}`, {
+    method,
+    credentials: "include",
+    headers: authHeader(accessToken),
+    body,
+  });
+
+  let res = await send(token);
+  if (res.status === 401) {
+    try {
+      const newToken = await refreshAccessToken();
+      if (!newToken) throw new Error("SESSION_EXPIRED");
+      res = await send(newToken);
+    } catch (err: any) {
+      _accessToken = null;
+      if (err.message === "SESSION_REVOKED") {
+        window.dispatchEvent(new CustomEvent("session-revoked"));
+      } else {
+        window.dispatchEvent(new CustomEvent("session-expired"));
+      }
+      throw new Error(err.message === "SESSION_REVOKED" ? "SESSION_REVOKED" : "SESSION_EXPIRED");
+    }
+  }
+
+  if (!res.ok) {
+    const responseBody = await res.json().catch(() => ({ error: "Request failed" }));
+    throw new Error(responseBody.error || `Error ${res.status}`);
+  }
+  return res.json();
+}
+
 // ── File Upload ──
 export interface UploadResult {
   url: string;
@@ -570,12 +607,37 @@ export async function deleteSocial(token: string, id: number) {
 }
 
 // ── News CRUD ──
+export const NEWS_CATEGORIES = [
+  "partnership",
+  "event",
+  "project",
+  "institutional",
+  "publication",
+  "opportunity",
+] as const;
+
+export type NewsCategory = (typeof NEWS_CATEGORIES)[number];
+
+const NEWS_CATEGORY_LABELS: Record<NewsCategory, { fr: string; en: string }> = {
+  partnership: { fr: "Partenariats", en: "Partnerships" },
+  event: { fr: "Événements & Ateliers", en: "Events & Workshops" },
+  project: { fr: "Projets & Activités de terrain", en: "Projects & Field Activities" },
+  institutional: { fr: "Actualités institutionnelles", en: "Institutional News" },
+  publication: { fr: "Publications", en: "Publications" },
+  opportunity: { fr: "Appels & Opportunités", en: "Calls & Opportunities" },
+};
+
+export function newsCategoryLabel(category: NewsCategory, locale: "fr" | "en") {
+  return NEWS_CATEGORY_LABELS[category][locale];
+}
+
 export interface NewsData {
   id: number;
   title_fr: string;
   title_en: string;
   body_fr: string;
   body_en: string;
+  category: NewsCategory;
   images: string[];        // array of image URL strings
   thumbnail_index: number; // which image is the card thumbnail
   date: string;
@@ -612,12 +674,14 @@ export async function listPublishedNews(opts?: {
   page?: number;
   limit?: number;
   year?: number;
+  category?: NewsCategory;
   q?: string;
 }) {
   const params = new URLSearchParams();
   if (opts?.page) params.set("page", String(opts.page));
   if (opts?.limit) params.set("limit", String(opts.limit));
   if (opts?.year) params.set("year", String(opts.year));
+  if (opts?.category) params.set("category", opts.category);
   if (opts?.q) params.set("q", opts.q);
   const qs = params.toString();
   return request<NewsListResponse>(`/news${qs ? `?${qs}` : ""}`);
@@ -671,6 +735,137 @@ export async function updateNews(
 // Authenticated: delete news
 export async function deleteNews(token: string, id: number) {
   return request<{ message: string }>(`/news/${id}`, {
+    method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
+// ── Knowledge resources CRUD ──
+export const RESOURCE_DOCUMENT_TYPES = [
+  "report",
+  "study",
+  "guide",
+  "atlas",
+  "policy_brief",
+  "newsletter",
+  "conference_document",
+  "strategy",
+  "other",
+] as const;
+
+export const RESOURCE_FIELDS = [
+  "biodiversity",
+  "climate",
+  "water",
+  "land",
+  "institutional",
+] as const;
+
+export type ResourceDocumentType = (typeof RESOURCE_DOCUMENT_TYPES)[number];
+export type ResourceField = (typeof RESOURCE_FIELDS)[number];
+export type ResourceLanguage = "fr" | "en";
+
+const RESOURCE_TYPE_LABELS: Record<ResourceDocumentType, { fr: string; en: string }> = {
+  report: { fr: "Rapport", en: "Report" },
+  study: { fr: "Étude", en: "Study" },
+  guide: { fr: "Guide", en: "Guide" },
+  atlas: { fr: "Atlas", en: "Atlas" },
+  policy_brief: { fr: "Note d’orientation", en: "Policy brief" },
+  newsletter: { fr: "Bulletin d’information", en: "Newsletter" },
+  conference_document: { fr: "Document de conférence", en: "Conference document" },
+  strategy: { fr: "Stratégie", en: "Strategy" },
+  other: { fr: "Autre", en: "Other" },
+};
+
+const RESOURCE_FIELD_LABELS: Record<ResourceField, { fr: string; en: string }> = {
+  biodiversity: { fr: "Biodiversité", en: "Biodiversity" },
+  climate: { fr: "Climat", en: "Climate" },
+  water: { fr: "Eau", en: "Water" },
+  land: { fr: "Terre", en: "Land" },
+  institutional: { fr: "Institutionnel et transversal", en: "Institutional and cross-cutting" },
+};
+
+export function resourceTypeLabel(type: ResourceDocumentType, locale: "fr" | "en") {
+  return RESOURCE_TYPE_LABELS[type][locale];
+}
+
+export function resourceFieldLabel(field: ResourceField, locale: "fr" | "en") {
+  return RESOURCE_FIELD_LABELS[field][locale];
+}
+
+export interface ResourceData {
+  id: string;
+  title_fr: string;
+  title_en: string;
+  summary_fr: string;
+  summary_en: string;
+  document_type: ResourceDocumentType;
+  fields: ResourceField[];
+  publication_date: string;
+  cover_image_path: string;
+  cover_is_custom: boolean;
+  file_fr_path: string | null;
+  file_fr_original_name: string | null;
+  file_fr_size: number | null;
+  file_en_path: string | null;
+  file_en_original_name: string | null;
+  file_en_size: number | null;
+  is_published: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ResourceListResponse {
+  items: ResourceData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function listPublishedResources(options?: {
+  page?: number;
+  limit?: number;
+  type?: ResourceDocumentType;
+  field?: ResourceField;
+  year?: number;
+  language?: ResourceLanguage;
+  q?: string;
+}) {
+  const params = new URLSearchParams();
+  if (options?.page) params.set("page", String(options.page));
+  if (options?.limit) params.set("limit", String(options.limit));
+  if (options?.type) params.set("type", options.type);
+  if (options?.field) params.set("field", options.field);
+  if (options?.year) params.set("year", String(options.year));
+  if (options?.language) params.set("language", options.language);
+  if (options?.q) params.set("q", options.q);
+  const queryString = params.toString();
+  return request<ResourceListResponse>(`/resources${queryString ? `?${queryString}` : ""}`);
+}
+
+export async function getResourceYears() {
+  return request<number[]>("/resources/years");
+}
+
+export async function listAllResources(token: string) {
+  return request<ResourceData[]>("/resources/all", { headers: authHeader(token) });
+}
+
+export async function getResource(token: string, id: string) {
+  return request<ResourceData>(`/resources/${id}`, { headers: authHeader(token) });
+}
+
+export async function createResource(token: string, formData: FormData) {
+  return multipartRequest<ResourceData>("/resources", token, "POST", formData);
+}
+
+export async function updateResource(token: string, id: string, formData: FormData) {
+  return multipartRequest<ResourceData>(`/resources/${id}`, token, "PATCH", formData);
+}
+
+export async function deleteResource(token: string, id: string) {
+  return request<{ message: string }>(`/resources/${id}`, {
     method: "DELETE",
     headers: authHeader(token),
   });

@@ -16,11 +16,20 @@ export function getNavItems(locale: Locale): NavItem[] {
           { label: 'Our team', href: '/en/team' },
         ],
       },
-      { label: 'Our fields', href: '#nos-domaines' },
+      {
+        label: 'Our fields',
+        href: '#nos-domaines',
+        children: [
+          { label: 'Biodiversity', href: '/en/domains/biodiversity' },
+          { label: 'Climate', href: '/en/domains/climate' },
+          { label: 'Water', href: '/en/domains/water' },
+          { label: 'Land', href: '/en/domains/land' },
+        ],
+      },
       { label: 'Projects', href: '/en/projects' },
-      { label: 'Knowledge sharing', href: '#partage' },
+      { label: 'Knowledge sharing', href: '/en/knowledge-sharing' },
       { label: 'News', href: '/en/news' },
-      { label: 'Integrity', href: '#integrite' },
+      { label: 'Integrity', href: '/en/integrity' },
     ];
   }
   return [
@@ -34,11 +43,20 @@ export function getNavItems(locale: Locale): NavItem[] {
         { label: 'Notre équipe', href: '/fr/team' },
       ],
     },
-    { label: 'Nos domaines', href: '#nos-domaines' },
+    {
+      label: 'Nos domaines',
+      href: '#nos-domaines',
+      children: [
+        { label: 'Biodiversité', href: '/fr/domains/biodiversity' },
+        { label: 'Climat', href: '/fr/domains/climate' },
+        { label: 'Eau', href: '/fr/domains/water' },
+        { label: 'Terre', href: '/fr/domains/land' },
+      ],
+    },
     { label: 'Projets', href: '/fr/projects' },
-    { label: 'Partage de connaissances', href: '#partage' },
+    { label: 'Partage de connaissances', href: '/fr/knowledge-sharing' },
     { label: 'Actualités', href: '/fr/news' },
-    { label: 'Intégrité', href: '#integrite' },
+    { label: 'Intégrité', href: '/fr/integrity' },
   ];
 }
 

@@ -5,6 +5,9 @@ import {
   getNews,
   createNews,
   updateNews,
+  NEWS_CATEGORIES,
+  newsCategoryLabel,
+  type NewsCategory,
 } from "../../api/auth";
 import MultiImageUpload from "../../components/admin/MultiImageUpload";
 import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
@@ -41,6 +44,7 @@ const emptyForm = {
   title_en: "",
   body_fr: "",
   body_en: "",
+  category: "institutional" as NewsCategory,
   images: [] as string[],
   thumbnail_index: 0,
   date: new Date().toISOString().slice(0, 10),
@@ -71,6 +75,7 @@ export default function NewsForm() {
           title_en: article.title_en || "",
           body_fr: article.body_fr || "",
           body_en: article.body_en || "",
+          category: article.category || "institutional",
           images: Array.isArray(article.images) ? article.images : [],
           thumbnail_index: article.thumbnail_index ?? 0,
           date: article.date ? new Date(article.date).toISOString().slice(0, 10) : emptyForm.date,
@@ -197,6 +202,23 @@ export default function NewsForm() {
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
             Image & Settings
           </h4>
+
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-ink/80 mb-1.5">
+              News type
+            </label>
+            <select
+              value={form.category}
+              onChange={(e) => set("category", e.target.value as NewsCategory)}
+              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
+            >
+              {NEWS_CATEGORIES.map((categoryOption) => (
+                <option key={categoryOption} value={categoryOption}>
+                  {newsCategoryLabel(categoryOption, lang)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <MultiImageUpload
             value={form.images}

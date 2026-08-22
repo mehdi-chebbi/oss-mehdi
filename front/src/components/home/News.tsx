@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { getThumbnail, type NewsData } from '@/api/auth';
+import { getThumbnail, newsCategoryLabel, type NewsData } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 
 // Truncate body to ~150 chars at a word boundary for card previews.
@@ -86,7 +86,7 @@ export default function News({ articles }: NewsProps) {
 
                 {/* Byline */}
                 <div className="flex items-center justify-between border-t border-oss-line pt-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-ink/50">
-                  <span>{formatDate(featured.date, locale)}</span>
+                  <span>{newsCategoryLabel(featured.category, locale)} · {formatDate(featured.date, locale)}</span>
                   <span className="flex items-center gap-1.5 font-bold normal-case tracking-normal text-oss-blue">
                     {locale === 'fr' ? 'Lire' : 'Read'}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -125,6 +125,9 @@ export default function News({ articles }: NewsProps) {
 
                       {/* Title */}
                       <div className="min-w-0">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.07em] text-oss-blue/60">
+                          {newsCategoryLabel(h.category, locale)}
+                        </p>
                         <h4 className="text-[16px] font-bold leading-[1.3] text-oss-blue-dark">
                           <span className="bg-gradient-to-r from-oss-blue to-oss-blue bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 group-hover:bg-[length:100%_2px]">
                             {locale === 'fr' ? h.title_fr : h.title_en}

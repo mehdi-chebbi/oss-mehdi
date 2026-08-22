@@ -20,6 +20,7 @@ import {
   UsersRound,
   Loader2,
   AlertCircle,
+  Library,
 } from "lucide-react";
 
 /* ── Sidebar structure ── */
@@ -55,6 +56,13 @@ const pages = [
     icon: UsersRound,
     sections: [
       { to: "/admin/team", label: "Members", icon: UsersRound, adminOnly: false },
+    ],
+  },
+  {
+    label: "Knowledge Sharing",
+    icon: Library,
+    sections: [
+      { to: "/admin/resources", label: "Resources", icon: Library, adminOnly: false },
     ],
   },
 ];

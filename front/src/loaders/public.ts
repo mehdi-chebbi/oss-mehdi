@@ -24,14 +24,24 @@ import {
   getDepartmentBySlug,
   getPublishedProjectsByDept,
   getProjectBySlug,
+  listPublishedResources,
+  getResourceYears,
+  NEWS_CATEGORIES,
+  RESOURCE_DOCUMENT_TYPES,
+  RESOURCE_FIELDS,
   type HeroData,
   type FieldData,
   type NewsData,
   type NewsListResponse,
+  type NewsCategory,
   type ToolData,
   type PartnerData,
   type DepartmentData,
   type ProjectData,
+  type ResourceListResponse,
+  type ResourceDocumentType,
+  type ResourceField,
+  type ResourceLanguage,
 } from "@/api/auth";
 
 // ── Home page ──
@@ -73,6 +83,7 @@ export interface NewsListLoaderData {
   years: number[];
   page: number;
   year: number | undefined;
+  category: NewsCategory | undefined;
   q: string;
 }
 
@@ -84,14 +95,18 @@ export async function newsListLoader({
   const year = url.searchParams.get("year")
     ? Number(url.searchParams.get("year"))
     : undefined;
+  const categoryParam = url.searchParams.get("category");
+  const category = NEWS_CATEGORIES.includes(categoryParam as NewsCategory)
+    ? (categoryParam as NewsCategory)
+    : undefined;
   const q = url.searchParams.get("q") || "";
 
   const [data, years] = await Promise.all([
-    listPublishedNews({ page, limit: NEWS_PAGE_SIZE, year, q: q || undefined }),
+    listPublishedNews({ page, limit: NEWS_PAGE_SIZE, year, category, q: q || undefined }),
     getNewsYears(),
   ]);
 
-  return { data, years, page, year, q };
+  return { data, years, page, year, category, q };
 }
 
 // ── News article ──
@@ -155,6 +170,89 @@ export async function departmentDetailLoader({
   } catch {
     return { dept: null, projects: [] };
   }
+}
+
+// ── Biodiversity domain ──
+
+export interface DomainProjectsLoaderData {
+  projects: ProjectData[];
+}
+
+async function latestDepartmentProjects(departmentSlug: string): Promise<DomainProjectsLoaderData> {
+  const projects = await getPublishedProjectsByDept(departmentSlug).catch(() => []);
+
+  return {
+    projects: [...projects].sort((a, b) => b.id - a.id).slice(0, 3),
+  };
+}
+
+export function biodiversityLoader() {
+  return latestDepartmentProjects('land-biodiversity-department');
+}
+
+export function climateLoader() {
+  return latestDepartmentProjects('climate-department');
+}
+
+export function waterLoader() {
+  return latestDepartmentProjects('water-department');
+}
+
+export function landLoader() {
+  return latestDepartmentProjects('land-biodiversity-department');
+}
+
+// ── Knowledge sharing resource library ──
+
+const RESOURCE_PAGE_SIZE = 9;
+
+export interface KnowledgeSharingLoaderData {
+  data: ResourceListResponse;
+  years: number[];
+  page: number;
+  type: ResourceDocumentType | undefined;
+  field: ResourceField | undefined;
+  year: number | undefined;
+  language: ResourceLanguage | undefined;
+  q: string;
+}
+
+export async function knowledgeSharingLoader({
+  request,
+}: LoaderFunctionArgs): Promise<KnowledgeSharingLoaderData> {
+  const url = new URL(request.url);
+  const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+  const typeParam = url.searchParams.get("type");
+  const fieldParam = url.searchParams.get("field");
+  const languageParam = url.searchParams.get("language");
+  const year = url.searchParams.get("year")
+    ? Number(url.searchParams.get("year"))
+    : undefined;
+  const type = RESOURCE_DOCUMENT_TYPES.includes(typeParam as ResourceDocumentType)
+    ? typeParam as ResourceDocumentType
+    : undefined;
+  const field = RESOURCE_FIELDS.includes(fieldParam as ResourceField)
+    ? fieldParam as ResourceField
+    : undefined;
+  const language = languageParam === "fr" || languageParam === "en"
+    ? languageParam
+    : undefined;
+  const q = url.searchParams.get("q") || "";
+
+  const [data, years] = await Promise.all([
+    listPublishedResources({
+      page,
+      limit: RESOURCE_PAGE_SIZE,
+      type,
+      field,
+      year,
+      language,
+      q: q || undefined,
+    }),
+    getResourceYears(),
+  ]);
+
+  return { data, years, page, type, field, year, language, q };
 }
 
 // ── Project detail ──

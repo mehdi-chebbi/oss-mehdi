@@ -10,6 +10,7 @@ import {
   createNews,
   updateNews,
   deleteNews,
+  isNewsCategory,
 } from "../services/news.js";
 
 const router = Router();
@@ -25,14 +26,21 @@ router.get("/latest", async (req, res) => {
 });
 
 // Paginated list with optional year + keyword filter (for /news page)
-// GET /api/news?page=1&limit=12&year=2025&q=keyword
+// GET /api/news?page=1&limit=12&year=2025&category=event&q=keyword
 router.get("/", async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
   const year = req.query.year ? Number(req.query.year) : undefined;
+  const categoryValue = req.query.category ? String(req.query.category) : undefined;
   const q = req.query.q ? String(req.query.q) : undefined;
 
-  const { items, total } = await listPublishedNews({ page, limit, year, q });
+  if (categoryValue && !isNewsCategory(categoryValue)) {
+    res.status(400).json({ error: "Invalid news category" });
+    return;
+  }
+
+  const category = categoryValue && isNewsCategory(categoryValue) ? categoryValue : undefined;
+  const { items, total } = await listPublishedNews({ page, limit, year, category, q });
   res.json({
     items,
     total,
@@ -80,9 +88,9 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 // Create news
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
-    const { title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, is_published } = req.body;
-    if (!title_fr || !title_en) {
-      res.status(400).json({ error: "title_fr and title_en are required" });
+    const { title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, is_published } = req.body;
+    if (!title_fr || !title_en || !isNewsCategory(category)) {
+      res.status(400).json({ error: "title_fr, title_en and a valid category are required" });
       return;
     }
     const article = await createNews({
@@ -90,6 +98,7 @@ router.post("/", editorOrAdmin, async (req, res) => {
       title_en,
       body_fr,
       body_en,
+      category,
       images,
       thumbnail_index,
       date,
@@ -104,6 +113,10 @@ router.post("/", editorOrAdmin, async (req, res) => {
 // Update news
 router.patch("/:id", editorOrAdmin, async (req, res) => {
   try {
+    if (req.body.category !== undefined && !isNewsCategory(req.body.category)) {
+      res.status(400).json({ error: "Invalid news category" });
+      return;
+    }
     const article = await updateNews(Number(req.params.id), req.body);
     if (!article) {
       res.status(404).json({ error: "Article not found" });

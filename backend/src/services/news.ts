@@ -1,11 +1,27 @@
 import { query } from "../config/db.js";
 
+export const NEWS_CATEGORIES = [
+  "partnership",
+  "event",
+  "project",
+  "institutional",
+  "publication",
+  "opportunity",
+] as const;
+
+export type NewsCategory = (typeof NEWS_CATEGORIES)[number];
+
+export function isNewsCategory(value: unknown): value is NewsCategory {
+  return typeof value === "string" && NEWS_CATEGORIES.includes(value as NewsCategory);
+}
+
 export interface NewsRow {
   id: number;
   title_fr: string;
   title_en: string;
   body_fr: string;
   body_en: string;
+  category: NewsCategory;
   images: string[];        // JSONB array of URL strings
   thumbnail_index: number; // which image is the card thumbnail
   date: string;            // ISO date string from DB
@@ -55,7 +71,7 @@ function clampThumbnailIndex(idx: unknown, images: string[]): number {
 // ── Public: latest published news (for the home page) ──
 export async function getLatestNews(limit = 4) {
   const result = await query(
-    `SELECT id, title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, slug
+    `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug
      FROM news
      WHERE is_published = true
      ORDER BY date DESC, id DESC
@@ -74,6 +90,7 @@ export async function listPublishedNews(opts: {
   page?: number;
   limit?: number;
   year?: number;
+  category?: NewsCategory;
   q?: string;
 }): Promise<{ items: NewsRow[]; total: number }> {
   const page = Math.max(1, opts.page || 1);
@@ -86,6 +103,11 @@ export async function listPublishedNews(opts: {
   if (opts.year) {
     params.push(opts.year);
     where.push(`EXTRACT(YEAR FROM date) = $${params.length}`);
+  }
+
+  if (opts.category) {
+    params.push(opts.category);
+    where.push(`category = $${params.length}`);
   }
 
   if (opts.q && opts.q.trim()) {
@@ -106,7 +128,7 @@ export async function listPublishedNews(opts: {
 
   params.push(limit, offset);
   const result = await query(
-    `SELECT id, title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, slug
+    `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug
      FROM news
      WHERE ${whereClause}
      ORDER BY date DESC, id DESC
@@ -126,7 +148,7 @@ export async function listPublishedNews(opts: {
 // ── Public: single article by slug ──
 export async function getPublishedNewsBySlug(slug: string) {
   const result = await query(
-    `SELECT id, title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, slug, created_at
+    `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, created_at
      FROM news
      WHERE slug = $1 AND is_published = true`,
     [slug],
@@ -155,7 +177,7 @@ export async function getPublishedYears() {
 // ── Authenticated: list all news (admin) ──
 export async function listAllNews() {
   const result = await query(
-    `SELECT id, title_fr, title_en, images, thumbnail_index, date, slug, is_published, created_at, updated_at
+    `SELECT id, title_fr, title_en, category, images, thumbnail_index, date, slug, is_published, created_at, updated_at
      FROM news
      ORDER BY date DESC, id DESC`,
   );
@@ -188,6 +210,7 @@ export async function createNews(data: {
   title_en: string;
   body_fr?: string;
   body_en?: string;
+  category: NewsCategory;
   images?: string[];
   thumbnail_index?: number;
   date?: string;
@@ -197,14 +220,15 @@ export async function createNews(data: {
   const thumbnail_index = clampThumbnailIndex(data.thumbnail_index, images);
 
   const result = await query(
-    `INSERT INTO news (title_fr, title_en, body_fr, body_en, images, thumbnail_index, date, slug, is_published)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, is_published)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING *`,
     [
       data.title_fr,
       data.title_en,
       data.body_fr || "",
       data.body_en || "",
+      data.category,
       JSON.stringify(images),
       thumbnail_index,
       data.date || new Date().toISOString().slice(0, 10),
@@ -255,6 +279,7 @@ export async function updateNews(id: number, data: Partial<NewsRow>) {
     "title_en",
     "body_fr",
     "body_en",
+    "category",
     "date",
     "is_published",
   ];

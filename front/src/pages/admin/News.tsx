@@ -6,6 +6,7 @@ import {
   listAllNews,
   deleteNews,
   getThumbnail,
+  newsCategoryLabel,
   type NewsData,
 } from "../../api/auth";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
@@ -121,6 +122,9 @@ export default function AdminNews() {
                   year: "numeric",
                 })}{" "}
                 · /news/{article.slug}
+              </p>
+              <p className="mt-1 text-[11px] font-semibold text-[#489e42]">
+                {newsCategoryLabel(article.category, "en")}
               </p>
             </div>
 

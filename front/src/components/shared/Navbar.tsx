@@ -44,7 +44,9 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
   };
 
   const renderLink = (href: string, label: string, className: string, key?: string) =>
-    href.startsWith('/') ? (
+    !href ? (
+      <button key={key || label} type="button" className={className}>{label}</button>
+    ) : href.startsWith('/') ? (
       <Link key={key} to={href} className={className}>{label}</Link>
     ) : (
       <a key={key} href={href} className={className}>{label}</a>
@@ -85,8 +87,8 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                       {item.children.map((child) => renderLink(
                         child.href,
                         child.label,
-                        'block px-3 py-2.5 text-sm text-ink/75 transition-colors hover:bg-oss-blue/5 hover:text-oss-blue',
-                        child.href,
+                        'block w-full px-3 py-2.5 text-left text-sm text-ink/75 transition-colors hover:bg-oss-blue/5 hover:text-oss-blue',
+                        child.href || child.label,
                       ))}
                     </div>
                   </>
@@ -155,7 +157,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                   <>
                     <div className="py-2 text-sm font-bold text-oss-blue-dark">{item.label}</div>
                     <div className="grid gap-1 pb-2 pl-3">
-                      {item.children.map((child) => renderLink(child.href, child.label, 'py-1.5 text-sm text-ink/65 hover:text-oss-blue', child.href))}
+                      {item.children.map((child) => renderLink(child.href, child.label, 'w-full py-1.5 text-left text-sm text-ink/65 hover:text-oss-blue', child.href || child.label))}
                     </div>
                   </>
                 ) : renderLink(item.href, item.label, 'block py-2 text-sm font-bold text-oss-blue-dark')}

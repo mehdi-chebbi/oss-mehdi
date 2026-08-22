@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLoaderData, useSearchParams, useNavigation, useParams, Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Search, Loader2 } from 'lucide-react';
-import { getThumbnail } from '@/api/auth';
+import { getThumbnail, NEWS_CATEGORIES, newsCategoryLabel } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { NewsListLoaderData } from '@/loaders/public';
 
@@ -27,7 +27,7 @@ function formatDate(iso: string, locale: Locale): string {
 export default function NewsList() {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
-  const { data, years, page, year, q } = useLoaderData() as NewsListLoaderData;
+  const { data, years, page, year, category, q } = useLoaderData() as NewsListLoaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const navigation = useNavigation();
 
@@ -43,6 +43,24 @@ export default function NewsList() {
   useEffect(() => {
     setSearchInput(q);
   }, [q]);
+
+  useEffect(() => {
+    const nextQuery = searchInput.trim();
+    if (nextQuery === q) return;
+
+    const timer = window.setTimeout(() => {
+      const next = new URLSearchParams(searchParams);
+      if (nextQuery) {
+        next.set('q', nextQuery);
+      } else {
+        next.delete('q');
+      }
+      next.delete('page');
+      setSearchParams(next);
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [searchInput, q, searchParams, setSearchParams]);
 
   const updateParam = (key: string, value: string | undefined) => {
     const next = new URLSearchParams(searchParams);
@@ -63,7 +81,6 @@ export default function NewsList() {
 
   const items = data.items;
   const totalPages = data.totalPages;
-  const total = data.total;
 
   return (
     <div className="font-oss relative min-h-screen overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
@@ -99,6 +116,22 @@ export default function NewsList() {
             </select>
           </div>
 
+          <div className="flex items-center gap-3">
+            <label className="whitespace-nowrap text-xs font-bold uppercase tracking-[0.07em] text-oss-blue/65">
+              {locale === 'fr' ? 'Type' : 'Type'}:
+            </label>
+            <select
+              value={category || ''}
+              onChange={(e) => updateParam('category', e.target.value || undefined)}
+              className="border border-oss-line bg-oss-paper px-3 py-2.5 text-sm font-medium text-oss-blue-dark outline-none transition-colors focus:border-oss-blue"
+            >
+              <option value="">{locale === 'fr' ? 'Tous' : 'All'}</option>
+              {NEWS_CATEGORIES.map((categoryOption) => (
+                <option key={categoryOption} value={categoryOption}>{newsCategoryLabel(categoryOption, locale)}</option>
+              ))}
+            </select>
+          </div>
+
           <form onSubmit={handleSearch} className="flex max-w-xl flex-1 items-center gap-2 sm:ml-auto">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-oss-blue/45" />
@@ -110,7 +143,7 @@ export default function NewsList() {
                 className="w-full border border-oss-line bg-oss-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-oss-blue"
               />
             </div>
-            {(q || year) && (
+            {(q || year || category) && (
               <button
                 type="button"
                 onClick={() => {
@@ -124,10 +157,6 @@ export default function NewsList() {
             )}
           </form>
         </div>
-
-        <p className="mb-6 text-xs font-bold uppercase tracking-[0.07em] text-ink/40">
-          {total} {locale === 'fr' ? (total > 1 ? 'articles' : 'article') : (total !== 1 ? 'articles' : 'article')}
-        </p>
 
         {/* Empty state */}
         {items.length === 0 && (
@@ -164,7 +193,7 @@ export default function NewsList() {
 
                 <div className="flex min-h-[245px] flex-1 flex-col p-5 sm:p-6">
                   <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.08em] text-oss-blue/58">
-                    {formatDate(article.date, locale)}
+                    {newsCategoryLabel(article.category, locale)}
                   </p>
                   <h3 className="text-lg font-bold leading-snug text-oss-blue-dark transition-colors duration-300 group-hover:text-oss-blue">
                     {locale === 'fr' ? article.title_fr : article.title_en}
@@ -172,9 +201,14 @@ export default function NewsList() {
                   <p className="mt-3 text-sm leading-relaxed text-ink/55">
                     {truncate(locale === 'fr' ? article.body_fr : article.body_en)}
                   </p>
-                  <div className="mt-auto flex items-center gap-1.5 pt-5 text-sm font-bold text-oss-blue">
-                    {locale === 'fr' ? 'Lire la suite' : 'Read more'}
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  <div className="mt-auto flex items-end justify-between gap-4 border-t border-oss-line pt-4">
+                    <span className="flex items-center gap-1.5 text-sm font-bold text-oss-blue">
+                      {locale === 'fr' ? 'Lire la suite' : 'Read more'}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                    <time dateTime={article.date} className="text-right text-[10px] font-bold uppercase tracking-[0.06em] text-ink/38">
+                      {formatDate(article.date, locale)}
+                    </time>
                   </div>
                 </div>
               </Link>
