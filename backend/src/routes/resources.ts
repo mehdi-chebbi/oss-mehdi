@@ -20,6 +20,7 @@ import {
   isResourceField,
   listAllResources,
   listPublishedResources,
+  queueResourceIndexing,
   updateResource,
   type ResourceField,
   type ResourceInput,
@@ -213,6 +214,7 @@ router.post("/", editorOrAdmin, (req, res) => {
       };
 
       const resource = await createResource(input);
+      await queueResourceIndexing(resource.id);
       res.status(201).json(resource);
     } catch (error: any) {
       await cleanupIncomingFiles(files);
@@ -299,6 +301,7 @@ router.patch("/:id", editorOrAdmin, async (req, res) => {
 
       const updated = await updateResource(existing.id, input);
       if (!updated) throw new Error("Resource not found");
+      if (pdfChanged) await queueResourceIndexing(updated.id);
 
       const oldFilesToDelete = [
         (newFr || removeFr) ? existing.file_fr_path : null,
@@ -314,6 +317,23 @@ router.patch("/:id", editorOrAdmin, async (req, res) => {
       res.status(400).json({ error: error.message || "Could not update resource" });
     }
   });
+});
+
+router.post("/:id/reindex", editorOrAdmin, async (req, res) => {
+  if (!hasValidResourceId(req.params.id)) {
+    res.status(400).json({ error: "Invalid resource id" });
+    return;
+  }
+  try {
+    const resource = await queueResourceIndexing(req.params.id);
+    if (!resource) {
+      res.status(404).json({ error: "Resource not found" });
+      return;
+    }
+    res.json(resource);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || "Could not queue resource indexing" });
+  }
 });
 
 router.delete("/:id", editorOrAdmin, async (req, res) => {

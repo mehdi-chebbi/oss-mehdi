@@ -764,6 +764,7 @@ export const RESOURCE_FIELDS = [
 export type ResourceDocumentType = (typeof RESOURCE_DOCUMENT_TYPES)[number];
 export type ResourceField = (typeof RESOURCE_FIELDS)[number];
 export type ResourceLanguage = "fr" | "en";
+export type ResourceIndexStatus = "pending" | "processing" | "ready" | "failed";
 
 const RESOURCE_TYPE_LABELS: Record<ResourceDocumentType, { fr: string; en: string }> = {
   report: { fr: "Rapport", en: "Report" },
@@ -811,6 +812,11 @@ export interface ResourceData {
   file_en_original_name: string | null;
   file_en_size: number | null;
   is_published: boolean;
+  index_status: ResourceIndexStatus;
+  index_error: string;
+  index_started_at: string | null;
+  indexed_at: string | null;
+  active_index_version: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -867,6 +873,13 @@ export async function updateResource(token: string, id: string, formData: FormDa
 export async function deleteResource(token: string, id: string) {
   return request<{ message: string }>(`/resources/${id}`, {
     method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
+export async function retryResourceIndex(token: string, id: string) {
+  return request<ResourceData>(`/resources/${id}/reindex`, {
+    method: "POST",
     headers: authHeader(token),
   });
 }

@@ -359,6 +359,8 @@ CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
 -- Files are stored locally under uploads/resources and served publicly.
 -- A resource may provide a French PDF, an English PDF, or both.
 -- ═══════════════════════════════════════════
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE IF NOT EXISTS resources (
     id                      UUID PRIMARY KEY,
     title_fr                TEXT NOT NULL,
@@ -388,6 +390,12 @@ CREATE TABLE IF NOT EXISTS resources (
     file_en_original_name   VARCHAR(500),
     file_en_size            INT,
     is_published            BOOLEAN NOT NULL DEFAULT false,
+    index_status            VARCHAR(20) NOT NULL DEFAULT 'pending'
+                            CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
+    index_error             TEXT NOT NULL DEFAULT '',
+    index_started_at        TIMESTAMPTZ,
+    indexed_at              TIMESTAMPTZ,
+    active_index_version    UUID,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CHECK (cardinality(fields) > 0),
@@ -399,3 +407,22 @@ CREATE INDEX IF NOT EXISTS idx_resources_publication_date ON resources (publicat
 CREATE INDEX IF NOT EXISTS idx_resources_document_type ON resources (document_type);
 CREATE INDEX IF NOT EXISTS idx_resources_fields ON resources USING GIN (fields);
 CREATE INDEX IF NOT EXISTS idx_resources_published ON resources (is_published);
+CREATE INDEX IF NOT EXISTS idx_resources_index_status ON resources (index_status, index_started_at);
+
+CREATE TABLE IF NOT EXISTS resource_chunks (
+    id                  BIGSERIAL PRIMARY KEY,
+    resource_id         UUID NOT NULL REFERENCES resources(id) ON DELETE CASCADE,
+    index_version       UUID NOT NULL,
+    language            VARCHAR(2) NOT NULL CHECK (language IN ('fr', 'en')),
+    page_start          INT NOT NULL CHECK (page_start > 0),
+    page_end            INT NOT NULL CHECK (page_end >= page_start),
+    chunk_index         INT NOT NULL CHECK (chunk_index >= 0),
+    content             TEXT NOT NULL,
+    embedding           vector(1536) NOT NULL,
+    embedding_model     VARCHAR(200) NOT NULL,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (resource_id, index_version, language, chunk_index)
+);
+
+CREATE INDEX IF NOT EXISTS idx_resource_chunks_version
+    ON resource_chunks (resource_id, index_version);

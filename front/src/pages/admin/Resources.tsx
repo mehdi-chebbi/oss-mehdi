@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Loader2,
   Pencil,
+  RotateCcw,
   Save,
   Trash2,
   Upload,
@@ -22,6 +23,7 @@ import {
   listAllResources,
   resourceFieldLabel,
   resourceTypeLabel,
+  retryResourceIndex,
   type ResourceData,
   type ResourceDocumentType,
   type ResourceField,
@@ -112,6 +114,7 @@ export default function AdminResources() {
     queryKey: ["resources"],
     queryFn: () => listAllResources(token!),
     enabled: Boolean(token),
+    refetchInterval: (query) => query.state.data?.some((resource) => resource.index_status === "pending" || resource.index_status === "processing") ? 5_000 : false,
   });
 
   useEffect(() => {
@@ -120,6 +123,11 @@ export default function AdminResources() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteResource(token!, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["resources"] }),
+  });
+
+  const retryMutation = useMutation({
+    mutationFn: (id: string) => retryResourceIndex(token!, id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["resources"] }),
   });
 
@@ -368,6 +376,27 @@ export default function AdminResources() {
                   </div>
                   <p className="mt-0.5 truncate text-sm text-ink/50">{resource.title_en}</p>
                   <p className="mt-1 text-xs text-ink/40">{resourceTypeLabel(resource.document_type, "en")} · {resource.publication_date.slice(0, 10)} · {resource.fields.map((field) => resourceFieldLabel(field, "en")).join(", ")}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                    <span className={`rounded-full px-2 py-0.5 font-semibold ${
+                      resource.index_status === "ready" ? "bg-[#489e42]/10 text-[#3d8a37]" :
+                      resource.index_status === "failed" ? "bg-red-50 text-red-600" :
+                      resource.index_status === "processing" ? "bg-[#0072bc]/10 text-[#0072bc]" :
+                      "bg-amber-50 text-amber-700"
+                    }`}>
+                      {resource.index_status === "ready" ? "AI ready" : resource.index_status === "failed" ? "Index failed" : resource.index_status === "processing" ? "Indexing" : "Index queued"}
+                    </span>
+                    {resource.index_error && <span className="max-w-xl truncate text-red-500" title={resource.index_error}>{resource.index_error}</span>}
+                    {(resource.index_status === "failed" || resource.index_status === "ready") && (
+                      <button
+                        type="button"
+                        disabled={retryMutation.isPending}
+                        onClick={() => retryMutation.mutate(resource.id)}
+                        className="inline-flex items-center gap-1 font-semibold text-[#0072bc] hover:underline disabled:opacity-40"
+                      >
+                        <RotateCcw className="h-3 w-3" /> Reindex
+                      </button>
+                    )}
+                  </div>
                   <div className="mt-2 flex gap-2 text-xs font-semibold">
                     {resource.file_fr_path && <a href={resource.file_fr_path} download className="inline-flex items-center gap-1 text-[#0072bc] hover:underline"><Download className="h-3 w-3" /> FR {formatSize(resource.file_fr_size)}</a>}
                     {resource.file_en_path && <a href={resource.file_en_path} download className="inline-flex items-center gap-1 text-[#0072bc] hover:underline"><Download className="h-3 w-3" /> EN {formatSize(resource.file_en_size)}</a>}

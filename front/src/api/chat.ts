@@ -5,14 +5,26 @@ export interface ChatMessage {
   content: string;
 }
 
+export interface ChatSource {
+  id: string;
+  resourceId: string;
+  titleFr: string;
+  titleEn: string;
+  language: "fr" | "en";
+  pageStart: number;
+  pageEnd: number;
+  filePath: string;
+}
+
 export async function streamChatMessage(
   messages: ChatMessage[],
+  useResources: boolean,
   onDelta: (delta: string) => void,
 ) {
   const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, useResources }),
   });
 
   if (!response.ok) {
@@ -21,6 +33,16 @@ export async function streamChatMessage(
   }
 
   if (!response.body) throw new Error("Streaming is not supported by this browser.");
+
+  let sources: ChatSource[] = [];
+  const sourceHeader = response.headers.get("X-OSS-Sources");
+  if (sourceHeader) {
+    try {
+      sources = JSON.parse(decodeURIComponent(sourceHeader)) as ChatSource[];
+    } catch {
+      sources = [];
+    }
+  }
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -42,5 +64,5 @@ export async function streamChatMessage(
   }
 
   if (!completeMessage.trim()) throw new Error("The assistant returned an empty response.");
-  return completeMessage;
+  return { message: completeMessage, sources };
 }

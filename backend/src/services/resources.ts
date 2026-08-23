@@ -23,6 +23,7 @@ export const RESOURCE_FIELDS = [
 export type ResourceDocumentType = (typeof RESOURCE_DOCUMENT_TYPES)[number];
 export type ResourceField = (typeof RESOURCE_FIELDS)[number];
 export type ResourceLanguage = "fr" | "en";
+export type ResourceIndexStatus = "pending" | "processing" | "ready" | "failed";
 
 export interface ResourceRow {
   id: string;
@@ -42,6 +43,11 @@ export interface ResourceRow {
   file_en_original_name: string | null;
   file_en_size: number | null;
   is_published: boolean;
+  index_status: ResourceIndexStatus;
+  index_error: string;
+  index_started_at: string | null;
+  indexed_at: string | null;
+  active_index_version: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -234,5 +240,15 @@ export async function updateResource(id: string, data: Omit<ResourceInput, "id">
 
 export async function deleteResourceRecord(id: string) {
   const result = await query("DELETE FROM resources WHERE id = $1 RETURNING *", [id]);
+  return (result.rows[0] as ResourceRow) || null;
+}
+
+export async function queueResourceIndexing(id: string) {
+  const result = await query(
+    `UPDATE resources SET
+       index_status = 'pending', index_error = '', index_started_at = NULL, updated_at = NOW()
+     WHERE id = $1 RETURNING *`,
+    [id],
+  );
   return (result.rows[0] as ResourceRow) || null;
 }

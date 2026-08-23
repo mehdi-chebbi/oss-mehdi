@@ -32,6 +32,9 @@ export const env = {
   // a clear 503 response without preventing the rest of the site from starting.
   openRouterApiKey: process.env.OPENROUTER_API_KEY || "",
   openRouterModel: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
+  openRouterEmbeddingModel: process.env.OPENROUTER_EMBEDDING_MODEL || "qwen/qwen3-embedding-8b",
+  embeddingDimensions: 1536,
+  resourceRetrievalMaxDistance: Number(process.env.RESOURCE_RETRIEVAL_MAX_DISTANCE) || 0.65,
 
   // ── Per-email fail tracking ──
   maxFails: 5, // after this many fails in the window, CAPTCHA is required for this email

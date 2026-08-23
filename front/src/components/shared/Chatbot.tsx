@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
-import { Bot, Loader2, MessageCircle, Send, User, X } from "lucide-react";
-import { streamChatMessage, type ChatMessage } from "@/api/chat";
+import { BookOpen, Bot, Download, Loader2, MessageCircle, Send, User, X } from "lucide-react";
+import { streamChatMessage, type ChatMessage, type ChatSource } from "@/api/chat";
 import { useLocale } from "@/context/locale";
 
 const copy = {
@@ -14,6 +14,9 @@ const copy = {
     thinking: "L’assistant réfléchit...",
     powered: "Propulsé par l’IA",
     genericError: "Une erreur est survenue. Veuillez réessayer.",
+    resourceMode: "Mode ressources OSS",
+    resourceModeHelp: "Répond uniquement à partir des documents publiés par l’OSS",
+    sources: "Sources",
     suggestions: ["Quels sont vos domaines d’action ?", "Présentez-moi vos outils", "Comment contacter l’OSS ?"],
   },
   en: {
@@ -26,16 +29,25 @@ const copy = {
     thinking: "The assistant is thinking...",
     powered: "Powered by AI",
     genericError: "Something went wrong. Please try again.",
+    resourceMode: "OSS resource mode",
+    resourceModeHelp: "Answers only from documents published by OSS",
+    sources: "Sources",
     suggestions: ["What are your areas of work?", "Tell me about your tools", "How can I contact OSS?"],
   },
 } as const;
+
+type DisplayMessage = ChatMessage & {
+  mode: "general" | "resources";
+  sources?: ChatSource[];
+};
 
 export default function Chatbot() {
   const { locale } = useLocale();
   const labels = copy[locale];
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
+  const [resourceMode, setResourceMode] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,15 +71,18 @@ export default function Chatbot() {
     const content = value.trim();
     if (!content || sending) return;
 
-    const userMessage: ChatMessage = { role: "user", content };
-    const conversation = [...messages, userMessage].slice(-10);
-    setMessages((current) => [...current, userMessage, { role: "assistant", content: "" }]);
+    const mode = resourceMode ? "resources" : "general";
+    const userMessage: DisplayMessage = { role: "user", content, mode };
+    const conversation = [...messages.filter((message) => message.mode === mode), userMessage]
+      .slice(-10)
+      .map(({ role, content: messageContent }) => ({ role, content: messageContent }));
+    setMessages((current) => [...current, userMessage, { role: "assistant", content: "", mode }]);
     setInput("");
     setError("");
     setSending(true);
 
     try {
-      await streamChatMessage(conversation, (delta) => {
+      const result = await streamChatMessage(conversation, resourceMode, (delta) => {
         setMessages((current) => {
           const next = [...current];
           const lastIndex = next.length - 1;
@@ -77,6 +92,14 @@ export default function Chatbot() {
           }
           return next;
         });
+      });
+      setMessages((current) => {
+        const next = [...current];
+        const lastIndex = next.length - 1;
+        if (next[lastIndex]?.role === "assistant") {
+          next[lastIndex] = { ...next[lastIndex], sources: result.sources };
+        }
+        return next;
       });
     } catch (requestError: any) {
       setMessages((current) => {
@@ -130,9 +153,26 @@ export default function Chatbot() {
                 <div className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${message.role === "user" ? "bg-[#489e42] text-white" : "bg-[#3183d4] text-white"}`}>
                   {message.role === "user" ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
                 </div>
-                <div className={`whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-sm ${message.role === "user" ? "rounded-br-sm bg-[#3183d4] text-white" : "rounded-bl-sm border border-[#3183d4]/10 bg-white text-gray-800"}`}>
-                  {message.content || (sending && index === messages.length - 1 ? <span className="flex items-center gap-2 text-gray-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {labels.thinking}</span> : null)}
-                  {message.content && sending && message.role === "assistant" && index === messages.length - 1 && <span className="ml-0.5 animate-pulse text-[#3183d4]">▍</span>}
+                <div className={`rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-sm ${message.role === "user" ? "rounded-br-sm bg-[#3183d4] text-white" : "rounded-bl-sm border border-[#3183d4]/10 bg-white text-gray-800"}`}>
+                  <div className="whitespace-pre-wrap">
+                    {message.content || (sending && index === messages.length - 1 ? <span className="flex items-center gap-2 text-gray-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {labels.thinking}</span> : null)}
+                    {message.content && sending && message.role === "assistant" && index === messages.length - 1 && <span className="ml-0.5 animate-pulse text-[#3183d4]">▍</span>}
+                  </div>
+                  {message.role === "assistant" && message.sources && message.sources.length > 0 && (
+                    <div className="mt-3 border-t border-[#3183d4]/10 pt-2.5">
+                      <p className="mb-2 flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#3d8a37]"><BookOpen className="h-3 w-3" /> {labels.sources}</p>
+                      <div className="space-y-1.5">
+                        {message.sources.map((source) => (
+                          <a key={source.id} href={source.filePath} download className="flex items-start gap-2 rounded-md bg-[#489e42]/[0.07] px-2.5 py-2 text-[11.5px] leading-snug text-gray-700 transition-colors hover:bg-[#489e42]/[0.14]">
+                            <span className="min-w-0 flex-1">
+                              <span className="line-clamp-2 font-semibold">{locale === "fr" ? source.titleFr : source.titleEn}</span>
+                            </span>
+                            <Download className="mt-0.5 h-3 w-3 shrink-0 text-[#3183d4]" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -142,6 +182,18 @@ export default function Chatbot() {
           </div>
 
           <div className="border-t border-[#3183d4]/10 bg-white">
+            <div className="px-3 pt-2.5">
+              <button
+                type="button"
+                aria-pressed={resourceMode}
+                title={labels.resourceModeHelp}
+                disabled={sending}
+                onClick={() => setResourceMode((value) => !value)}
+                className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 ${resourceMode ? "border-[#489e42]/35 bg-[#489e42]/10 text-[#347b30]" : "border-ink/10 bg-ink/[0.025] text-ink/55 hover:border-[#489e42]/25 hover:text-[#3d8a37]"}`}
+              >
+                <BookOpen className="h-3.5 w-3.5" /> {labels.resourceMode}
+              </button>
+            </div>
             {messages.length === 0 && (
               <div className="flex flex-wrap gap-1.5 px-3 pt-2.5">
                 {labels.suggestions.map((suggestion) => (

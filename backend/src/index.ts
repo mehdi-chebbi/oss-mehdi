@@ -20,6 +20,7 @@ import uploadRoutes from "./routes/upload.js";
 import reportsRoutes from "./routes/reports.js";
 import resourcesRoutes from "./routes/resources.js";
 import chatRoutes from "./routes/chat.js";
+import { startResourceIndexer } from "./services/resourceIndexer.js";
 
 // ── Fail-fast env validation ──
 // In production, refuse to boot if secrets are missing or still set to their
@@ -136,6 +137,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Expose-Headers", "X-OSS-Sources");
     if (req.method === "OPTIONS") {
       res.sendStatus(204);
       return;
@@ -146,6 +148,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Expose-Headers", "X-OSS-Sources");
     if (req.method === "OPTIONS") {
       res.sendStatus(204);
       return;
@@ -183,6 +186,7 @@ app.get("/api/health", async (_req, res) => {
 
 // Start server
 async function start() {
+  startResourceIndexer();
   // Periodic cleanup of expired refresh tokens (every hour)
   const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
   setInterval(async () => {
