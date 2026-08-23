@@ -27,6 +27,12 @@ export const env = {
   turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
   turnstileSecret: process.env.TURNSTILE_SECRET || "1x0000000000000000000000000000000AA",
 
+  // ── Public OSS assistant (OpenRouter) ──
+  // The API key stays server-side. If it is empty, the chat endpoint returns
+  // a clear 503 response without preventing the rest of the site from starting.
+  openRouterApiKey: process.env.OPENROUTER_API_KEY || "",
+  openRouterModel: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
+
   // ── Per-email fail tracking ──
   maxFails: 5, // after this many fails in the window, CAPTCHA is required for this email
   failWindowMs: 15 * 60 * 1000, // 15 min

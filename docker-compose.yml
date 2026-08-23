@@ -44,6 +44,10 @@ services:
       JWT_REFRESH_SECRET: "a2577104ac8c96f70d75a43a892a32168bbbf1c7af169f6024614bcead283056"
       TURNSTILE_SITE_KEY: "0x4AAAAAAEEZs14kAL9OcKpf"
       TURNSTILE_SECRET: "0x4AAAAAAEEZsxwtfxZ4mKs34QnoJ-quvIc"
+      # OpenRouter credentials for the public OSS chatbot.
+      # Set OPENROUTER_API_KEY in your shell or a local .env file.
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      OPENROUTER_MODEL: "${OPENROUTER_MODEL:-openai/gpt-4o-mini}"
       # ── Runtime config ──
       NODE_ENV: production
       COOKIE_SECURE: "false"   # HTTP locally — browsers reject Secure cookies over http://

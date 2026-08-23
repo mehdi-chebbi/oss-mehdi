@@ -19,6 +19,7 @@ import teamRoutes from "./routes/team.js";
 import uploadRoutes from "./routes/upload.js";
 import reportsRoutes from "./routes/reports.js";
 import resourcesRoutes from "./routes/resources.js";
+import chatRoutes from "./routes/chat.js";
 
 // ── Fail-fast env validation ──
 // In production, refuse to boot if secrets are missing or still set to their
@@ -97,7 +98,13 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on("finish", () => {
     const ms = Date.now() - start;
-    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${ms}ms${req.method !== "GET" && req.body ? ` body=${JSON.stringify(req.body)}` : ""}`);
+    const hasBody = req.method !== "GET" && req.body;
+    const bodyLog = hasBody
+      ? req.originalUrl.startsWith("/api/chat")
+        ? " body=[redacted]"
+        : ` body=${JSON.stringify(req.body)}`
+      : "";
+    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${ms}ms${bodyLog}`);
   });
   next();
 });
@@ -162,6 +169,7 @@ app.use("/api/team", teamRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/resources", resourcesRoutes);
+app.use("/api/chat", chatRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {
