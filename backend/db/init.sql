@@ -124,6 +124,12 @@ CREATE TABLE IF NOT EXISTS news (
     date            DATE NOT NULL DEFAULT CURRENT_DATE,
     slug            VARCHAR(200) NOT NULL UNIQUE,
     is_published    BOOLEAN NOT NULL DEFAULT false,
+    index_status    VARCHAR(20) NOT NULL DEFAULT 'pending'
+                    CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
+    index_error     TEXT NOT NULL DEFAULT '',
+    index_started_at TIMESTAMPTZ,
+    indexed_at      TIMESTAMPTZ,
+    active_index_version UUID,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -132,6 +138,7 @@ CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
 CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
 CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
 CREATE INDEX IF NOT EXISTS idx_news_category ON news (category);
+CREATE INDEX IF NOT EXISTS idx_news_index_status ON news (index_status, index_started_at);
 
 -- ═══════════════════════════════════════════
 -- Tools (Nos outils)
@@ -409,20 +416,25 @@ CREATE INDEX IF NOT EXISTS idx_resources_fields ON resources USING GIN (fields);
 CREATE INDEX IF NOT EXISTS idx_resources_published ON resources (is_published);
 CREATE INDEX IF NOT EXISTS idx_resources_index_status ON resources (index_status, index_started_at);
 
-CREATE TABLE IF NOT EXISTS resource_chunks (
+CREATE TABLE IF NOT EXISTS knowledge_chunks (
     id                  BIGSERIAL PRIMARY KEY,
-    resource_id         UUID NOT NULL REFERENCES resources(id) ON DELETE CASCADE,
+    source_type         VARCHAR(20) NOT NULL
+                        CHECK (source_type IN ('resource', 'news', 'project')),
+    source_id           VARCHAR(64) NOT NULL,
     index_version       UUID NOT NULL,
     language            VARCHAR(2) NOT NULL CHECK (language IN ('fr', 'en')),
-    page_start          INT NOT NULL CHECK (page_start > 0),
-    page_end            INT NOT NULL CHECK (page_end >= page_start),
+    page_start          INT CHECK (page_start IS NULL OR page_start > 0),
+    page_end            INT CHECK (page_end IS NULL OR page_end >= page_start),
     chunk_index         INT NOT NULL CHECK (chunk_index >= 0),
     content             TEXT NOT NULL,
     embedding           vector(1536) NOT NULL,
     embedding_model     VARCHAR(200) NOT NULL,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE (resource_id, index_version, language, chunk_index)
+    UNIQUE (source_type, source_id, index_version, language, chunk_index),
+    CHECK ((page_start IS NULL) = (page_end IS NULL))
 );
 
-CREATE INDEX IF NOT EXISTS idx_resource_chunks_version
-    ON resource_chunks (resource_id, index_version);
+CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_source
+    ON knowledge_chunks (source_type, source_id, index_version);
+CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_embedding
+    ON knowledge_chunks USING hnsw (embedding vector_cosine_ops);

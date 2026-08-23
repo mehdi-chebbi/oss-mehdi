@@ -7,12 +7,13 @@ export interface ChatMessage {
 
 export interface ChatSource {
   id: string;
-  resourceId: string;
+  sourceType: "resource" | "news";
+  sourceId: string;
   titleFr: string;
   titleEn: string;
   language: "fr" | "en";
-  pageStart: number;
-  pageEnd: number;
+  pageStart: number | null;
+  pageEnd: number | null;
   filePath: string;
 }
 

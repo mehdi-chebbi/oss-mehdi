@@ -617,6 +617,7 @@ export const NEWS_CATEGORIES = [
 ] as const;
 
 export type NewsCategory = (typeof NEWS_CATEGORIES)[number];
+export type NewsIndexStatus = "pending" | "processing" | "ready" | "failed";
 
 const NEWS_CATEGORY_LABELS: Record<NewsCategory, { fr: string; en: string }> = {
   partnership: { fr: "Partenariats", en: "Partnerships" },
@@ -643,6 +644,11 @@ export interface NewsData {
   date: string;
   slug: string;
   is_published?: boolean;
+  index_status: NewsIndexStatus;
+  index_error: string;
+  index_started_at: string | null;
+  indexed_at: string | null;
+  active_index_version: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -736,6 +742,13 @@ export async function updateNews(
 export async function deleteNews(token: string, id: number) {
   return request<{ message: string }>(`/news/${id}`, {
     method: "DELETE",
+    headers: authHeader(token),
+  });
+}
+
+export async function retryNewsIndex(token: string, id: number) {
+  return request<NewsData>(`/news/${id}/reindex`, {
+    method: "POST",
     headers: authHeader(token),
   });
 }

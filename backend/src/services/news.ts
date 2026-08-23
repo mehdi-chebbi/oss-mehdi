@@ -1,4 +1,4 @@
-import { query } from "../config/db.js";
+import { pool, query } from "../config/db.js";
 
 export const NEWS_CATEGORIES = [
   "partnership",
@@ -10,6 +10,7 @@ export const NEWS_CATEGORIES = [
 ] as const;
 
 export type NewsCategory = (typeof NEWS_CATEGORIES)[number];
+export type NewsIndexStatus = "pending" | "processing" | "ready" | "failed";
 
 export function isNewsCategory(value: unknown): value is NewsCategory {
   return typeof value === "string" && NEWS_CATEGORIES.includes(value as NewsCategory);
@@ -27,6 +28,11 @@ export interface NewsRow {
   date: string;            // ISO date string from DB
   slug: string;
   is_published: boolean;
+  index_status: NewsIndexStatus;
+  index_error: string;
+  index_started_at: string | null;
+  indexed_at: string | null;
+  active_index_version: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -177,7 +183,9 @@ export async function getPublishedYears() {
 // ── Authenticated: list all news (admin) ──
 export async function listAllNews() {
   const result = await query(
-    `SELECT id, title_fr, title_en, category, images, thumbnail_index, date, slug, is_published, created_at, updated_at
+    `SELECT id, title_fr, title_en, category, images, thumbnail_index, date, slug, is_published,
+            index_status, index_error, index_started_at, indexed_at, active_index_version,
+            created_at, updated_at
      FROM news
      ORDER BY date DESC, id DESC`,
   );
@@ -309,6 +317,29 @@ export async function updateNews(id: number, data: Partial<NewsRow>) {
 
 // ── Authenticated: delete news ──
 export async function deleteNews(id: number) {
-  const result = await query("DELETE FROM news WHERE id = $1 RETURNING id", [id]);
-  return result.rows[0] || null;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query("DELETE FROM news WHERE id = $1 RETURNING id", [id]);
+    if (result.rows[0]) {
+      await client.query("DELETE FROM knowledge_chunks WHERE source_type = 'news' AND source_id = $1", [String(id)]);
+    }
+    await client.query("COMMIT");
+    return result.rows[0] || null;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function queueNewsIndexing(id: number) {
+  const result = await query(
+    `UPDATE news SET
+       index_status = 'pending', index_error = '', index_started_at = NULL, updated_at = NOW()
+     WHERE id = $1 RETURNING *`,
+    [id],
+  );
+  return (result.rows[0] as NewsRow) || null;
 }

@@ -7,10 +7,11 @@ import {
   deleteNews,
   getThumbnail,
   newsCategoryLabel,
+  retryNewsIndex,
   type NewsData,
 } from "../../api/auth";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
-import { Loader2, Plus, Trash2, Pencil, Newspaper } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Newspaper, RotateCcw } from "lucide-react";
 
 export default function AdminNews() {
   const { token } = useAuth();
@@ -23,6 +24,7 @@ export default function AdminNews() {
     queryKey: ["news"],
     queryFn: () => listAllNews(token!),
     enabled: !!token,
+    refetchInterval: (query) => query.state.data?.some((article) => article.index_status === "pending" || article.index_status === "processing") ? 5_000 : false,
   });
 
   useEffect(() => {
@@ -34,6 +36,11 @@ export default function AdminNews() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
     },
+  });
+
+  const retryMutation = useMutation({
+    mutationFn: (id: number) => retryNewsIndex(token!, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["news"] }),
   });
 
   const handleDelete = async () => {
@@ -126,6 +133,21 @@ export default function AdminNews() {
               <p className="mt-1 text-[11px] font-semibold text-[#489e42]">
                 {newsCategoryLabel(article.category, "en")}
               </p>
+              <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+                <span className={`font-semibold ${
+                  article.index_status === "ready" ? "text-[#3d8a37]" :
+                  article.index_status === "failed" ? "text-red-600" :
+                  article.index_status === "processing" ? "text-[#0072bc]" : "text-amber-700"
+                }`}>
+                  {article.index_status === "ready" ? "AI ready" : article.index_status === "failed" ? "Index failed" : article.index_status === "processing" ? "Indexing" : "Index queued"}
+                </span>
+                {article.index_error && <span className="max-w-xs truncate text-red-500" title={article.index_error}>{article.index_error}</span>}
+                {(article.index_status === "failed" || article.index_status === "ready") && (
+                  <button type="button" disabled={retryMutation.isPending} onClick={() => retryMutation.mutate(article.id)} className="inline-flex items-center gap-1 font-semibold text-[#0072bc] hover:underline disabled:opacity-40">
+                    <RotateCcw className="h-3 w-3" /> Reindex
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Published badge */}

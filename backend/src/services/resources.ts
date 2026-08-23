@@ -1,4 +1,4 @@
-import { query } from "../config/db.js";
+import { pool, query } from "../config/db.js";
 
 export const RESOURCE_DOCUMENT_TYPES = [
   "report",
@@ -239,8 +239,21 @@ export async function updateResource(id: string, data: Omit<ResourceInput, "id">
 }
 
 export async function deleteResourceRecord(id: string) {
-  const result = await query("DELETE FROM resources WHERE id = $1 RETURNING *", [id]);
-  return (result.rows[0] as ResourceRow) || null;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query("DELETE FROM resources WHERE id = $1 RETURNING *", [id]);
+    if (result.rows[0]) {
+      await client.query("DELETE FROM knowledge_chunks WHERE source_type = 'resource' AND source_id = $1", [id]);
+    }
+    await client.query("COMMIT");
+    return (result.rows[0] as ResourceRow) || null;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function queueResourceIndexing(id: string) {

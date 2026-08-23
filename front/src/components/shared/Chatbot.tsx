@@ -1,5 +1,7 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
-import { BookOpen, Bot, Download, Loader2, MessageCircle, Send, User, X } from "lucide-react";
+import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { BookOpen, Bot, Download, ExternalLink, Loader2, MessageCircle, Send, User, X } from "lucide-react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { streamChatMessage, type ChatMessage, type ChatSource } from "@/api/chat";
 import { useLocale } from "@/context/locale";
 
@@ -39,6 +41,37 @@ const copy = {
 type DisplayMessage = ChatMessage & {
   mode: "general" | "resources";
   sources?: ChatSource[];
+  rawContent?: string;
+};
+
+function stripKnowledgeMarkers(value: string) {
+  return value
+    .replace(/\[SOURCE_\d+\]/g, "")
+    .replace(/\[(?:S(?:O(?:U(?:R(?:C(?:E(?:_\d*)?)?)?)?)?)?)?$/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .trimStart();
+}
+
+const markdownComponents = {
+  h1: ({ children }: { children?: ReactNode }) => <h1 className="mb-2 mt-3 text-base font-bold first:mt-0">{children}</h1>,
+  h2: ({ children }: { children?: ReactNode }) => <h2 className="mb-2 mt-3 text-[15px] font-bold first:mt-0">{children}</h2>,
+  h3: ({ children }: { children?: ReactNode }) => <h3 className="mb-1.5 mt-2.5 text-sm font-bold first:mt-0">{children}</h3>,
+  h4: ({ children }: { children?: ReactNode }) => <h4 className="mb-1 mt-2 text-[13.5px] font-bold first:mt-0">{children}</h4>,
+  p: ({ children }: { children?: ReactNode }) => <p className="mb-2 last:mb-0">{children}</p>,
+  ul: ({ children }: { children?: ReactNode }) => <ul className="mb-2 ml-4 list-disc space-y-1 last:mb-0">{children}</ul>,
+  ol: ({ children }: { children?: ReactNode }) => <ol className="mb-2 ml-4 list-decimal space-y-1 last:mb-0">{children}</ol>,
+  li: ({ children }: { children?: ReactNode }) => <li className="pl-0.5">{children}</li>,
+  blockquote: ({ children }: { children?: ReactNode }) => <blockquote className="my-2 border-l-2 border-[#3183d4]/35 pl-3 text-gray-600">{children}</blockquote>,
+  a: ({ href, children }: { href?: string; children?: ReactNode }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="font-semibold text-[#2674bd] underline decoration-[#2674bd]/30 underline-offset-2 hover:decoration-[#2674bd]">{children}</a>
+  ),
+  pre: ({ children }: { children?: ReactNode }) => <pre className="my-2 max-w-full overflow-x-auto rounded-lg bg-gray-900 p-3 text-[11.5px] leading-relaxed text-gray-100 [&>code]:bg-transparent [&>code]:p-0 [&>code]:text-inherit">{children}</pre>,
+  code: ({ children }: { children?: ReactNode }) => <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-[0.9em] text-gray-800">{children}</code>,
+  table: ({ children }: { children?: ReactNode }) => <div className="my-2 max-w-full overflow-x-auto"><table className="w-full border-collapse text-left text-xs">{children}</table></div>,
+  th: ({ children }: { children?: ReactNode }) => <th className="border border-gray-200 bg-gray-50 px-2 py-1.5 font-bold">{children}</th>,
+  td: ({ children }: { children?: ReactNode }) => <td className="border border-gray-200 px-2 py-1.5 align-top">{children}</td>,
+  hr: () => <hr className="my-3 border-[#3183d4]/15" />,
+  img: ({ src, alt }: { src?: string; alt?: string }) => <img src={src} alt={alt || ""} loading="lazy" className="my-2 max-h-52 max-w-full rounded-lg object-contain" />,
 };
 
 export default function Chatbot() {
@@ -74,9 +107,9 @@ export default function Chatbot() {
     const mode = resourceMode ? "resources" : "general";
     const userMessage: DisplayMessage = { role: "user", content, mode };
     const conversation = [...messages.filter((message) => message.mode === mode), userMessage]
-      .slice(-10)
+      .slice(-7)
       .map(({ role, content: messageContent }) => ({ role, content: messageContent }));
-    setMessages((current) => [...current, userMessage, { role: "assistant", content: "", mode }]);
+    setMessages((current) => [...current, userMessage, { role: "assistant", content: "", rawContent: "", mode }]);
     setInput("");
     setError("");
     setSending(true);
@@ -88,7 +121,12 @@ export default function Chatbot() {
           const lastIndex = next.length - 1;
           const lastMessage = next[lastIndex];
           if (lastMessage?.role === "assistant") {
-            next[lastIndex] = { ...lastMessage, content: lastMessage.content + delta };
+            const rawContent = (lastMessage.rawContent ?? lastMessage.content) + delta;
+            next[lastIndex] = {
+              ...lastMessage,
+              rawContent,
+              content: mode === "resources" ? stripKnowledgeMarkers(rawContent) : rawContent,
+            };
           }
           return next;
         });
@@ -97,7 +135,13 @@ export default function Chatbot() {
         const next = [...current];
         const lastIndex = next.length - 1;
         if (next[lastIndex]?.role === "assistant") {
-          next[lastIndex] = { ...next[lastIndex], sources: result.sources };
+          const citedSources = result.sources.filter((source) => result.message.includes(`[${source.id}]`));
+          next[lastIndex] = {
+            ...next[lastIndex],
+            rawContent: result.message,
+            content: resourceMode ? stripKnowledgeMarkers(result.message) : result.message,
+            sources: citedSources.length > 0 ? citedSources : result.sources.slice(0, 1),
+          };
         }
         return next;
       });
@@ -154,22 +198,29 @@ export default function Chatbot() {
                   {message.role === "user" ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
                 </div>
                 <div className={`rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed shadow-sm ${message.role === "user" ? "rounded-br-sm bg-[#3183d4] text-white" : "rounded-bl-sm border border-[#3183d4]/10 bg-white text-gray-800"}`}>
-                  <div className="whitespace-pre-wrap">
-                    {message.content || (sending && index === messages.length - 1 ? <span className="flex items-center gap-2 text-gray-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {labels.thinking}</span> : null)}
+                  <div className={message.role === "assistant" ? "" : "whitespace-pre-wrap"}>
+                    {message.content ? (
+                      message.role === "assistant"
+                        ? <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{message.content}</Markdown>
+                        : message.content
+                    ) : (sending && index === messages.length - 1 ? <span className="flex items-center gap-2 text-gray-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {labels.thinking}</span> : null)}
                     {message.content && sending && message.role === "assistant" && index === messages.length - 1 && <span className="ml-0.5 animate-pulse text-[#3183d4]">▍</span>}
                   </div>
                   {message.role === "assistant" && message.sources && message.sources.length > 0 && (
                     <div className="mt-3 border-t border-[#3183d4]/10 pt-2.5">
                       <p className="mb-2 flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#3d8a37]"><BookOpen className="h-3 w-3" /> {labels.sources}</p>
                       <div className="space-y-1.5">
-                        {message.sources.map((source) => (
-                          <a key={source.id} href={source.filePath} download className="flex items-start gap-2 rounded-md bg-[#489e42]/[0.07] px-2.5 py-2 text-[11.5px] leading-snug text-gray-700 transition-colors hover:bg-[#489e42]/[0.14]">
-                            <span className="min-w-0 flex-1">
-                              <span className="line-clamp-2 font-semibold">{locale === "fr" ? source.titleFr : source.titleEn}</span>
-                            </span>
-                            <Download className="mt-0.5 h-3 w-3 shrink-0 text-[#3183d4]" />
-                          </a>
-                        ))}
+                        {message.sources.map((source) => {
+                          const href = source.sourceType === "news" ? `/${locale}${source.filePath}` : source.filePath;
+                          return (
+                            <a key={source.id} href={href} download={source.sourceType === "resource" || undefined} className="flex items-start gap-2 rounded-md bg-[#489e42]/[0.07] px-2.5 py-2 text-[11.5px] leading-snug text-gray-700 transition-colors hover:bg-[#489e42]/[0.14]">
+                              <span className="min-w-0 flex-1">
+                                <span className="line-clamp-2 font-semibold">{locale === "fr" ? source.titleFr : source.titleEn}</span>
+                              </span>
+                              {source.sourceType === "news" ? <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 text-[#3183d4]" /> : <Download className="mt-0.5 h-3 w-3 shrink-0 text-[#3183d4]" />}
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

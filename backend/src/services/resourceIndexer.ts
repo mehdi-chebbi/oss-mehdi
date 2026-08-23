@@ -207,10 +207,10 @@ async function indexResource(resource: IndexableResource) {
       for (let index = 0; index < chunks.length; index += 1) {
         const chunk = chunks[index];
         await client.query(
-          `INSERT INTO resource_chunks (
-             resource_id, index_version, language, page_start, page_end,
+          `INSERT INTO knowledge_chunks (
+             source_type, source_id, index_version, language, page_start, page_end,
              chunk_index, content, embedding, embedding_model
-           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::vector, $9)`,
+           ) VALUES ('resource', $1, $2, $3, $4, $5, $6, $7, $8::vector, $9)`,
           [resource.id, version, chunk.language, chunk.pageStart, chunk.pageEnd,
             chunk.chunkIndex, chunk.content, `[${vectors[index].join(",")}]`, env.openRouterEmbeddingModel],
         );
@@ -224,7 +224,7 @@ async function indexResource(resource: IndexableResource) {
       );
       if (activated.rowCount !== 1) throw new Error("Resource changed while it was being indexed");
       await client.query(
-        "DELETE FROM resource_chunks WHERE resource_id = $1 AND index_version <> $2",
+        "DELETE FROM knowledge_chunks WHERE source_type = 'resource' AND source_id = $1 AND index_version <> $2",
         [resource.id, version],
       );
       await client.query("COMMIT");

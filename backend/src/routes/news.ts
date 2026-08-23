@@ -11,6 +11,7 @@ import {
   updateNews,
   deleteNews,
   isNewsCategory,
+  queueNewsIndexing,
 } from "../services/news.js";
 
 const router = Router();
@@ -104,7 +105,7 @@ router.post("/", editorOrAdmin, async (req, res) => {
       date,
       is_published,
     });
-    res.status(201).json(article);
+    res.status(201).json(await queueNewsIndexing(article.id));
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
@@ -117,14 +118,40 @@ router.patch("/:id", editorOrAdmin, async (req, res) => {
       res.status(400).json({ error: "Invalid news category" });
       return;
     }
-    const article = await updateNews(Number(req.params.id), req.body);
+    const articleId = Number(req.params.id);
+    const existing = await getNews(articleId);
+    if (!existing) {
+      res.status(404).json({ error: "Article not found" });
+      return;
+    }
+    const indexableContentChanged = ["title_fr", "title_en", "body_fr", "body_en", "category", "date"]
+      .some((field) => req.body[field] !== undefined && req.body[field] !== existing[field]);
+    const article = await updateNews(articleId, req.body);
+    if (!article) {
+      res.status(404).json({ error: "Article not found" });
+      return;
+    }
+    res.json(indexableContentChanged ? await queueNewsIndexing(articleId) : article);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.post("/:id/reindex", editorOrAdmin, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      res.status(400).json({ error: "Invalid article id" });
+      return;
+    }
+    const article = await queueNewsIndexing(id);
     if (!article) {
       res.status(404).json({ error: "Article not found" });
       return;
     }
     res.json(article);
   } catch (err: any) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message || "Could not queue article indexing" });
   }
 });
 
