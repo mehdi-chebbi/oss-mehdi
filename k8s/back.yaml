@@ -34,6 +34,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: app-config
+            - secretRef:
+                name: app-secrets
           volumeMounts:
             - name: uploads
               mountPath: /app/uploads

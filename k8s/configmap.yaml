@@ -8,16 +8,15 @@ data:
   DB_HOST: "db"
   DB_PORT: "5432"
   DB_USER: "appuser"
-  DB_PASSWORD: "appsecret"
   DB_NAME: "appdb"
 
-  # ── Auth ──
-  JWT_SECRET: "fcab09c8bb83dd1316c2bafb62f109b61d1b5bb6d42fb6603ad9bd92349ed686"
-  JWT_REFRESH_SECRET: "a2577104ac8c96f70d75a43a892a32168bbbf1c7af169f6024614bcead283056"
-
-  # ── Turnstile ──
+  # ── Public Turnstile configuration ──
   TURNSTILE_SITE_KEY: "0x4AAAAAAEEZs14kAL9OcKpf"
-  TURNSTILE_SECRET: "0x4AAAAAAEEZsxwtfxZ4mKs34QnoJ-quvIc"
+
+  # ── Public OSS assistant ──
+  OPENROUTER_MODEL: "qwen/qwen3-235b-a22b-2507"
+  OPENROUTER_EMBEDDING_MODEL: "qwen/qwen3-embedding-8b"
+  RESOURCE_RETRIEVAL_MAX_DISTANCE: "0.65"
 
   # ── Runtime ──
   NODE_ENV: "production"

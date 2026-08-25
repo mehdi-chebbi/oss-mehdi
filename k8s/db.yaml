@@ -93,6 +93,12 @@ data:
         date            DATE NOT NULL DEFAULT CURRENT_DATE,
         slug            VARCHAR(200) NOT NULL UNIQUE,
         is_published    BOOLEAN NOT NULL DEFAULT false,
+        index_status    VARCHAR(20) NOT NULL DEFAULT 'pending'
+                        CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
+        index_error     TEXT NOT NULL DEFAULT '',
+        index_started_at TIMESTAMPTZ,
+        indexed_at      TIMESTAMPTZ,
+        active_index_version UUID,
         created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -100,6 +106,7 @@ data:
     CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
     CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
     CREATE INDEX IF NOT EXISTS idx_news_category ON news (category);
+    CREATE INDEX IF NOT EXISTS idx_news_index_status ON news (index_status, index_started_at);
 
     CREATE TABLE IF NOT EXISTS tools (
         id              SERIAL PRIMARY KEY,
@@ -271,6 +278,80 @@ data:
     );
     CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
     CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
+
+    -- Knowledge resources and unified vector index for resources, news and projects.
+    CREATE EXTENSION IF NOT EXISTS vector;
+
+    CREATE TABLE IF NOT EXISTS resources (
+        id                      UUID PRIMARY KEY,
+        title_fr                TEXT NOT NULL,
+        title_en                TEXT NOT NULL,
+        summary_fr              TEXT NOT NULL DEFAULT '',
+        summary_en              TEXT NOT NULL DEFAULT '',
+        document_type           VARCHAR(40) NOT NULL
+                                CHECK (document_type IN (
+                                    'report',
+                                    'study',
+                                    'guide',
+                                    'atlas',
+                                    'policy_brief',
+                                    'newsletter',
+                                    'conference_document',
+                                    'strategy',
+                                    'other'
+                                )),
+        fields                  TEXT[] NOT NULL DEFAULT '{}',
+        publication_date        DATE NOT NULL,
+        cover_image_path        VARCHAR(1000) NOT NULL DEFAULT '',
+        cover_is_custom         BOOLEAN NOT NULL DEFAULT false,
+        file_fr_path            VARCHAR(1000),
+        file_fr_original_name   VARCHAR(500),
+        file_fr_size            INT,
+        file_en_path            VARCHAR(1000),
+        file_en_original_name   VARCHAR(500),
+        file_en_size            INT,
+        is_published            BOOLEAN NOT NULL DEFAULT false,
+        index_status            VARCHAR(20) NOT NULL DEFAULT 'pending'
+                                CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
+        index_error             TEXT NOT NULL DEFAULT '',
+        index_started_at        TIMESTAMPTZ,
+        indexed_at              TIMESTAMPTZ,
+        active_index_version    UUID,
+        created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CHECK (cardinality(fields) > 0),
+        CHECK (fields <@ ARRAY['biodiversity', 'climate', 'water', 'land', 'institutional']::TEXT[]),
+        CHECK (file_fr_path IS NOT NULL OR file_en_path IS NOT NULL)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_resources_publication_date ON resources (publication_date DESC);
+    CREATE INDEX IF NOT EXISTS idx_resources_document_type ON resources (document_type);
+    CREATE INDEX IF NOT EXISTS idx_resources_fields ON resources USING GIN (fields);
+    CREATE INDEX IF NOT EXISTS idx_resources_published ON resources (is_published);
+    CREATE INDEX IF NOT EXISTS idx_resources_index_status ON resources (index_status, index_started_at);
+
+    CREATE TABLE IF NOT EXISTS knowledge_chunks (
+        id                  BIGSERIAL PRIMARY KEY,
+        source_type         VARCHAR(20) NOT NULL
+                            CHECK (source_type IN ('resource', 'news', 'project')),
+        source_id           VARCHAR(64) NOT NULL,
+        index_version       UUID NOT NULL,
+        language            VARCHAR(2) NOT NULL CHECK (language IN ('fr', 'en')),
+        page_start          INT CHECK (page_start IS NULL OR page_start > 0),
+        page_end            INT CHECK (page_end IS NULL OR page_end >= page_start),
+        chunk_index         INT NOT NULL CHECK (chunk_index >= 0),
+        content             TEXT NOT NULL,
+        embedding           vector(1536) NOT NULL,
+        embedding_model     VARCHAR(200) NOT NULL,
+        created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (source_type, source_id, index_version, language, chunk_index),
+        CHECK ((page_start IS NULL) = (page_end IS NULL))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_source
+        ON knowledge_chunks (source_type, source_id, index_version);
+    CREATE INDEX IF NOT EXISTS idx_knowledge_chunks_embedding
+        ON knowledge_chunks USING hnsw (embedding vector_cosine_ops);
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -301,7 +382,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:16-alpine
+          image: pgvector/pgvector:pg16
           ports:
             - containerPort: 5432
           env:
@@ -312,8 +393,8 @@ spec:
                   key: DB_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: app-config
+                secretKeyRef:
+                  name: app-secrets
                   key: DB_PASSWORD
             - name: POSTGRES_DB
               valueFrom:

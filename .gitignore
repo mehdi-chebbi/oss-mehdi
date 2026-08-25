@@ -20,3 +20,6 @@ npm-debug.log*
 
 # Runtime uploads are persistent local data, not source files
 storage/uploads/
+
+# Local Kubernetes secrets
+k8s/secret.yaml
