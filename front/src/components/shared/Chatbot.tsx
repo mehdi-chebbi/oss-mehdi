@@ -83,6 +83,7 @@ export default function Chatbot() {
   const [resourceMode, setResourceMode] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const sendingRef = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -102,7 +103,8 @@ export default function Chatbot() {
 
   const submitMessage = async (value: string) => {
     const content = value.trim();
-    if (!content || sending) return;
+    if (!content || sendingRef.current) return;
+    sendingRef.current = true;
 
     const mode = resourceMode ? "resources" : "general";
     const userMessage: DisplayMessage = { role: "user", content, mode };
@@ -154,6 +156,7 @@ export default function Chatbot() {
       });
       setError(requestError.message || labels.genericError);
     } finally {
+      sendingRef.current = false;
       setSending(false);
       window.setTimeout(() => inputRef.current?.focus(), 0);
     }

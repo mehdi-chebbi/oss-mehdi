@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedProjectsByDeptSlug,
-  getPublishedProjectBySlug,
+  getPublicProjectsByDeptSlug,
+  getPublicProjectBySlug,
   listAllProjectsByDept,
   getProject,
   createProject,
@@ -14,17 +14,17 @@ const router = Router();
 
 // ── Public routes ──
 
-// Published projects for a department (by dept slug)
+// Projects for a department (by dept slug)
 // GET /api/projects/dept/:deptSlug
 router.get("/dept/:deptSlug", async (req, res) => {
-  const items = await getPublishedProjectsByDeptSlug(req.params.deptSlug);
+  const items = await getPublicProjectsByDeptSlug(req.params.deptSlug);
   res.json(items);
 });
 
 // Single project by slug (joins department for breadcrumb)
 // GET /api/projects/slug/:slug
 router.get("/slug/:slug", async (req, res) => {
-  const project = await getPublishedProjectBySlug(req.params.slug);
+  const project = await getPublicProjectBySlug(req.params.slug);
   if (!project) {
     res.status(404).json({ error: "Project not found" });
     return;
@@ -34,7 +34,7 @@ router.get("/slug/:slug", async (req, res) => {
 
 // ── Authenticated routes (admin) ──
 
-// List all projects for a department (including drafts)
+// List all projects for a department
 // GET /api/projects/all/:deptId
 router.get("/all/:deptId", editorOrAdmin, async (req, res) => {
   const deptId = Number(req.params.deptId);
@@ -74,7 +74,6 @@ router.post("/", editorOrAdmin, async (req, res) => {
       status,
       budget,
       sort_order,
-      is_published,
     } = req.body;
 
     if (!department_id || !title_fr || !title_en) {
@@ -97,7 +96,6 @@ router.post("/", editorOrAdmin, async (req, res) => {
       status,
       budget,
       sort_order,
-      is_published,
     });
     res.status(201).json(project);
   } catch (err: any) {

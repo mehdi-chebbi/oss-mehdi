@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation, Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import {
@@ -21,64 +21,69 @@ import {
   Loader2,
   AlertCircle,
   Library,
+  Menu,
+  X,
+  ExternalLink,
 } from "lucide-react";
 
-/* ── Sidebar structure ── */
+/* Sidebar structure */
 const pages = [
   {
-    label: "Home Page",
+    label: "Page d’accueil",
     icon: Home,
     sections: [
-      { to: "/admin/hero", label: "Hero", icon: Image, adminOnly: false },
-      { to: "/admin/fields", label: "Fields", icon: Layers, adminOnly: false },
-      { to: "/admin/tools", label: "Tools", icon: Wrench, adminOnly: false },
-      { to: "/admin/partners", label: "Partners", icon: Handshake, adminOnly: false },
-      { to: "/admin/socials", label: "Socials", icon: Share2, adminOnly: false },
+      { to: "/admin/hero", label: "Bannière", icon: Image, adminOnly: false },
+      { to: "/admin/fields", label: "Domaines", icon: Layers, adminOnly: false },
+      { to: "/admin/tools", label: "Outils", icon: Wrench, adminOnly: false },
+      { to: "/admin/partners", label: "Partenaires", icon: Handshake, adminOnly: false },
+      { to: "/admin/socials", label: "Réseaux sociaux", icon: Share2, adminOnly: false },
     ],
   },
   {
-    label: "News",
+    label: "Actualités",
     icon: Newspaper,
     sections: [
       { to: "/admin/news", label: "Articles", icon: Newspaper, adminOnly: false },
     ],
   },
   {
-    label: "Projects",
+    label: "Projets",
     icon: FolderKanban,
     sections: [
-      { to: "/admin/departments", label: "Departments", icon: Building2, adminOnly: false },
-      { to: "/admin/projects", label: "Projects", icon: Briefcase, adminOnly: false },
+      { to: "/admin/departments", label: "Départements", icon: Building2, adminOnly: false },
+      { to: "/admin/projects", label: "Projets", icon: Briefcase, adminOnly: false },
     ],
   },
   {
-    label: "Team",
+    label: "Équipe",
     icon: UsersRound,
     sections: [
-      { to: "/admin/team", label: "Members", icon: UsersRound, adminOnly: false },
+      { to: "/admin/team", label: "Membres", icon: UsersRound, adminOnly: false },
     ],
   },
   {
-    label: "Knowledge Sharing",
+    label: "Partage des connaissances",
     icon: Library,
     sections: [
-      { to: "/admin/resources", label: "Resources", icon: Library, adminOnly: false },
+      { to: "/admin/resources", label: "Ressources", icon: Library, adminOnly: false },
     ],
   },
 ];
 
 const topItems = [
-  { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
-  { to: "/admin/reports", label: "Reports", icon: AlertCircle, adminOnly: true },
+  { to: "/admin/users", label: "Utilisateurs", icon: Users, adminOnly: true },
+  { to: "/admin/reports", label: "Signalements", icon: AlertCircle, adminOnly: true },
 ];
 
-/* ── Collapsible page group ── */
+/* Collapsible page group */
 function PageGroup({
   page,
   defaultOpen,
+  onNavigate,
 }: {
   page: (typeof pages)[number];
   defaultOpen: boolean;
+  onNavigate?: () => void;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const location = useLocation();
@@ -91,13 +96,14 @@ function PageGroup({
   const expanded = open || hasActive;
 
   return (
-    <div>
+    <div className="admin-nav-group">
       <button
+        type="button"
         onClick={() => setOpen(!expanded)}
-        className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-semibold text-ink/70 hover:bg-ink/5 transition-colors"
+        className={`admin-nav-group-button ${hasActive ? "is-active" : ""}`}
       >
         <span className="flex items-center gap-2.5">
-          <page.icon className="w-4 h-4" />
+          <page.icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
           {page.label}
         </span>
         <ChevronDown
@@ -105,20 +111,17 @@ function PageGroup({
         />
       </button>
       {expanded && (
-        <div className="ml-3 mt-1 space-y-1 border-l border-ink/10 pl-3">
+        <div className="admin-nav-children">
           {page.sections.map((section) => (
             <NavLink
               key={section.to}
               to={section.to}
+              onClick={onNavigate}
               className={({ isActive, isPending }) =>
-                `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive || isPending
-                    ? "bg-[#489e42]/10 text-[#489e42]"
-                    : "text-ink/60 hover:bg-ink/5 hover:text-ink"
-                }`
+                `admin-nav-link ${isActive || isPending ? "is-active" : ""}`
               }
             >
-              <section.icon className="w-4 h-4" />
+              <section.icon className="h-4 w-4" strokeWidth={1.8} />
               {section.label}
             </NavLink>
           ))}
@@ -128,32 +131,35 @@ function PageGroup({
   );
 }
 
-/* ── Loading skeleton — keeps the sidebar visible during auth bootstrap ── */
+/* Loading skeleton keeps the sidebar visible during auth bootstrap. */
 function AdminLoading() {
   return (
-    <div className="min-h-screen flex bg-[#FAFAF8]">
-      <aside className="w-60 bg-white border-r border-ink/10 flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
-        <div className="h-16 flex items-center gap-2.5 px-5 border-b border-ink/10">
-          <Shield className="w-6 h-6 text-[#489e42]" />
-          <span className="text-lg font-bold text-ink">OSS Admin</span>
+    <div className="admin-shell min-h-[100dvh]">
+      <aside className="admin-sidebar hidden lg:flex">
+        <div className="admin-brand">
+          <span className="admin-brand-mark"><Shield className="h-5 w-5" strokeWidth={1.8} /></span>
+          <span><strong>OSS</strong><small>Administration</small></span>
         </div>
-        <div className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <div className="flex-1 space-y-3 overflow-hidden px-4 py-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="px-3 py-2">
-              <div className="h-4 w-24 bg-ink/5 rounded animate-pulse" />
+            <div key={i} className="rounded-xl bg-white/[0.06] px-4 py-3">
+              <div className="h-4 w-28 animate-pulse rounded bg-white/10" />
             </div>
           ))}
         </div>
       </aside>
-      <main className="flex-1 ml-60 overflow-auto flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-ink/30 animate-spin" />
+      <main className="admin-main lg:ml-72">
+        <div className="admin-topbar" />
+        <div className="flex min-h-[70dvh] items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-[#0079bc]" />
+        </div>
       </main>
     </div>
   );
 }
 
-/* ── Layout route ──
- * This is a *layout route* — it renders the sidebar + <Outlet/> and stays
+/* Layout route
+ * This is a layout route. It renders the sidebar + <Outlet/> and stays
  * mounted across all admin child routes. The auth gate is inline: during
  * AuthProvider.loading, we show the sidebar skeleton (not bare "Loading…"),
  * so the sidebar is visually stable across the loading → loaded transition.
@@ -162,8 +168,14 @@ function AdminLoading() {
 export default function AdminLayout() {
   const { user, token, loading, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Auth gate — keep the sidebar visible during bootstrap
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Auth gate keeps the sidebar visible during bootstrap.
   if (loading) return <AdminLoading />;
   if (!token) return <Navigate to="/login" replace />;
 
@@ -176,75 +188,90 @@ export default function AdminLayout() {
     navigate("/login");
   };
 
-  return (
-    <div className="min-h-screen flex bg-[#FAFAF8]">
-      {/* Fixed sidebar */}
-      <aside className="w-60 bg-white border-r border-ink/10 flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
-        {/* Brand */}
-        <div className="h-16 flex items-center gap-2.5 px-5 border-b border-ink/10">
-          <Shield className="w-6 h-6 text-[#489e42]" />
-          <span className="text-lg font-bold text-ink">OSS Admin</span>
-        </div>
+  const allSections = [...pages.flatMap((page) => page.sections), ...topItems];
+  const currentSection = allSections.find((item) => location.pathname.startsWith(item.to));
+  const currentGroup = pages.find((page) => page.sections.some((item) => location.pathname.startsWith(item.to)));
 
-        {/* Navigation — scrollable if it overflows */}
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {/* Collapsible page groups */}
-          {pages.map((page) => (
-            <PageGroup key={page.label} page={page} defaultOpen={false} />
-          ))}
+  const sidebar = (
+    <>
+      <div className="admin-brand">
+        <span className="admin-brand-mark"><Shield className="h-5 w-5" strokeWidth={1.8} /></span>
+        <span className="min-w-0 flex-1">
+          <strong>OSS</strong>
+          <small>Administration</small>
+        </span>
+        <button type="button" onClick={() => setMobileOpen(false)} className="admin-sidebar-close lg:hidden" aria-label="Fermer la navigation">
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
-          {/* Top-level items (Users etc.) */}
-          {visibleTopItems.length > 0 && (
-            <>
-              <div className="h-px bg-ink/10 my-2" />
-              {visibleTopItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-[#489e42]/10 text-[#489e42]"
-                        : "text-ink/60 hover:bg-ink/5 hover:text-ink"
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </NavLink>
-              ))}
-            </>
-          )}
-        </nav>
+      <nav className="admin-navigation">
+        <p className="admin-nav-label">Gestion du contenu</p>
+        {pages.map((page) => (
+          <PageGroup key={page.label} page={page} defaultOpen={false} onNavigate={() => setMobileOpen(false)} />
+        ))}
 
-        {/* Footer — always at bottom */}
-        <div className="border-t border-ink/10 p-4 space-y-3">
-          <a
-            href="/fr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-ink/50 hover:text-ink transition-colors"
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            View Site
-          </a>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-ink/40 truncate">{user?.email}</span>
-            <button
-              onClick={handleLogout}
-              className="text-ink/40 hover:text-red-500 transition-colors"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+        {visibleTopItems.length > 0 && (
+          <div className="admin-system-links">
+            <p className="admin-nav-label">Administration</p>
+            {visibleTopItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) => `admin-nav-link admin-nav-link-root ${isActive ? "is-active" : ""}`}
+              >
+                <item.icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
+                {item.label}
+              </NavLink>
+            ))}
           </div>
+        )}
+      </nav>
+
+      <div className="admin-sidebar-footer">
+        <a href="/fr" target="_blank" rel="noopener noreferrer" className="admin-view-site">
+          <LayoutDashboard className="h-4 w-4" strokeWidth={1.8} />
+          Voir le site public
+          <ExternalLink className="ml-auto h-3.5 w-3.5 opacity-55" />
+        </a>
+        <div className="admin-account">
+          <span className="admin-account-avatar">{user?.name?.charAt(0).toUpperCase() || "O"}</span>
+          <span className="min-w-0 flex-1">
+            <strong>{user?.name || "Utilisateur OSS"}</strong>
+            <small>{user?.email}</small>
+          </span>
+          <button type="button" onClick={handleLogout} className="admin-logout" title="Déconnexion" aria-label="Déconnexion">
+            <LogOut className="h-4 w-4" strokeWidth={1.8} />
+          </button>
         </div>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="admin-shell min-h-[100dvh]">
+      {mobileOpen && <button type="button" className="admin-sidebar-backdrop lg:hidden" onClick={() => setMobileOpen(false)} aria-label="Fermer la navigation" />}
+
+      <aside className={`admin-sidebar ${mobileOpen ? "is-open" : ""}`}>
+        {sidebar}
       </aside>
 
-      {/* Main content — offset by sidebar width */}
-      <main className="flex-1 ml-60 overflow-auto">
-        <Outlet />
+      <main className="admin-main lg:ml-72">
+        <header className="admin-topbar">
+          <button type="button" onClick={() => setMobileOpen(true)} className="admin-menu-button lg:hidden" aria-label="Ouvrir la navigation">
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="min-w-0">
+            <p>{currentGroup?.label || "Administration"}</p>
+            <h1>{currentSection?.label || "Espace OSS"}</h1>
+          </div>
+          <span className="admin-role-badge">{user?.role === "admin" ? "Administrateur" : "Éditeur"}</span>
+        </header>
+        <div className="admin-content">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

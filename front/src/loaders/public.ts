@@ -12,19 +12,19 @@
  */
 import type { LoaderFunctionArgs } from "react-router-dom";
 import {
-  getPublishedHero,
-  getPublishedFields,
+  getPageHero,
+  getPageFields,
   getLatestNews,
-  getPublishedTools,
-  getPublishedPartners,
-  listPublishedNews,
+  getPageTools,
+  getPagePartners,
+  listPublicNews,
   getNewsYears,
   getNewsBySlug,
-  getPublishedDepartments,
+  getPublicDepartments,
   getDepartmentBySlug,
-  getPublishedProjectsByDept,
+  getPublicProjectsByDept,
   getProjectBySlug,
-  listPublishedResources,
+  listPublicResources,
   getResourceYears,
   NEWS_CATEGORIES,
   RESOURCE_DOCUMENT_TYPES,
@@ -60,11 +60,11 @@ export interface HomeLoaderData {
 
 export async function homeLoader(): Promise<HomeLoaderData> {
   const [hero, fields, latestNews, tools, partners] = await Promise.all([
-    getPublishedHero().catch(() => null),
-    getPublishedFields().catch(() => []),
+    getPageHero().catch(() => null),
+    getPageFields().catch(() => []),
     getLatestNews(4).catch(() => []),
-    getPublishedTools().catch(() => []),
-    getPublishedPartners().catch(() => []),
+    getPageTools().catch(() => []),
+    getPagePartners().catch(() => []),
   ]);
 
   return { hero, fields, latestNews, tools, partners };
@@ -102,7 +102,7 @@ export async function newsListLoader({
   const q = url.searchParams.get("q") || "";
 
   const [data, years] = await Promise.all([
-    listPublishedNews({ page, limit: NEWS_PAGE_SIZE, year, category, q: q || undefined }),
+    listPublicNews({ page, limit: NEWS_PAGE_SIZE, year, category, q: q || undefined }),
     getNewsYears(),
   ]);
 
@@ -139,11 +139,11 @@ export interface ProjectsListLoaderData {
 }
 
 export async function projectsListLoader(): Promise<ProjectsListLoaderData> {
-  const departments = await getPublishedDepartments().catch(() => []);
+  const departments = await getPublicDepartments().catch(() => []);
   // Fetch projects for each department in parallel
   const withProjects = await Promise.all(
     departments.map(async (dept) => {
-      const projects = await getPublishedProjectsByDept(dept.slug).catch(() => []);
+      const projects = await getPublicProjectsByDept(dept.slug).catch(() => []);
       return { dept, projects };
     }),
   );
@@ -164,7 +164,7 @@ export async function departmentDetailLoader({
   try {
     const [dept, projects] = await Promise.all([
       getDepartmentBySlug(params.deptSlug),
-      getPublishedProjectsByDept(params.deptSlug),
+      getPublicProjectsByDept(params.deptSlug),
     ]);
     return { dept, projects };
   } catch {
@@ -179,7 +179,7 @@ export interface DomainProjectsLoaderData {
 }
 
 async function latestDepartmentProjects(departmentSlug: string): Promise<DomainProjectsLoaderData> {
-  const projects = await getPublishedProjectsByDept(departmentSlug).catch(() => []);
+  const projects = await getPublicProjectsByDept(departmentSlug).catch(() => []);
 
   return {
     projects: [...projects].sort((a, b) => b.id - a.id).slice(0, 3),
@@ -240,7 +240,7 @@ export async function knowledgeSharingLoader({
   const q = url.searchParams.get("q") || "";
 
   const [data, years] = await Promise.all([
-    listPublishedResources({
+    listPublicResources({
       page,
       limit: RESOURCE_PAGE_SIZE,
       type,

@@ -346,12 +346,11 @@ export interface HeroData {
   cta_secondary_label_en: string;
   cta_secondary_link: string;
   background_image: string;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
-export async function getPublishedHero() {
+export async function getPageHero() {
   return request<HeroData>("/hero");
 }
 
@@ -404,12 +403,11 @@ export interface FieldData {
   image: string;
   gradient_hue: number;
   sort_order: number;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
-export async function getPublishedFields() {
+export async function getPageFields() {
   return request<FieldData[]>("/fields");
 }
 
@@ -459,12 +457,11 @@ export interface ToolData {
   image: string;
   link: string;
   sort_order: number;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
-export async function getPublishedTools() {
+export async function getPageTools() {
   return request<ToolData[]>("/tools");
 }
 
@@ -511,12 +508,11 @@ export interface PartnerData {
   image: string;
   row_number: number;
   sort_order: number;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
-export async function getPublishedPartners() {
+export async function getPagePartners() {
   return request<PartnerData[]>("/partners");
 }
 
@@ -643,7 +639,6 @@ export interface NewsData {
   thumbnail_index: number; // which image is the card thumbnail
   date: string;
   slug: string;
-  is_published?: boolean;
   index_status: NewsIndexStatus;
   index_error: string;
   index_started_at: string | null;
@@ -670,13 +665,13 @@ export interface NewsListResponse {
   totalPages: number;
 }
 
-// Public: latest published news (for the home page)
+// Public: latest news (for the home page)
 export async function getLatestNews(limit = 4) {
   return request<NewsData[]>(`/news/latest?limit=${limit}`);
 }
 
 // Public: paginated list with optional year + keyword filter
-export async function listPublishedNews(opts?: {
+export async function listPublicNews(opts?: {
   page?: number;
   limit?: number;
   year?: number;
@@ -693,7 +688,7 @@ export async function listPublishedNews(opts?: {
   return request<NewsListResponse>(`/news${qs ? `?${qs}` : ""}`);
 }
 
-// Public: distinct years with published articles
+// Public: distinct article years
 export async function getNewsYears() {
   return request<number[]>(`/news/years`);
 }
@@ -703,7 +698,7 @@ export async function getNewsBySlug(slug: string) {
   return request<NewsData>(`/news/slug/${encodeURIComponent(slug)}`);
 }
 
-// Authenticated: list all news (including drafts)
+// Authenticated: list all news
 export async function listAllNews(token: string) {
   return request<NewsData[]>("/news/all", { headers: authHeader(token) });
 }
@@ -824,7 +819,6 @@ export interface ResourceData {
   file_en_path: string | null;
   file_en_original_name: string | null;
   file_en_size: number | null;
-  is_published: boolean;
   index_status: ResourceIndexStatus;
   index_error: string;
   index_started_at: string | null;
@@ -842,7 +836,7 @@ export interface ResourceListResponse {
   totalPages: number;
 }
 
-export async function listPublishedResources(options?: {
+export async function listPublicResources(options?: {
   page?: number;
   limit?: number;
   type?: ResourceDocumentType;
@@ -907,13 +901,12 @@ export interface DepartmentData {
   image: string;
   slug: string;
   sort_order: number;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
 }
 
-// Public: all published departments (for the /projects landing page later)
-export async function getPublishedDepartments() {
+// Public: all departments
+export async function getPublicDepartments() {
   return request<DepartmentData[]>("/departments");
 }
 
@@ -922,7 +915,7 @@ export async function getDepartmentBySlug(slug: string) {
   return request<DepartmentData>(`/departments/slug/${encodeURIComponent(slug)}`);
 }
 
-// Authenticated: list all departments (including drafts)
+// Authenticated: list all departments
 export async function listAllDepartments(token: string) {
   return request<DepartmentData[]>("/departments/all", { headers: authHeader(token) });
 }
@@ -993,7 +986,6 @@ export interface ProjectData {
   budget: string;
   slug: string;
   sort_order: number;
-  is_published: boolean;
   created_at?: string;
   updated_at?: string;
   // Joined from departments (public endpoints only)
@@ -1018,8 +1010,8 @@ export function yearRange(start: number | null, end: number | null, locale: "fr"
   return s === end ? `${s}` : `${s} – ${end}`;
 }
 
-// Public: published projects for a department (by dept slug)
-export async function getPublishedProjectsByDept(deptSlug: string) {
+// Public: projects for a department (by dept slug)
+export async function getPublicProjectsByDept(deptSlug: string) {
   return request<ProjectData[]>(`/projects/dept/${encodeURIComponent(deptSlug)}`);
 }
 
@@ -1028,7 +1020,7 @@ export async function getProjectBySlug(slug: string) {
   return request<ProjectData>(`/projects/slug/${encodeURIComponent(slug)}`);
 }
 
-// Authenticated: list all projects for a department (including drafts)
+// Authenticated: list all projects for a department
 export async function listAllProjectsByDept(token: string, deptId: number) {
   return request<ProjectData[]>(`/projects/all/${deptId}`, { headers: authHeader(token) });
 }
@@ -1086,7 +1078,7 @@ export interface TeamMemberData {
 }
 
 // Public: team members (optionally filtered by department)
-export async function getPublishedTeam(department?: string) {
+export async function getPublicTeam(department?: string) {
   const params = department ? `?department=${encodeURIComponent(department)}` : "";
   return request<TeamMemberData[]>(`/team${params}`);
 }

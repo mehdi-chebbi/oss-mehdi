@@ -3,6 +3,7 @@ import { ArrowRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { contactInfo } from '@/data/contact';
 import type { Locale } from '@/context/locale';
+import { sendContactMessage } from '@/api/mail';
 
 const iconMap: Record<string, React.ElementType> = {
   Adresse: MapPin,
@@ -13,12 +14,35 @@ const iconMap: Record<string, React.ElementType> = {
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
 
   const labels = locale === 'en'
-    ? { title: 'Contact us', intro: 'A question, partnership proposal or information request? Our team is ready to help.', name: 'Full name', namePlaceholder: 'Your name', subject: 'Subject', subjectPlaceholder: 'Subject of your message', message: 'Message', messagePlaceholder: 'Your message...', send: 'Send message', sent: 'Message sent', thanks: 'Thank you for your message. Our team will reply as soon as possible.' }
-    : { title: 'Contactez-nous', intro: 'Une question, une proposition de partenariat ou une demande d’information ? Notre équipe est à votre écoute.', name: 'Nom complet', namePlaceholder: 'Votre nom', subject: 'Sujet', subjectPlaceholder: 'Objet de votre message', message: 'Message', messagePlaceholder: 'Votre message...', send: 'Envoyer le message', sent: 'Message envoyé', thanks: 'Merci pour votre message. Notre équipe vous répondra dans les meilleurs délais.' };
+    ? { title: 'Contact us', intro: 'A question, partnership proposal or information request? Our team is ready to help.', name: 'Full name', namePlaceholder: 'Your name', subject: 'Subject', subjectPlaceholder: 'Subject of your message', message: 'Message', messagePlaceholder: 'Your message...', send: 'Send message', sending: 'Sending…', sent: 'Message sent', thanks: 'Thank you for your message. Our team will reply as soon as possible.', error: 'The message could not be sent. Please try again.' }
+    : { title: 'Contactez-nous', intro: 'Une question, une proposition de partenariat ou une demande d’information ? Notre équipe est à votre écoute.', name: 'Nom complet', namePlaceholder: 'Votre nom', subject: 'Sujet', subjectPlaceholder: 'Objet de votre message', message: 'Message', messagePlaceholder: 'Votre message...', send: 'Envoyer le message', sending: 'Envoi…', sent: 'Message envoyé', thanks: 'Merci pour votre message. Notre équipe vous répondra dans les meilleurs délais.', error: 'Le message n’a pas pu être envoyé. Veuillez réessayer.' };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+    setError('');
+    try {
+      await sendContactMessage({
+        name: String(form.get('name') || ''),
+        email: String(form.get('email') || ''),
+        subject: String(form.get('subject') || ''),
+        message: String(form.get('message') || ''),
+        locale,
+      });
+      setSubmitted(true);
+    } catch {
+      setError(labels.error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <section id="contact" className="bg-oss-paper pb-20 pt-10 lg:pb-24 lg:pt-12">
@@ -56,7 +80,7 @@ export default function Contact() {
               <p className="mt-2 max-w-md text-sm leading-relaxed text-ink/65">{labels.thanks}</p>
             </div>
           ) : (
-            <form onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }} className="grid gap-5" noValidate>
+            <form onSubmit={handleSubmit} className="grid gap-5">
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.08em] text-oss-blue-dark" htmlFor="name">
                   {labels.name}
@@ -75,8 +99,9 @@ export default function Contact() {
                 {labels.message}
                 <textarea id="message" name="message" required rows={6} placeholder={labels.messagePlaceholder} className="min-h-36 resize-y border border-oss-blue/25 bg-white px-4 py-3 text-[15px] font-normal normal-case tracking-normal text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-oss-blue focus:ring-2 focus:ring-oss-blue/10" />
               </label>
-              <button type="submit" className="inline-flex min-h-12 w-fit items-center gap-2 bg-oss-blue px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark focus:outline-none focus:ring-2 focus:ring-oss-blue focus:ring-offset-2">
-                {labels.send}
+              {error && <p role="alert" className="text-sm font-semibold text-red-700">{error}</p>}
+              <button type="submit" disabled={submitting} className="inline-flex min-h-12 w-fit items-center gap-2 bg-oss-blue px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark focus:outline-none focus:ring-2 focus:ring-oss-blue focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60">
+                {submitting ? labels.sending : labels.send}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>

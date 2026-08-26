@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedHero,
+  getPageHero,
   listHero,
   getHero,
   createHero,
@@ -11,12 +11,12 @@ import {
 
 const router = Router();
 
-// Public: get published hero for a page
+// Public: get the current hero for a page
 router.get("/", async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
-  const hero = await getPublishedHero(pageId);
+  const hero = await getPageHero(pageId);
   if (!hero) {
-    res.status(404).json({ error: "No published hero found" });
+    res.status(404).json({ error: "No hero found" });
     return;
   }
   res.json(hero);

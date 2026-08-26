@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedDepartments,
-  getPublishedDepartmentBySlug,
+  getPublicDepartments,
+  getPublicDepartmentBySlug,
   listAllDepartments,
   getDepartment,
   createDepartment,
@@ -14,17 +14,17 @@ const router = Router();
 
 // ── Public routes ──
 
-// All published departments (for the /projects landing page later)
+// All departments
 // GET /api/departments
 router.get("/", async (_req, res) => {
-  const items = await getPublishedDepartments();
+  const items = await getPublicDepartments();
   res.json(items);
 });
 
 // Single department by slug
 // GET /api/departments/slug/:slug
 router.get("/slug/:slug", async (req, res) => {
-  const dept = await getPublishedDepartmentBySlug(req.params.slug);
+  const dept = await getPublicDepartmentBySlug(req.params.slug);
   if (!dept) {
     res.status(404).json({ error: "Department not found" });
     return;
@@ -34,7 +34,7 @@ router.get("/slug/:slug", async (req, res) => {
 
 // ── Authenticated routes (admin) ──
 
-// List all departments (including drafts)
+// List all departments
 router.get("/all", editorOrAdmin, async (_req, res) => {
   const items = await listAllDepartments();
   res.json(items);
@@ -53,7 +53,7 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 // Create department
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
-    const { title_fr, title_en, description_fr, description_en, image, sort_order, is_published } = req.body;
+    const { title_fr, title_en, description_fr, description_en, image, sort_order } = req.body;
     if (!title_fr || !title_en) {
       res.status(400).json({ error: "title_fr and title_en are required" });
       return;
@@ -65,7 +65,6 @@ router.post("/", editorOrAdmin, async (req, res) => {
       description_en,
       image,
       sort_order,
-      is_published,
     });
     res.status(201).json(dept);
   } catch (err: any) {

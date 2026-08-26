@@ -7,14 +7,13 @@ export interface PartnerRow {
   image: string;
   row_number: number;
   sort_order: number;
-  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export async function getPublishedPartners(pageId: number) {
+export async function getPagePartners(pageId: number) {
   const result = await query(
-    "SELECT * FROM partners WHERE page_id = $1 AND is_published = true ORDER BY row_number ASC, sort_order ASC",
+    "SELECT * FROM partners WHERE page_id = $1 ORDER BY row_number ASC, sort_order ASC",
     [pageId],
   );
   return result.rows;
@@ -39,18 +38,16 @@ export async function createPartner(data: {
   image?: string;
   row_number?: number;
   sort_order?: number;
-  is_published?: boolean;
 }) {
   const result = await query(
-    `INSERT INTO partners (page_id, name, image, row_number, sort_order, is_published)
-     VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+    `INSERT INTO partners (page_id, name, image, row_number, sort_order)
+     VALUES ($1,$2,$3,$4,$5) RETURNING *`,
     [
       data.page_id,
       data.name,
       data.image || "",
       data.row_number ?? 1,
       data.sort_order ?? 0,
-      data.is_published ?? true,
     ],
   );
   return result.rows[0];
@@ -61,7 +58,7 @@ export async function updatePartner(id: number, data: Partial<PartnerRow>) {
   const values: unknown[] = [];
   let idx = 1;
 
-  const allowed = ["name", "image", "row_number", "sort_order", "is_published"];
+  const allowed = ["name", "image", "row_number", "sort_order"];
 
   for (const key of allowed) {
     if ((data as any)[key] !== undefined) {

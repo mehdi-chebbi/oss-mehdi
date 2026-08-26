@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedFields,
+  getPageFields,
   listFields,
   getField,
   createField,
@@ -11,10 +11,10 @@ import {
 
 const router = Router();
 
-// Public: get published fields for a page
+// Public: get fields for a page
 router.get("/", async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
-  const fields = await getPublishedFields(pageId);
+  const fields = await getPageFields(pageId);
   res.json(fields);
 });
 

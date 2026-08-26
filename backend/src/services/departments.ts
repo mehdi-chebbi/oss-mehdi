@@ -9,7 +9,6 @@ export interface DepartmentRow {
   image: string;
   slug: string;
   sort_order: number;
-  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -36,23 +35,22 @@ function slugify(text: string, fallback = "department"): string {
   );
 }
 
-// ── Public: published departments, ordered by sort_order ──
-export async function getPublishedDepartments() {
+// ── Public: departments ordered by sort_order ──
+export async function getPublicDepartments() {
   const result = await query(
     `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order
      FROM departments
-     WHERE is_published = true
      ORDER BY sort_order ASC, id ASC`,
   );
   return result.rows;
 }
 
 // ── Public: single department by slug ──
-export async function getPublishedDepartmentBySlug(slug: string) {
+export async function getPublicDepartmentBySlug(slug: string) {
   const result = await query(
     `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order, created_at
      FROM departments
-     WHERE slug = $1 AND is_published = true`,
+     WHERE slug = $1`,
     [slug],
   );
   return result.rows[0] || null;
@@ -61,7 +59,7 @@ export async function getPublishedDepartmentBySlug(slug: string) {
 // ── Authenticated: list all departments (admin) ──
 export async function listAllDepartments() {
   const result = await query(
-    `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published, created_at, updated_at
+    `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order, created_at, updated_at
      FROM departments
      ORDER BY sort_order ASC, id ASC`,
   );
@@ -84,11 +82,10 @@ export async function createDepartment(data: {
   description_en?: string;
   image?: string;
   sort_order?: number;
-  is_published?: boolean;
 }) {
   const result = await query(
-    `INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
       data.title_fr,
@@ -98,7 +95,6 @@ export async function createDepartment(data: {
       data.image || "",
       "placeholder", // replaced below
       data.sort_order ?? 0,
-      data.is_published ?? false,
     ],
   );
 
@@ -124,7 +120,6 @@ export async function updateDepartment(id: number, data: Partial<DepartmentRow>)
     "description_en",
     "image",
     "sort_order",
-    "is_published",
   ];
 
   for (const key of allowed) {

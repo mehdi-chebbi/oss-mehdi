@@ -36,6 +36,15 @@ export const env = {
   embeddingDimensions: 1536,
   resourceRetrievalMaxDistance: Number(process.env.RESOURCE_RETRIEVAL_MAX_DISTANCE) || 0.65,
 
+  // ── Microsoft Graph mail (contact + newsletter) ──
+  microsoftTenantId: process.env.MICROSOFT_TENANT_ID || "",
+  microsoftClientId: process.env.MICROSOFT_CLIENT_ID || "",
+  microsoftClientSecret: process.env.MICROSOFT_CLIENT_SECRET || "",
+  mailSenderAddress: process.env.MAIL_SENDER_ADDRESS || "platform@oss.org.tn",
+  mailSenderName: process.env.MAIL_SENDER_NAME || "OSS",
+  contactRecipientAddress:
+    process.env.CONTACT_RECIPIENT_ADDRESS || "platform@oss.org.tn",
+
   // ── Per-email fail tracking ──
   maxFails: 5, // after this many fails in the window, CAPTCHA is required for this email
   failWindowMs: 15 * 60 * 1000, // 15 min

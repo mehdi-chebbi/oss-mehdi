@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getPublishedTeam, type TeamMemberData } from "@/api/auth";
+import { getPublicTeam, type TeamMemberData } from "@/api/auth";
 import { Loader2 } from "lucide-react";
 
 const DEPARTMENTS = [
@@ -46,7 +46,7 @@ export default function Team() {
 
   useEffect(() => {
     setLoading(true);
-    getPublishedTeam(activeDept)
+    getPublicTeam(activeDept)
       .then(setMembers)
       .catch(() => setMembers([]))
       .finally(() => setLoading(false));

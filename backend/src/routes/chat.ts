@@ -9,8 +9,11 @@ type ChatMessage = { role: ChatRole; content: string };
 
 const MAX_MESSAGES = 10;
 const RETRIEVAL_CONTEXT_MESSAGES = 7;
-const MAX_MESSAGE_LENGTH = 2_000;
-const MAX_TOTAL_LENGTH = 8_000;
+const MAX_USER_MESSAGE_LENGTH = 2_000;
+const MAX_ASSISTANT_MESSAGE_LENGTH = 20_000;
+const MAX_CONVERSATION_LENGTH = 50_000;
+const MAX_RETRIEVAL_QUERY_LENGTH = 8_000;
+const MAX_RETRIEVAL_ASSISTANT_EXCERPT = 1_500;
 const REQUEST_TIMEOUT_MS = 30_000;
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX_REQUESTS = 12;
@@ -42,7 +45,6 @@ function parseMessages(value: unknown): ChatMessage[] | null {
   if (!Array.isArray(value) || value.length === 0 || value.length > MAX_MESSAGES) return null;
 
   const messages: ChatMessage[] = [];
-  let totalLength = 0;
 
   for (const item of value) {
     if (!item || typeof item !== "object") return null;
@@ -51,14 +53,30 @@ function parseMessages(value: unknown): ChatMessage[] | null {
     if (typeof candidate.content !== "string") return null;
 
     const content = candidate.content.trim();
-    if (!content || content.length > MAX_MESSAGE_LENGTH) return null;
-    totalLength += content.length;
-    if (totalLength > MAX_TOTAL_LENGTH) return null;
+    const maximumLength = candidate.role === "user"
+      ? MAX_USER_MESSAGE_LENGTH
+      : MAX_ASSISTANT_MESSAGE_LENGTH;
+    if (!content || content.length > maximumLength) return null;
     messages.push({ role: candidate.role, content });
   }
 
   if (messages[messages.length - 1]?.role !== "user") return null;
-  return messages;
+
+  // Preserve the newest exchanges instead of rejecting an otherwise valid
+  // follow-up when earlier assistant responses make the history too large.
+  let totalLength = messages.reduce((total, message) => total + message.content.length, 0);
+  let firstKeptIndex = 0;
+  while (totalLength > MAX_CONVERSATION_LENGTH && firstKeptIndex < messages.length - 1) {
+    totalLength -= messages[firstKeptIndex].content.length;
+    firstKeptIndex += 1;
+  }
+
+  // Avoid beginning the retained history with an orphaned assistant answer.
+  while (firstKeptIndex < messages.length - 1 && messages[firstKeptIndex].role === "assistant") {
+    firstKeptIndex += 1;
+  }
+
+  return messages.slice(firstKeptIndex);
 }
 
 function extractTextContent(value: unknown) {
@@ -75,14 +93,30 @@ function extractTextContent(value: unknown) {
 }
 
 function buildRetrievalQuery(messages: ChatMessage[]) {
-  return messages
-    .slice(-RETRIEVAL_CONTEXT_MESSAGES)
-    .map((message, index, contextMessages) => {
-      const isCurrentQuestion = index === contextMessages.length - 1;
-      if (isCurrentQuestion) return `Current question: ${message.content}`;
-      return `${message.role === "user" ? "User" : "Assistant"}: ${message.content}`;
-    })
-    .join("\n");
+  const contextMessages = messages.slice(-RETRIEVAL_CONTEXT_MESSAGES);
+  const lines: string[] = [];
+  let remainingLength = MAX_RETRIEVAL_QUERY_LENGTH;
+
+  for (let index = contextMessages.length - 1; index >= 0 && remainingLength > 0; index -= 1) {
+    const message = contextMessages[index];
+    const isCurrentQuestion = index === contextMessages.length - 1;
+    const label = isCurrentQuestion
+      ? "Current question: "
+      : `${message.role === "user" ? "User" : "Assistant"}: `;
+    const maximumContentLength = message.role === "assistant" && !isCurrentQuestion
+      ? MAX_RETRIEVAL_ASSISTANT_EXCERPT
+      : MAX_USER_MESSAGE_LENGTH;
+    const availableContentLength = Math.max(0, remainingLength - label.length - 1);
+    if (availableContentLength === 0) break;
+
+    const contentLength = Math.min(message.content.length, maximumContentLength, availableContentLength);
+    const wasShortened = contentLength < message.content.length;
+    const line = `${label}${message.content.slice(0, contentLength)}${wasShortened ? "…" : ""}`;
+    lines.unshift(line);
+    remainingLength -= line.length + 1;
+  }
+
+  return lines.join("\n");
 }
 
 router.post("/", async (req, res) => {
@@ -173,7 +207,7 @@ router.post("/", async (req, res) => {
           ...messages,
         ],
         temperature: 0.3,
-        max_tokens: 500,
+        max_tokens: 4_000,
         stream: true,
       }),
     });

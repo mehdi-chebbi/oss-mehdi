@@ -27,7 +27,6 @@ export interface NewsRow {
   thumbnail_index: number; // which image is the card thumbnail
   date: string;            // ISO date string from DB
   slug: string;
-  is_published: boolean;
   index_status: NewsIndexStatus;
   index_error: string;
   index_started_at: string | null;
@@ -74,12 +73,11 @@ function clampThumbnailIndex(idx: unknown, images: string[]): number {
   return Math.min(Math.max(0, n), images.length - 1);
 }
 
-// ── Public: latest published news (for the home page) ──
+// ── Public: latest news (for the home page) ──
 export async function getLatestNews(limit = 4) {
   const result = await query(
     `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug
      FROM news
-     WHERE is_published = true
      ORDER BY date DESC, id DESC
      LIMIT $1`,
     [limit],
@@ -92,7 +90,7 @@ export async function getLatestNews(limit = 4) {
 }
 
 // ── Public: paginated list with optional year + keyword filter (for /news) ──
-export async function listPublishedNews(opts: {
+export async function listPublicNews(opts: {
   page?: number;
   limit?: number;
   year?: number;
@@ -103,7 +101,7 @@ export async function listPublishedNews(opts: {
   const limit = Math.min(50, Math.max(1, opts.limit || 12));
   const offset = (page - 1) * limit;
 
-  const where: string[] = ["is_published = true"];
+  const where: string[] = [];
   const params: unknown[] = [];
 
   if (opts.year) {
@@ -124,10 +122,10 @@ export async function listPublishedNews(opts: {
     );
   }
 
-  const whereClause = where.join(" AND ");
+  const whereClause = where.length > 0 ? `WHERE ${where.join(" AND ")}` : "";
 
   const countResult = await query(
-    `SELECT COUNT(*)::int AS count FROM news WHERE ${whereClause}`,
+    `SELECT COUNT(*)::int AS count FROM news ${whereClause}`,
     params,
   );
   const total = countResult.rows[0]?.count || 0;
@@ -136,7 +134,7 @@ export async function listPublishedNews(opts: {
   const result = await query(
     `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug
      FROM news
-     WHERE ${whereClause}
+     ${whereClause}
      ORDER BY date DESC, id DESC
      LIMIT $${params.length - 1} OFFSET $${params.length}`,
     params,
@@ -152,11 +150,11 @@ export async function listPublishedNews(opts: {
 }
 
 // ── Public: single article by slug ──
-export async function getPublishedNewsBySlug(slug: string) {
+export async function getPublicNewsBySlug(slug: string) {
   const result = await query(
     `SELECT id, title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, created_at
      FROM news
-     WHERE slug = $1 AND is_published = true`,
+     WHERE slug = $1`,
     [slug],
   );
   if (!result.rows[0]) return null;
@@ -169,12 +167,11 @@ export async function getPublishedNewsBySlug(slug: string) {
   };
 }
 
-// ── Public: distinct years that have published articles (for the year filter) ──
-export async function getPublishedYears() {
+// ── Public: distinct article years (for the year filter) ──
+export async function getPublicNewsYears() {
   const result = await query(
     `SELECT DISTINCT EXTRACT(YEAR FROM date)::int AS year
      FROM news
-     WHERE is_published = true
      ORDER BY year DESC`,
   );
   return result.rows.map((r) => r.year) as number[];
@@ -183,7 +180,7 @@ export async function getPublishedYears() {
 // ── Authenticated: list all news (admin) ──
 export async function listAllNews() {
   const result = await query(
-    `SELECT id, title_fr, title_en, category, images, thumbnail_index, date, slug, is_published,
+    `SELECT id, title_fr, title_en, category, images, thumbnail_index, date, slug,
             index_status, index_error, index_started_at, indexed_at, active_index_version,
             created_at, updated_at
      FROM news
@@ -222,14 +219,13 @@ export async function createNews(data: {
   images?: string[];
   thumbnail_index?: number;
   date?: string;
-  is_published?: boolean;
 }) {
   const images = normalizeImages(data.images);
   const thumbnail_index = clampThumbnailIndex(data.thumbnail_index, images);
 
   const result = await query(
-    `INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, is_published)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    `INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING *`,
     [
       data.title_fr,
@@ -241,7 +237,6 @@ export async function createNews(data: {
       thumbnail_index,
       data.date || new Date().toISOString().slice(0, 10),
       "placeholder", // will be replaced below
-      data.is_published ?? false,
     ],
   );
 
@@ -289,7 +284,6 @@ export async function updateNews(id: number, data: Partial<NewsRow>) {
     "body_en",
     "category",
     "date",
-    "is_published",
   ];
 
   for (const key of allowed) {

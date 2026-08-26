@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi } from "../api/auth";
 import { useAuth } from "../context/auth";
+import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react";
 
 // Cloudflare Turnstile site key. Defaults to Cloudflare's "always passes" TEST key.
 // In production, set VITE_TURNSTILE_SITE_KEY to your real site key.
@@ -26,7 +27,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // CAPTCHA state — only shown after the backend flags the account (captcha_required)
+  // CAPTCHA state is shown only after the backend flags the account.
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const captchaContainerRef = useRef<HTMLDivElement>(null);
@@ -38,9 +39,9 @@ export default function Login() {
   // Show reuse detection / expiry message if redirected from session loss
   useEffect(() => {
     if (logoutReason === "reuse_detected") {
-      setError("Your session was revoked for security reasons. Please sign in again.");
+      setError("Votre session a été révoquée pour des raisons de sécurité. Veuillez vous reconnecter.");
     } else if (logoutReason === "expired") {
-      setError("Your session has expired. Please sign in again.");
+      setError("Votre session a expiré. Veuillez vous reconnecter.");
     }
   }, [logoutReason]);
 
@@ -86,7 +87,7 @@ export default function Login() {
     setError("");
 
     if (showCaptcha && !captchaToken) {
-      setError("Please complete the security check.");
+      setError("Veuillez effectuer la vérification de sécurité.");
       return;
     }
 
@@ -99,11 +100,11 @@ export default function Login() {
     } catch (err: any) {
       const msg = err?.message || "";
       if (msg === "captcha_required") {
-        // Backend flagged the account — demand a CAPTCHA from now on
+        // The backend flagged the account, so CAPTCHA is now required.
         setShowCaptcha(true);
-        setError("Too many failed attempts. Please complete the security check.");
+        setError("Trop de tentatives ont échoué. Veuillez effectuer la vérification de sécurité.");
       } else {
-        setError(msg || "Login failed");
+        setError(msg || "Échec de la connexion");
       }
       // Force the user to re-solve the widget on the next attempt
       setCaptchaToken(null);
@@ -120,16 +121,30 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8] px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-ink">OSS Admin</h1>
-          <p className="text-ink/60 mt-2">Sign in to manage your platform</p>
+    <main className="admin-login min-h-[100dvh]">
+      <section className="admin-login-visual">
+        <div className="admin-login-visual-content">
+          <span className="admin-login-mark"><ShieldCheck className="h-6 w-6" strokeWidth={1.8} /></span>
+          <div>
+            <p className="admin-login-organization">Observatoire du Sahara et du Sahel</p>
+            <h1>Administration des contenus</h1>
+            <p>Gérez le site de l’OSS, ses ressources institutionnelles, ses actualités, ses projets et ses informations publiques depuis un espace sécurisé.</p>
+          </div>
+          <span className="admin-login-secure"><LockKeyhole className="h-4 w-4" /> Accès réservé au personnel autorisé de l’OSS</span>
         </div>
+      </section>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-5">
+      <section className="admin-login-panel">
+        <div className="admin-login-form-wrap">
+          <div className="admin-login-heading">
+            <p>Espace d’administration OSS</p>
+            <h2>Bienvenue</h2>
+            <span>Connectez-vous avec votre compte d’administration.</span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="admin-login-form">
           {error && (
-            <div className={`border px-4 py-3 rounded-lg text-sm ${
+            <div className={`admin-login-alert ${
               logoutReason === "reuse_detected"
                 ? "bg-amber-50 border-amber-200 text-amber-800"
                 : "bg-red-50 border-red-200 text-red-700"
@@ -138,31 +153,31 @@ export default function Login() {
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-ink/80 mb-1.5">Email</label>
+          <div className="admin-login-field">
+            <label>Adresse e-mail</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-              placeholder="you@example.com"
+              autoComplete="email"
+              placeholder="name@oss.org.tn"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-ink/80 mb-1.5">Password</label>
+          <div className="admin-login-field">
+            <label>Mot de passe</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
+              autoComplete="current-password"
               placeholder="••••••••"
             />
           </div>
 
-          {/* CAPTCHA — rendered on demand after the backend flags the account */}
+          {/* CAPTCHA rendered on demand after the backend flags the account. */}
           {showCaptcha && (
             <div className="flex justify-center">
               <div ref={captchaContainerRef} />
@@ -172,12 +187,14 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading || (showCaptcha && !captchaToken)}
-            className="w-full py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="admin-login-submit"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            <span>{loading ? "Connexion..." : "Se connecter"}</span>
+            {!loading && <ArrowRight className="h-4 w-4" strokeWidth={1.8} />}
           </button>
         </form>
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 }

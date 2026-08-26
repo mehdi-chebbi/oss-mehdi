@@ -34,7 +34,7 @@ export default function AdminReports() {
 
   const handleDelete = async (r: ReportData) => {
     if (!token) return;
-    if (!confirm(`Delete report "${r.subject}"?`)) return;
+    if (!confirm(`Supprimer le signalement « ${r.subject} » ?`)) return;
     setError("");
     try {
       await deleteReport(token, r.id);
@@ -50,15 +50,15 @@ export default function AdminReports() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Reports</h2>
-          <p className="text-ink/50 text-sm mt-1">{reports.length} total</p>
+          <h2 className="text-2xl font-bold text-ink">Signalements</h2>
+          <p className="text-ink/50 text-sm mt-1">{reports.length} au total</p>
         </div>
         <button
           onClick={() => setSortDesc(!sortDesc)}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors px-3 py-2 rounded-lg border border-ink/10 hover:border-ink/20"
         >
           {sortDesc ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-          Newest first
+          Plus récents d’abord
         </button>
       </div>
 
@@ -69,17 +69,17 @@ export default function AdminReports() {
       )}
 
       {loading ? (
-        <div className="text-center py-16 text-ink/40">Loading reports…</div>
+        <div className="text-center py-16 text-ink/40">Chargement des signalements...</div>
       ) : reports.length === 0 ? (
-        <div className="text-center py-16 text-ink/40">No reports yet.</div>
+        <div className="text-center py-16 text-ink/40">Aucun signalement.</div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="bg-ink/5 text-left text-sm text-ink/60">
-                <th className="px-6 py-3 font-medium">Category</th>
-                <th className="px-6 py-3 font-medium">Subject</th>
-                <th className="px-6 py-3 font-medium">From</th>
+                <th className="px-6 py-3 font-medium">Catégorie</th>
+                <th className="px-6 py-3 font-medium">Objet</th>
+                <th className="px-6 py-3 font-medium">Auteur</th>
                 <th className="px-6 py-3 font-medium">Date</th>
                 <th className="px-6 py-3 font-medium text-right">Actions</th>
               </tr>
@@ -91,17 +91,17 @@ export default function AdminReports() {
                   <tr key={r.id} className="hover:bg-ink/[0.02] transition-colors">
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${cat.color}`}>
-                        {cat.en}
+                        {cat.fr}
                       </span>
                     </td>
                     <td className="px-6 py-4 font-medium text-ink max-w-xs truncate">
                       {r.subject}
                     </td>
                     <td className="px-6 py-4 text-sm text-ink/60">
-                      {r.name ?? <span className="italic text-ink/35">Anonymous</span>}
+                      {r.name ?? <span className="italic text-ink/35">Anonyme</span>}
                     </td>
                     <td className="px-6 py-4 text-sm text-ink/50">
-                      {new Date(r.created_at).toLocaleDateString("en-GB", {
+                      {new Date(r.created_at).toLocaleDateString("fr-FR", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -112,14 +112,14 @@ export default function AdminReports() {
                         <button
                           onClick={() => setSelected(r)}
                           className="p-2 text-ink/40 hover:text-[#489e42] hover:bg-[#489e42]/5 rounded-lg transition-colors"
-                          title="View report"
+                          title="Voir le signalement"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(r)}
                           className="p-2 text-ink/40 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
+                          title="Supprimer"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -140,7 +140,7 @@ export default function AdminReports() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-ink/10">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-[#489e42]" />
-                <h3 className="text-lg font-semibold text-ink">Report Detail</h3>
+                <h3 className="text-lg font-semibold text-ink">Détail du signalement</h3>
               </div>
               <button
                 onClick={() => setSelected(null)}
@@ -155,10 +155,10 @@ export default function AdminReports() {
                 <span
                   className={`text-xs px-2.5 py-1 rounded-full font-medium ${catInfo(selected.category).color}`}
                 >
-                  {catInfo(selected.category).en}
+                  {catInfo(selected.category).fr}
                 </span>
                 <span className="text-sm text-ink/40">
-                  {new Date(selected.created_at).toLocaleDateString("en-GB", {
+                  {new Date(selected.created_at).toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -169,7 +169,7 @@ export default function AdminReports() {
               </div>
 
               <div>
-                <p className="text-xs font-medium text-ink/40 uppercase tracking-wide mb-1">Subject</p>
+                <p className="text-xs font-medium text-ink/40 uppercase tracking-wide mb-1">Objet</p>
                 <p className="text-ink font-medium">{selected.subject}</p>
               </div>
 
@@ -182,7 +182,7 @@ export default function AdminReports() {
 
               {(selected.name || selected.email) && (
                 <div className="pt-3 border-t border-ink/10">
-                  <p className="text-xs font-medium text-ink/40 uppercase tracking-wide mb-2">Submitted by</p>
+                  <p className="text-xs font-medium text-ink/40 uppercase tracking-wide mb-2">Envoyé par</p>
                   {selected.name && <p className="text-sm text-ink/70">{selected.name}</p>}
                   {selected.email && <p className="text-sm text-ink/50">{selected.email}</p>}
                 </div>
@@ -190,7 +190,7 @@ export default function AdminReports() {
 
               {!selected.name && !selected.email && (
                 <div className="pt-3 border-t border-ink/10">
-                  <p className="text-sm italic text-ink/35">Submitted anonymously</p>
+                  <p className="text-sm italic text-ink/35">Envoyé anonymement</p>
                 </div>
               )}
             </div>

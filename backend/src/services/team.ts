@@ -13,7 +13,7 @@ export interface TeamRow {
   department: string;
 }
 
-export async function getPublishedTeam(department?: string) {
+export async function getPublicTeam(department?: string) {
   if (department) {
     const result = await query(
       "SELECT * FROM team WHERE department = $1 ORDER BY id ASC",

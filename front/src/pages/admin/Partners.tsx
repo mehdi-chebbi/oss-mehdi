@@ -65,7 +65,7 @@ export default function AdminPartners() {
         {label}
       </h3>
       {items.length === 0 ? (
-        <p className="text-ink/30 text-sm">No partners in this row</p>
+        <p className="text-ink/30 text-sm">Aucun partenaire sur cette ligne</p>
       ) : (
         <div className="space-y-2">
           {items.map((p) => (
@@ -84,31 +84,22 @@ export default function AdminPartners() {
                     }}
                   />
                 ) : (
-                  <span className="text-ink/20 text-xs">No img</span>
+                  <span className="text-ink/20 text-xs">Aucune image</span>
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-ink text-sm truncate">{p.name}</p>
               </div>
-              <span
-                className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${
-                  p.is_published
-                    ? "bg-[#489e42]/10 text-[#489e42]"
-                    : "bg-ink/5 text-ink/40"
-                }`}
-              >
-                {p.is_published ? "Pub" : "Draft"}
-              </span>
               <button
                 onClick={() => navigate(`/admin/partners/${p.id}`)}
                 className="flex items-center gap-1 text-xs text-ink/60 hover:text-[#489e42] font-medium transition-colors"
               >
-                <Pencil className="w-3 h-3" /> Edit
+                <Pencil className="w-3 h-3" /> Modifier
               </button>
               <button
                 onClick={() => setDeleteTarget(p)}
                 className="text-ink/30 hover:text-red-500 transition-colors"
-                title="Delete"
+                title="Supprimer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -123,16 +114,16 @@ export default function AdminPartners() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Partners</h2>
+          <h2 className="text-2xl font-bold text-ink">Partenaires</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage the partner logos in the marquee rows
+            Gérez les logos des partenaires dans les deux lignes défilantes.
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/partners/new")}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm"
         >
-          <Plus className="w-4 h-4" /> Add Partner
+          <Plus className="w-4 h-4" /> Ajouter un partenaire
         </button>
       </div>
 
@@ -144,17 +135,17 @@ export default function AdminPartners() {
 
       {partners.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No partners yet. Click "Add Partner" to create one.
+          Aucun partenaire. Cliquez sur « Ajouter un partenaire » pour en créer un.
         </div>
       )}
 
-      {renderRow("Row 1 — scrolls right", row1)}
-      {renderRow("Row 2 — scrolls left", row2)}
+      {renderRow("Ligne 1, défile vers la droite", row1)}
+      {renderRow("Ligne 2, défile vers la gauche", row2)}
 
       {/* Delete confirmation modal */}
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this partner?"
+        message="Voulez-vous vraiment supprimer ce partenaire ?"
         itemName={deleteTarget?.name}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

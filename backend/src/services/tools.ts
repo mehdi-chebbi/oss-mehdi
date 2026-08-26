@@ -10,15 +10,14 @@ export interface ToolRow {
   image: string;
   link: string;
   sort_order: number;
-  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
 
-// Public: returns published tools for a page, ordered by sort_order
-export async function getPublishedTools(pageId: number) {
+// Public: returns tools for a page, ordered by sort_order
+export async function getPageTools(pageId: number) {
   const result = await query(
-    "SELECT * FROM tools WHERE page_id = $1 AND is_published = true ORDER BY sort_order ASC",
+    "SELECT * FROM tools WHERE page_id = $1 ORDER BY sort_order ASC",
     [pageId],
   );
   return result.rows;
@@ -49,12 +48,11 @@ export async function createTool(data: {
   image?: string;
   link?: string;
   sort_order?: number;
-  is_published?: boolean;
 }) {
   const result = await query(
     `INSERT INTO tools (page_id, title_fr, title_en, description_fr, description_en,
-     image, link, sort_order, is_published)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+     image, link, sort_order)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
      RETURNING *`,
     [
       data.page_id,
@@ -65,7 +63,6 @@ export async function createTool(data: {
       data.image || "/misland.jpg",
       data.link || "#",
       data.sort_order ?? 0,
-      data.is_published ?? true,
     ],
   );
   return result.rows[0];
@@ -85,7 +82,6 @@ export async function updateTool(id: number, data: Partial<ToolRow>) {
     "image",
     "link",
     "sort_order",
-    "is_published",
   ];
 
   for (const key of allowed) {

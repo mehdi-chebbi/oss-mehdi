@@ -2,9 +2,9 @@ import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
   getLatestNews,
-  listPublishedNews,
-  getPublishedNewsBySlug,
-  getPublishedYears,
+  listPublicNews,
+  getPublicNewsBySlug,
+  getPublicNewsYears,
   listAllNews,
   getNews,
   createNews,
@@ -18,7 +18,7 @@ const router = Router();
 
 // ── Public routes ──
 
-// Latest published news (for the home page)
+// Latest news (for the home page)
 // GET /api/news/latest?limit=4
 router.get("/latest", async (req, res) => {
   const limit = Math.min(20, Math.max(1, Number(req.query.limit) || 4));
@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
   }
 
   const category = categoryValue && isNewsCategory(categoryValue) ? categoryValue : undefined;
-  const { items, total } = await listPublishedNews({ page, limit, year, category, q });
+  const { items, total } = await listPublicNews({ page, limit, year, category, q });
   res.json({
     items,
     total,
@@ -51,16 +51,16 @@ router.get("/", async (req, res) => {
   });
 });
 
-// Distinct years with published articles (for the year filter dropdown)
+// Distinct article years (for the year filter dropdown)
 router.get("/years", async (_req, res) => {
-  const years = await getPublishedYears();
+  const years = await getPublicNewsYears();
   res.json(years);
 });
 
 // Single article by slug
 // GET /api/news/slug/:slug
 router.get("/slug/:slug", async (req, res) => {
-  const article = await getPublishedNewsBySlug(req.params.slug);
+  const article = await getPublicNewsBySlug(req.params.slug);
   if (!article) {
     res.status(404).json({ error: "Article not found" });
     return;
@@ -70,7 +70,7 @@ router.get("/slug/:slug", async (req, res) => {
 
 // ── Authenticated routes (admin) ──
 
-// List all news (including drafts)
+// List all news
 router.get("/all", editorOrAdmin, async (_req, res) => {
   const items = await listAllNews();
   res.json(items);
@@ -89,7 +89,7 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 // Create news
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
-    const { title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, is_published } = req.body;
+    const { title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date } = req.body;
     if (!title_fr || !title_en || !isNewsCategory(category)) {
       res.status(400).json({ error: "title_fr, title_en and a valid category are required" });
       return;
@@ -103,7 +103,6 @@ router.post("/", editorOrAdmin, async (req, res) => {
       images,
       thumbnail_index,
       date,
-      is_published,
     });
     res.status(201).json(await queueNewsIndexing(article.id));
   } catch (err: any) {

@@ -80,7 +80,7 @@ export default function TeamForm() {
       } else {
         await createTeamMember(token, form);
       }
-      setSuccess("Team member saved successfully!");
+      setSuccess("Membre de l’équipe enregistré avec succès !");
       setTimeout(() => navigate("/admin/team"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -107,13 +107,13 @@ export default function TeamForm() {
           onClick={() => navigate("/admin/team")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Team
+          <ArrowLeft className="w-4 h-4" /> Retour à l’équipe
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Member" : "New Team Member"}
+          {isEditing ? "Modifier le membre" : "Nouveau membre"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
-          {isEditing ? "Update this team member" : "Add a new team member"}
+          {isEditing ? "Mettre à jour ce membre de l’équipe" : "Ajouter un nouveau membre à l’équipe"}
         </p>
       </div>
 
@@ -132,7 +132,7 @@ export default function TeamForm() {
         {/* Name */}
         <div>
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Name
+            Nom
           </label>
           <input
             type="text"
@@ -146,7 +146,7 @@ export default function TeamForm() {
         {/* Department */}
         <div>
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Department
+            Département
           </label>
           <select
             value={form.department}
@@ -175,7 +175,7 @@ export default function TeamForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Job Title (FR)
+              Fonction (FR)
             </label>
             <input
               type="text"
@@ -186,7 +186,7 @@ export default function TeamForm() {
           </div>
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Job Title (EN)
+              Fonction (EN)
             </label>
             <input
               type="text"
@@ -199,7 +199,7 @@ export default function TeamForm() {
 
         <div>
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Diplomas / Qualifications (FR)
+            Diplômes / qualifications (FR)
           </label>
           <textarea
             value={form.diplomas_fr}
@@ -211,7 +211,7 @@ export default function TeamForm() {
 
         <div>
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Diplomas / Qualifications (EN)
+            Diplômes / qualifications (EN)
           </label>
           <textarea
             value={form.diplomas_en}
@@ -224,7 +224,7 @@ export default function TeamForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Nationality (FR)
+              Nationalité (FR)
             </label>
             <input
               type="text"
@@ -235,7 +235,7 @@ export default function TeamForm() {
           </div>
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Nationality (EN)
+              Nationalité (EN)
             </label>
             <input
               type="text"
@@ -255,14 +255,14 @@ export default function TeamForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement…" : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/team")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

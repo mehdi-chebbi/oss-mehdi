@@ -59,7 +59,7 @@ export default function AdminSocials() {
         </svg>
       );
     }
-    return <span className="text-xs">—</span>;
+    return <span className="text-xs">Indisponible</span>;
   };
 
   if (loading) {
@@ -74,16 +74,16 @@ export default function AdminSocials() {
     <div className="p-8 max-w-3xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Social Links</h2>
+          <h2 className="text-2xl font-bold text-ink">Réseaux sociaux</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage the social media links in the sidebar
+            Gérez les liens vers les réseaux sociaux affichés sur le site.
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/socials/new")}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm"
         >
-          <Plus className="w-4 h-4" /> Add Social
+          <Plus className="w-4 h-4" /> Ajouter un réseau
         </button>
       </div>
 
@@ -95,7 +95,7 @@ export default function AdminSocials() {
 
       {socials.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No social links yet. Click "Add Social" to create one.
+          Aucun réseau social. Cliquez sur « Ajouter un réseau » pour en créer un.
         </div>
       )}
 
@@ -130,12 +130,12 @@ export default function AdminSocials() {
               onClick={() => navigate(`/admin/socials/${s.id}`)}
               className="flex items-center gap-1 text-xs text-ink/60 hover:text-[#489e42] font-medium transition-colors"
             >
-              <Pencil className="w-3 h-3" /> Edit
+              <Pencil className="w-3 h-3" /> Modifier
             </button>
             <button
               onClick={() => setDeleteTarget(s)}
               className="text-ink/30 hover:text-red-500 transition-colors"
-              title="Delete"
+              title="Supprimer"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -146,7 +146,7 @@ export default function AdminSocials() {
       {/* Delete confirmation modal */}
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this social link?"
+        message="Voulez-vous vraiment supprimer ce lien vers un réseau social ?"
         itemName={deleteTarget?.platform}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

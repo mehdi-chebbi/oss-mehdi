@@ -14,12 +14,12 @@ import {
 import {
   createResource,
   deleteResourceRecord,
-  getPublishedResourceYears,
+  getPublicResourceYears,
   getResource,
   isResourceDocumentType,
   isResourceField,
   listAllResources,
-  listPublishedResources,
+  listPublicResources,
   queueResourceIndexing,
   updateResource,
   type ResourceField,
@@ -32,11 +32,6 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 
 function hasValidResourceId(id: string) {
   return UUID_PATTERN.test(id);
-}
-
-function parseBoolean(value: unknown, fallback = false) {
-  if (value === undefined || value === null || value === "") return fallback;
-  return value === true || value === "true" || value === "1";
 }
 
 function parseFields(value: unknown): ResourceField[] {
@@ -77,7 +72,6 @@ function validateMetadata(body: Record<string, unknown>) {
     document_type: documentType,
     fields,
     publication_date: publicationDate,
-    is_published: parseBoolean(body.is_published),
   };
 }
 
@@ -123,7 +117,7 @@ router.get("/", async (req, res) => {
       return;
     }
 
-    const result = await listPublishedResources({
+    const result = await listPublicResources({
       page,
       limit,
       documentType: documentTypeValue && isResourceDocumentType(documentTypeValue) ? documentTypeValue : undefined,
@@ -146,7 +140,7 @@ router.get("/", async (req, res) => {
 
 router.get("/years", async (_req, res) => {
   try {
-    res.json(await getPublishedResourceYears());
+    res.json(await getPublicResourceYears());
   } catch (error: any) {
     res.status(500).json({ error: error.message || "Could not load publication years" });
   }
@@ -255,9 +249,9 @@ router.patch("/:id", editorOrAdmin, async (req, res) => {
       const newFr = uploadedFileData(getUploadedFile(files, "file_fr"));
       const newEn = uploadedFileData(getUploadedFile(files, "file_en"));
       const newCustomCover = uploadedFileData(getUploadedFile(files, "cover"));
-      const removeFr = parseBoolean(req.body.remove_file_fr);
-      const removeEn = parseBoolean(req.body.remove_file_en);
-      const removeCustomCover = parseBoolean(req.body.remove_custom_cover);
+      const removeFr = req.body.remove_file_fr === "true" || req.body.remove_file_fr === true;
+      const removeEn = req.body.remove_file_en === "true" || req.body.remove_file_en === true;
+      const removeCustomCover = req.body.remove_custom_cover === "true" || req.body.remove_custom_cover === true;
 
       const fileFr = newFr || (removeFr ? null : {
         path: existing.file_fr_path!,

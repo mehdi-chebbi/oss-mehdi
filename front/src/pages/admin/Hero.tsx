@@ -45,7 +45,6 @@ const emptyForm = {
   cta_secondary_label_en: "",
   cta_secondary_link: "#",
   background_image: "/hero.jpg",
-  is_published: true,
 };
 
 export default function AdminHero() {
@@ -81,7 +80,6 @@ export default function AdminHero() {
         cta_secondary_label_en: hero.cta_secondary_label_en,
         cta_secondary_link: hero.cta_secondary_link,
         background_image: hero.background_image,
-        is_published: hero.is_published,
       });
     }
   }, [hero]);
@@ -102,7 +100,7 @@ export default function AdminHero() {
         await createHero(token, form);
       }
       queryClient.invalidateQueries({ queryKey: ["hero"] });
-      setSuccess("Hero saved successfully!");
+      setSuccess("Bannière enregistrée avec succès.");
       setTimeout(() => setSuccess(""), 3000);
     } catch (err: any) {
       setError(err.message);
@@ -124,8 +122,8 @@ export default function AdminHero() {
   return (
     <div className="p-8 max-w-3xl">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-ink">Hero</h2>
-        <p className="text-ink/50 text-sm mt-1">Edit the hero banner on the home page</p>
+        <h2 className="text-2xl font-bold text-ink">Bannière principale</h2>
+        <p className="text-ink/50 text-sm mt-1">Modifiez la bannière principale de la page d’accueil.</p>
       </div>
 
       {error && (
@@ -142,19 +140,19 @@ export default function AdminHero() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         {/* Language tabs */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink/70">Content language:</span>
+          <span className="text-sm font-medium text-ink/70">Langue du contenu :</span>
           <LangTabs lang={lang} setLang={setLang} />
         </div>
 
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            {lang === "fr" ? "French" : "English"} Content
+            Contenu {lang === "fr" ? "français" : "anglais"}
           </h4>
 
           {/* Title */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Title ({lang.toUpperCase()})
+              Titre ({lang.toUpperCase()})
             </label>
             <input
               type="text"
@@ -168,7 +166,7 @@ export default function AdminHero() {
           {/* Subtitle */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Subtitle ({lang.toUpperCase()})
+              Sous-titre ({lang.toUpperCase()})
             </label>
             <textarea
               value={lang === "fr" ? form.subtitle_fr : form.subtitle_en}
@@ -183,7 +181,7 @@ export default function AdminHero() {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Primary CTA Label ({lang.toUpperCase()})
+                Libellé du bouton principal ({lang.toUpperCase()})
               </label>
               <input
                 type="text"
@@ -197,7 +195,7 @@ export default function AdminHero() {
             </div>
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Primary CTA Link
+                Lien du bouton principal
               </label>
               <input
                 type="text"
@@ -212,7 +210,7 @@ export default function AdminHero() {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Secondary CTA Label ({lang.toUpperCase()})
+                Libellé du bouton secondaire ({lang.toUpperCase()})
               </label>
               <input
                 type="text"
@@ -226,7 +224,7 @@ export default function AdminHero() {
             </div>
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Secondary CTA Link
+                Lien du bouton secondaire
               </label>
               <input
                 type="text"
@@ -241,30 +239,15 @@ export default function AdminHero() {
         {/* Background image */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Background Image
+            Image d’arrière-plan
           </h4>
           <ImageUpload
             value={form.background_image}
             onChange={(url) => set("background_image", url)}
             section="hero"
-            label="Background Image"
+            label="Image d’arrière-plan"
             placeholder="/hero.jpg"
           />
-        </div>
-
-        {/* Published toggle */}
-        <div className="border-t border-ink/5 pt-5">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.is_published}
-              onChange={(e) => set("is_published", e.target.checked)}
-              className="w-5 h-5 rounded border-ink/20 text-[#489e42] focus:ring-[#489e42]"
-            />
-            <span className="text-sm font-medium text-ink/80">
-              Published (visible on site)
-            </span>
-          </label>
         </div>
 
         {/* Action buttons */}
@@ -276,7 +259,7 @@ export default function AdminHero() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
         </div>
       </div>

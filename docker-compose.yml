@@ -50,6 +50,13 @@ services:
       OPENROUTER_MODEL: "${OPENROUTER_MODEL:-openai/gpt-4o-mini}"
       OPENROUTER_EMBEDDING_MODEL: "${OPENROUTER_EMBEDDING_MODEL:-qwen/qwen3-embedding-8b}"
       RESOURCE_RETRIEVAL_MAX_DISTANCE: "${RESOURCE_RETRIEVAL_MAX_DISTANCE:-0.65}"
+      # Microsoft Graph credentials for contact and newsletter mail.
+      MICROSOFT_TENANT_ID: "${MICROSOFT_TENANT_ID:-}"
+      MICROSOFT_CLIENT_ID: "${MICROSOFT_CLIENT_ID:-}"
+      MICROSOFT_CLIENT_SECRET: "${MICROSOFT_CLIENT_SECRET:-}"
+      MAIL_SENDER_ADDRESS: "${MAIL_SENDER_ADDRESS:-platform@oss.org.tn}"
+      MAIL_SENDER_NAME: "${MAIL_SENDER_NAME:-OSS}"
+      CONTACT_RECIPIENT_ADDRESS: "${CONTACT_RECIPIENT_ADDRESS:-platform@oss.org.tn}"
       # ── Runtime config ──
       NODE_ENV: production
       COOKIE_SECURE: "false"   # HTTP locally — browsers reject Secure cookies over http://

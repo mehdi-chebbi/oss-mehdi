@@ -67,16 +67,16 @@ export default function AdminNews() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">News</h2>
+          <h2 className="text-2xl font-bold text-ink">Actualités</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage news articles published on the site
+            Gérez les articles d’actualité du site.
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/news/new")}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm"
         >
-          <Plus className="w-4 h-4" /> Add Article
+          <Plus className="w-4 h-4" /> Ajouter un article
         </button>
       </div>
 
@@ -88,7 +88,7 @@ export default function AdminNews() {
 
       {news.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No articles yet. Click "Add Article" to create one.
+          Aucun article. Cliquez sur « Ajouter un article » pour en créer un.
         </div>
       )}
 
@@ -123,7 +123,7 @@ export default function AdminNews() {
                 {article.title_en}
               </p>
               <p className="text-xs text-ink/40 mt-0.5">
-                {new Date(article.date).toLocaleDateString("en-GB", {
+                {new Date(article.date).toLocaleDateString("fr-FR", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
@@ -131,7 +131,7 @@ export default function AdminNews() {
                 · /news/{article.slug}
               </p>
               <p className="mt-1 text-[11px] font-semibold text-[#489e42]">
-                {newsCategoryLabel(article.category, "en")}
+                {newsCategoryLabel(article.category, "fr")}
               </p>
               <div className="mt-1.5 flex items-center gap-2 text-[11px]">
                 <span className={`font-semibold ${
@@ -139,39 +139,28 @@ export default function AdminNews() {
                   article.index_status === "failed" ? "text-red-600" :
                   article.index_status === "processing" ? "text-[#0072bc]" : "text-amber-700"
                 }`}>
-                  {article.index_status === "ready" ? "AI ready" : article.index_status === "failed" ? "Index failed" : article.index_status === "processing" ? "Indexing" : "Index queued"}
+                  {article.index_status === "ready" ? "Prêt pour l’IA" : article.index_status === "failed" ? "Échec de l’indexation" : article.index_status === "processing" ? "Indexation en cours" : "Indexation en attente"}
                 </span>
                 {article.index_error && <span className="max-w-xs truncate text-red-500" title={article.index_error}>{article.index_error}</span>}
                 {(article.index_status === "failed" || article.index_status === "ready") && (
                   <button type="button" disabled={retryMutation.isPending} onClick={() => retryMutation.mutate(article.id)} className="inline-flex items-center gap-1 font-semibold text-[#0072bc] hover:underline disabled:opacity-40">
-                    <RotateCcw className="h-3 w-3" /> Reindex
+                    <RotateCcw className="h-3 w-3" /> Réindexer
                   </button>
                 )}
               </div>
             </div>
-
-            {/* Published badge */}
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${
-                article.is_published
-                  ? "bg-[#489e42]/10 text-[#489e42]"
-                  : "bg-ink/5 text-ink/40"
-              }`}
-            >
-              {article.is_published ? "Published" : "Draft"}
-            </span>
 
             {/* Actions */}
             <button
               onClick={() => navigate(`/admin/news/${article.id}`)}
               className="flex items-center gap-1 text-sm text-ink/60 hover:text-[#489e42] font-medium transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5" /> Edit
+              <Pencil className="w-3.5 h-3.5" /> Modifier
             </button>
             <button
               onClick={() => setDeleteTarget(article)}
               className="text-ink/30 hover:text-red-500 transition-colors"
-              title="Delete"
+              title="Supprimer"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -181,7 +170,7 @@ export default function AdminNews() {
 
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this article?"
+        message="Voulez-vous vraiment supprimer cet article ?"
         itemName={deleteTarget?.title_fr}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

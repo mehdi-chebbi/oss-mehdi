@@ -6,6 +6,7 @@ import { getFooterNavLinks, getLegalLinks } from '@/data/navigation';
 import { socials } from '@/data/socials';
 import type { Locale } from '@/context/locale';
 import BrandBands from './BrandBands';
+import { subscribeToNewsletter } from '@/api/mail';
 
 const iconMap: Record<string, React.ElementType> = {
   Adresse: MapPin,
@@ -17,16 +18,26 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscriptionError, setSubscriptionError] = useState(false);
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
   const footerNavLinks = getFooterNavLinks(locale);
   const legalLinks = getLegalLinks(locale);
 
-  const handleSubscribe = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubscribed(true);
-    setEmail('');
-    window.setTimeout(() => setSubscribed(false), 4000);
+    setSubscribing(true);
+    setSubscriptionError(false);
+    try {
+      await subscribeToNewsletter(email, locale);
+      setSubscribed(true);
+      setEmail('');
+    } catch {
+      setSubscriptionError(true);
+    } finally {
+      setSubscribing(false);
+    }
   };
 
   const footerLink = (href: string, label: string, className: string) => href.startsWith('/')
@@ -99,11 +110,13 @@ export default function Footer() {
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder={locale === 'en' ? 'Your email address' : 'Votre adresse email'}
                   aria-label={locale === 'en' ? 'Email address' : 'Adresse email'}
+                  disabled={subscribing}
                   className="min-h-11 border border-white/25 bg-white/8 px-3 text-sm text-white outline-none placeholder:text-white/45 focus:border-oss-ochre"
                 />
-                <button type="submit" className="inline-flex min-h-11 items-center justify-center gap-2 bg-oss-ochre px-4 text-sm font-bold text-oss-blue-dark transition-colors hover:bg-white">
+                {subscriptionError && <p role="alert" className="text-xs font-semibold text-red-200">{locale === 'en' ? 'Subscription failed. Please try again.' : 'L’inscription a échoué. Veuillez réessayer.'}</p>}
+                <button type="submit" disabled={subscribing} className="inline-flex min-h-11 items-center justify-center gap-2 bg-oss-ochre px-4 text-sm font-bold text-oss-blue-dark transition-colors hover:bg-white disabled:cursor-wait disabled:opacity-60">
                   <Send className="h-4 w-4" />
-                  {locale === 'en' ? 'Subscribe' : "S'abonner"}
+                  {subscribing ? (locale === 'en' ? 'Subscribing…' : 'Inscription…') : (locale === 'en' ? 'Subscribe' : "S'abonner")}
                 </button>
               </form>
             )}

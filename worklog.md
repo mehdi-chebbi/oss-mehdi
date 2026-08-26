@@ -33,7 +33,7 @@ Why this approach:
 Create new tables in `init.sql` for all content sections.
 All text fields are bilingual (`_fr` / `_en`).
 
-- **pages** — id, slug, title_fr, title_en, is_published, created_at, updated_at
+- **pages** — id, slug, title_fr, title_en, created_at, updated_at
 - **hero** — id, page_id, title_fr, title_en, subtitle_fr, subtitle_en, cta_primary_label_fr, cta_primary_label_en, cta_primary_link, cta_secondary_label_fr, cta_secondary_label_en, cta_secondary_link, background_image
 - **stats** — id, page_id, label_fr, label_en, value, suffix, sort_order
 - **fields** — id, page_id, title_fr, title_en, description_fr, description_en, image, gradient_hue, sort_order
@@ -53,16 +53,14 @@ All text fields are bilingual (`_fr` / `_en`).
 
 ### 1.3 Content CRUD APIs (per section)
 For each content type:
-- `GET /api/content/:section` — public read (no auth, returns published only)
+- `GET /api/content/:section` — public read (no auth)
 - `POST /api/content/:section` — admin create
 - `PATCH /api/content/:section/:id` — admin update
 - `DELETE /api/content/:section/:id` — admin delete
 
-### 1.4 Draft/Publish system
-- Items have `is_published` boolean (default: false)
-- `POST /api/content/:section/:id/publish` — goes live
-- `POST /api/content/:section/:id/unpublish` — reverts to draft
-- Public GET only returns published items
+### 1.4 Content availability
+- Created and updated content is immediately available through the public API.
+- Resource indexing remains a separate technical status used only by the AI retrieval system.
 
 ---
 

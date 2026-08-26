@@ -42,7 +42,6 @@ export interface ResourceRow {
   file_en_path: string | null;
   file_en_original_name: string | null;
   file_en_size: number | null;
-  is_published: boolean;
   index_status: ResourceIndexStatus;
   index_error: string;
   index_started_at: string | null;
@@ -69,7 +68,6 @@ export interface ResourceInput {
   file_en_path: string | null;
   file_en_original_name: string | null;
   file_en_size: number | null;
-  is_published: boolean;
 }
 
 export function isResourceDocumentType(value: string): value is ResourceDocumentType {
@@ -80,7 +78,7 @@ export function isResourceField(value: string): value is ResourceField {
   return RESOURCE_FIELDS.includes(value as ResourceField);
 }
 
-export async function listPublishedResources(options: {
+export async function listPublicResources(options: {
   page: number;
   limit: number;
   documentType?: ResourceDocumentType;
@@ -89,7 +87,7 @@ export async function listPublishedResources(options: {
   language?: ResourceLanguage;
   q?: string;
 }) {
-  const conditions = ["is_published = true"];
+  const conditions: string[] = [];
   const values: unknown[] = [];
 
   const addValue = (value: unknown) => {
@@ -118,7 +116,7 @@ export async function listPublishedResources(options: {
     )`);
   }
 
-  const where = `WHERE ${conditions.join(" AND ")}`;
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
   const countResult = await query(`SELECT COUNT(*)::int AS total FROM resources ${where}`, values);
   const total = Number(countResult.rows[0]?.total || 0);
 
@@ -135,11 +133,10 @@ export async function listPublishedResources(options: {
   return { items: result.rows as ResourceRow[], total };
 }
 
-export async function getPublishedResourceYears() {
+export async function getPublicResourceYears() {
   const result = await query(
     `SELECT DISTINCT EXTRACT(YEAR FROM publication_date)::int AS year
      FROM resources
-     WHERE is_published = true
      ORDER BY year DESC`,
   );
   return result.rows.map((row) => Number(row.year));
@@ -163,12 +160,12 @@ export async function createResource(data: ResourceInput) {
       id, title_fr, title_en, summary_fr, summary_en, document_type, fields,
       publication_date, cover_image_path, cover_is_custom,
       file_fr_path, file_fr_original_name, file_fr_size,
-      file_en_path, file_en_original_name, file_en_size, is_published
+      file_en_path, file_en_original_name, file_en_size
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7::text[],
       $8, $9, $10,
       $11, $12, $13,
-      $14, $15, $16, $17
+      $14, $15, $16
     ) RETURNING *`,
     [
       data.id,
@@ -187,7 +184,6 @@ export async function createResource(data: ResourceInput) {
       data.file_en_path,
       data.file_en_original_name,
       data.file_en_size,
-      data.is_published,
     ],
   );
   return result.rows[0] as ResourceRow;
@@ -211,9 +207,8 @@ export async function updateResource(id: string, data: Omit<ResourceInput, "id">
       file_en_path = $13,
       file_en_original_name = $14,
       file_en_size = $15,
-      is_published = $16,
       updated_at = NOW()
-     WHERE id = $17
+     WHERE id = $16
      RETURNING *`,
     [
       data.title_fr,
@@ -231,7 +226,6 @@ export async function updateResource(id: string, data: Omit<ResourceInput, "id">
       data.file_en_path,
       data.file_en_original_name,
       data.file_en_size,
-      data.is_published,
       id,
     ],
   );

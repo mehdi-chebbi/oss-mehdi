@@ -16,7 +16,6 @@ const emptyForm = {
   image: "",
   row_number: 1,
   sort_order: 0,
-  is_published: true,
 };
 
 export default function PartnerForm() {
@@ -43,7 +42,6 @@ export default function PartnerForm() {
           image: partner.image,
           row_number: partner.row_number,
           sort_order: partner.sort_order,
-          is_published: partner.is_published,
         });
       }
     } catch (err: any) {
@@ -76,7 +74,7 @@ export default function PartnerForm() {
       } else {
         await createPartner(token, form);
       }
-      setSuccess("Partner saved successfully!");
+      setSuccess("Partenaire enregistré avec succès.");
       setTimeout(() => navigate("/admin/partners"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -103,13 +101,13 @@ export default function PartnerForm() {
           onClick={() => navigate("/admin/partners")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Partners
+          <ArrowLeft className="w-4 h-4" /> Retour aux partenaires
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Partner" : "New Partner"}
+          {isEditing ? "Modifier le partenaire" : "Nouveau partenaire"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
-          {isEditing ? "Update this partner logo" : "Add a new partner logo to the marquee"}
+          {isEditing ? "Mettez à jour ce partenaire." : "Ajoutez un partenaire aux lignes défilantes."}
         </p>
       </div>
 
@@ -127,7 +125,7 @@ export default function PartnerForm() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         <div className="mb-4">
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Partner Name
+            Nom du partenaire
           </label>
           <input
             type="text"
@@ -151,20 +149,20 @@ export default function PartnerForm() {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Marquee Row
+              Ligne de défilement
             </label>
             <select
               value={form.row_number}
               onChange={(e) => set("row_number", Number(e.target.value))}
               className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
             >
-              <option value={1}>Row 1 — scrolls right</option>
-              <option value={2}>Row 2 — scrolls left</option>
+              <option value={1}>Ligne 1, défile vers la droite</option>
+              <option value={2}>Ligne 2, défile vers la gauche</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Sort Order
+              Ordre d’affichage
             </label>
             <input
               type="number"
@@ -175,20 +173,6 @@ export default function PartnerForm() {
           </div>
         </div>
 
-        <div className="border-t border-ink/5 pt-5">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.is_published}
-              onChange={(e) => set("is_published", e.target.checked)}
-              className="w-5 h-5 rounded border-ink/20 text-[#489e42] focus:ring-[#489e42]"
-            />
-            <span className="text-sm font-medium text-ink/80">
-              Published (visible on site)
-            </span>
-          </label>
-        </div>
-
         <div className="border-t border-ink/5 pt-5 flex gap-3">
           <button
             type="button"
@@ -197,14 +181,14 @@ export default function PartnerForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/partners")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

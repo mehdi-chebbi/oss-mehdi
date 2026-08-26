@@ -87,7 +87,7 @@ export default function SocialForm() {
       } else {
         await createSocial(token, form);
       }
-      setSuccess("Social link saved!");
+      setSuccess("Lien vers le réseau social enregistré !");
       setTimeout(() => navigate("/admin/socials"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -122,13 +122,13 @@ export default function SocialForm() {
           onClick={() => navigate("/admin/socials")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Social Links
+          <ArrowLeft className="w-4 h-4" /> Retour aux réseaux sociaux
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Social Link" : "New Social Link"}
+          {isEditing ? "Modifier le lien" : "Nouveau lien"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
-          {isEditing ? "Update this social media link" : "Add a new social media link to the sidebar"}
+          {isEditing ? "Mettre à jour ce lien vers un réseau social" : "Ajouter un réseau social à la barre latérale"}
         </p>
       </div>
 
@@ -146,14 +146,14 @@ export default function SocialForm() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         <div className="mb-4">
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Platform
+            Plateforme
           </label>
           <input
             type="text"
             value={form.platform}
             onChange={(e) => handlePlatformChange(e.target.value)}
             required
-            placeholder="e.g. Facebook, X, LinkedIn..."
+            placeholder="Ex. : Facebook, X, LinkedIn…"
             className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
           />
         </div>
@@ -175,14 +175,14 @@ export default function SocialForm() {
         {/* Icon: upload SVG file or use preset SVG path */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Icon
+            Icône
           </h4>
 
           <ImageUpload
             value={form.icon_file}
             onChange={(url) => set("icon_file", url)}
             section="socials"
-            label="Upload SVG/Icon File"
+            label="Importer un fichier SVG ou une icône"
             placeholder="/uploads/socials/icon.svg"
             accept="image/svg+xml,image/png,image/jpeg"
             contain
@@ -192,18 +192,18 @@ export default function SocialForm() {
 
           <div className="mt-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Or use SVG Path (preset icons auto-fill this)
+              Ou utiliser un tracé SVG (rempli automatiquement pour les plateformes connues)
             </label>
             <textarea
               value={form.icon_svg}
               onChange={(e) => set("icon_svg", e.target.value)}
               rows={3}
-              placeholder="SVG path d attribute..."
+              placeholder="Attribut d du tracé SVG…"
               className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink font-mono text-xs resize-none"
             />
             {/* Live preview */}
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-xs text-ink/40">Preview:</span>
+              <span className="text-xs text-ink/40">Aperçu :</span>
               <div className="w-8 h-8 flex items-center justify-center bg-[#489e42] rounded text-white">
                 {form.icon_file ? (
                   <img src={form.icon_file} alt="" width="18" height="18" className="object-contain" />
@@ -212,7 +212,7 @@ export default function SocialForm() {
                     <path d={form.icon_svg} />
                   </svg>
                 ) : (
-                  <span className="text-xs">—</span>
+                  <span className="text-xs">Indisponible</span>
                 )}
               </div>
             </div>
@@ -221,7 +221,7 @@ export default function SocialForm() {
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Sort Order
+            Ordre d’affichage
           </label>
           <input
             type="number"
@@ -239,14 +239,14 @@ export default function SocialForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement…" : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/socials")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

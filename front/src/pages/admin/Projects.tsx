@@ -100,9 +100,9 @@ export default function AdminProjects() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Projects</h2>
+          <h2 className="text-2xl font-bold text-ink">Projets</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage projects grouped by department
+            Gérez les projets regroupés par département.
           </p>
         </div>
         <button
@@ -115,9 +115,9 @@ export default function AdminProjects() {
           }
           disabled={!selectedDept}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-          title={selectedDept ? "" : "Select a department first"}
+          title={selectedDept ? "" : "Sélectionnez d’abord un département"}
         >
-          <Plus className="w-4 h-4" /> Add Project
+          <Plus className="w-4 h-4" /> Ajouter un projet
         </button>
       </div>
 
@@ -131,22 +131,22 @@ export default function AdminProjects() {
       {departments.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center">
           <Building2 className="w-8 h-8 text-ink/20 mx-auto mb-3" />
-          <p className="text-ink/50 mb-1">No departments exist yet.</p>
+          <p className="text-ink/50 mb-1">Aucun département n’existe encore.</p>
           <p className="text-sm text-ink/40">
-            Create a department first before adding projects.
+            Créez d’abord un département avant d’ajouter des projets.
           </p>
           <button
             onClick={() => navigate("/admin/departments/new")}
             className="mt-4 inline-flex items-center gap-1.5 text-sm text-[#489e42] font-semibold hover:underline"
           >
-            <Plus className="w-3.5 h-3.5" /> New Department
+            <Plus className="w-3.5 h-3.5" /> Nouveau département
           </button>
         </div>
       ) : (
         <>
           <div className="mb-6">
             <label className="block text-sm font-medium text-ink/70 mb-1.5">
-              Department
+              Département
             </label>
             <select
               value={selectedDept ?? ""}
@@ -168,7 +168,7 @@ export default function AdminProjects() {
             </div>
           ) : projects.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-              No projects in this department yet. Click “Add Project” to create one.
+              Aucun projet dans ce département. Cliquez sur « Ajouter un projet » pour en créer un.
             </div>
           ) : (
             <div className="space-y-3">
@@ -202,7 +202,7 @@ export default function AdminProjects() {
                       {project.title_en}
                     </p>
                     <p className="text-xs text-ink/40 mt-0.5">
-                      {yearRange(project.year_start, project.year_end, "en")}
+                      {yearRange(project.year_start, project.year_end, "fr")}
                       {project.budget ? ` · ${project.budget}` : ""}
                     </p>
                   </div>
@@ -215,18 +215,7 @@ export default function AdminProjects() {
                         : "bg-ink/5 text-ink/50"
                     }`}
                   >
-                    {statusLabel(project.status, "en")}
-                  </span>
-
-                  {/* Published badge */}
-                  <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${
-                      project.is_published
-                        ? "bg-[#489e42]/10 text-[#489e42]"
-                        : "bg-ink/5 text-ink/40"
-                    }`}
-                  >
-                    {project.is_published ? "Published" : "Draft"}
+                    {statusLabel(project.status, "fr")}
                   </span>
 
                   {/* Actions */}
@@ -234,12 +223,12 @@ export default function AdminProjects() {
                     onClick={() => navigate(`/admin/projects/${project.id}`)}
                     className="flex items-center gap-1 text-sm text-ink/60 hover:text-[#489e42] font-medium transition-colors"
                   >
-                    <Pencil className="w-3.5 h-3.5" /> Edit
+                    <Pencil className="w-3.5 h-3.5" /> Modifier
                   </button>
                   <button
                     onClick={() => setDeleteTarget(project)}
                     className="text-ink/30 hover:text-red-500 transition-colors"
-                    title="Delete"
+                    title="Supprimer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -252,7 +241,7 @@ export default function AdminProjects() {
 
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this project?"
+        message="Voulez-vous vraiment supprimer ce projet ?"
         itemName={deleteTarget?.title_fr}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

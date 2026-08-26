@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { uploadFile } from "../../api/auth";
 import { useAuth } from "../../context/auth";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Upload, X, Loader2 } from "lucide-react";
 
 interface ImageUploadProps {
   /** Current image URL/path (from form state) */
@@ -63,16 +63,14 @@ export default function ImageUpload({
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-ink/80 mb-1.5">
+    <div className="admin-upload-field">
+      <label className="mb-2 block text-sm font-medium text-ink/80">
         {label}
       </label>
 
-      {/* Preview + upload area */}
-      <div className="flex items-start gap-3">
-        {/* Thumbnail preview */}
+      <div className="admin-upload-control">
         <div
-          className={`${previewWidth} ${previewHeight} rounded-lg overflow-hidden bg-ink/5 flex-shrink-0 flex items-center justify-center relative group`}
+          className={`admin-upload-preview ${previewWidth} ${previewHeight} group`}
         >
           {value ? (
             <>
@@ -87,34 +85,33 @@ export default function ImageUpload({
               <button
                 type="button"
                 onClick={handleRemove}
-                className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                title="Remove image"
+                className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-md bg-[#12355b]/85 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                title="Supprimer l’image"
               >
                 <X className="w-3 h-3" />
               </button>
             </>
           ) : (
-            <span className="text-ink/20 text-xs">No img</span>
+            <span className="flex flex-col items-center gap-1.5 text-[11px] text-ink/35"><ImageIcon className="h-5 w-5" strokeWidth={1.6} />Aucune image</span>
           )}
         </div>
 
-        <div className="flex-1 space-y-2">
-          {/* File upload button */}
+        <div className="min-w-0 flex-1 space-y-2.5">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-1.5 px-3 py-2 bg-[#489e42]/10 hover:bg-[#489e42]/20 text-[#489e42] font-medium rounded-lg transition-colors text-sm disabled:opacity-50"
+              className="admin-upload-button"
             >
               {uploading ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
                 <Upload className="w-3.5 h-3.5" />
               )}
-              {uploading ? "Uploading…" : "Upload"}
+              {uploading ? "Importation..." : "Importer"}
             </button>
-            <span className="text-xs text-ink/40">or enter URL manually</span>
+            <span className="admin-upload-hint">ou saisir une URL</span>
           </div>
 
           <input
@@ -130,7 +127,7 @@ export default function ImageUpload({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full px-3 py-2 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink text-sm"
+            className="admin-upload-url"
             placeholder={placeholder}
           />
 

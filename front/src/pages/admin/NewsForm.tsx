@@ -48,7 +48,6 @@ const emptyForm = {
   images: [] as string[],
   thumbnail_index: 0,
   date: new Date().toISOString().slice(0, 10),
-  is_published: false,
 };
 
 export default function NewsForm() {
@@ -79,7 +78,6 @@ export default function NewsForm() {
           images: Array.isArray(article.images) ? article.images : [],
           thumbnail_index: article.thumbnail_index ?? 0,
           date: article.date ? new Date(article.date).toISOString().slice(0, 10) : emptyForm.date,
-          is_published: article.is_published ?? false,
         });
       }
     } catch (err: any) {
@@ -106,7 +104,7 @@ export default function NewsForm() {
       } else {
         await createNews(token, form);
       }
-      setSuccess("Article saved successfully!");
+      setSuccess("Article enregistré avec succès.");
       setTimeout(() => navigate("/admin/news"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -133,15 +131,15 @@ export default function NewsForm() {
           onClick={() => navigate("/admin/news")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to News
+          <ArrowLeft className="w-4 h-4" /> Retour aux actualités
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Article" : "New Article"}
+          {isEditing ? "Modifier l’article" : "Nouvel article"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
           {isEditing
-            ? "Update this news article"
-            : "Add a new news article — it will be available at /news/:slug once published"}
+            ? "Mettez à jour cet article d’actualité."
+            : "Ajoutez un article. Il sera immédiatement accessible à l’adresse /news/:slug."}
         </p>
       </div>
 
@@ -159,19 +157,19 @@ export default function NewsForm() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         {/* Language tabs */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink/70">Content language:</span>
+          <span className="text-sm font-medium text-ink/70">Langue du contenu :</span>
           <LangTabs lang={lang} setLang={setLang} />
         </div>
 
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            {lang === "fr" ? "French" : "English"} Content
+            Contenu {lang === "fr" ? "français" : "anglais"}
           </h4>
 
           {/* Title */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Title ({lang.toUpperCase()})
+              Titre ({lang.toUpperCase()})
             </label>
             <input
               type="text"
@@ -185,14 +183,14 @@ export default function NewsForm() {
           {/* Body */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Body ({lang.toUpperCase()}) — plain text, blank line separates paragraphs
+              Corps de l’article ({lang.toUpperCase()}). Une ligne vide sépare les paragraphes.
             </label>
             <textarea
               value={lang === "fr" ? form.body_fr : form.body_en}
               onChange={(e) => set(lang === "fr" ? "body_fr" : "body_en", e.target.value)}
               rows={10}
               className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-y font-mono text-sm"
-              placeholder="Write the full article here…"
+              placeholder="Rédigez l’article complet ici..."
             />
           </div>
         </div>
@@ -200,12 +198,12 @@ export default function NewsForm() {
         {/* Image & settings */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Image & Settings
+            Images et paramètres
           </h4>
 
           <div className="mb-5">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              News type
+              Type d’actualité
             </label>
             <select
               value={form.category}
@@ -228,12 +226,12 @@ export default function NewsForm() {
               set("thumbnail_index", thumbIdx);
             }}
             section="news"
-            label="Article images"
+            label="Images de l’article"
           />
 
           <div className="mt-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Publication date
+              Date de publication
             </label>
             <input
               type="date"
@@ -250,30 +248,15 @@ export default function NewsForm() {
             <div className="flex items-start gap-2 text-sm text-ink/50 bg-ink/5 px-4 py-3 rounded-lg">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-ink/70">URL slug</p>
+                <p className="font-medium text-ink/70">Identifiant d’URL</p>
                 <p className="mt-0.5">
-                  The article is available at <code className="bg-white px-1.5 py-0.5 rounded text-xs">/news/:slug</code>.
-                  The slug is auto-generated and cannot be changed (stable URLs for SEO).
+                  L’article est accessible à l’adresse <code className="bg-white px-1.5 py-0.5 rounded text-xs">/news/:slug</code>.
+                  L’identifiant est généré automatiquement et ne peut pas être modifié afin de conserver une URL stable.
                 </p>
               </div>
             </div>
           </div>
         )}
-
-        {/* Published toggle */}
-        <div className="border-t border-ink/5 pt-5">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.is_published}
-              onChange={(e) => set("is_published", e.target.checked)}
-              className="w-5 h-5 rounded border-ink/20 text-[#489e42] focus:ring-[#489e42]"
-            />
-            <span className="text-sm font-medium text-ink/80">
-              Published (visible on site)
-            </span>
-          </label>
-        </div>
 
         {/* Action buttons */}
         <div className="border-t border-ink/5 pt-5 flex gap-3">
@@ -284,14 +267,14 @@ export default function NewsForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/news")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

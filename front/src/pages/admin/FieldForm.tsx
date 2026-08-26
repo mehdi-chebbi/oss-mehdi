@@ -46,7 +46,6 @@ const emptyForm = {
   image: "",
   gradient_hue: 120,
   sort_order: 0,
-  is_published: true,
 };
 
 export default function FieldForm() {
@@ -77,7 +76,6 @@ export default function FieldForm() {
           image: field.image,
           gradient_hue: field.gradient_hue,
           sort_order: field.sort_order,
-          is_published: field.is_published,
         });
       }
     } catch (err: any) {
@@ -111,7 +109,7 @@ export default function FieldForm() {
       } else {
         await createField(token, form);
       }
-      setSuccess("Field saved successfully!");
+      setSuccess("Domaine enregistré avec succès.");
       setTimeout(() => navigate("/admin/fields"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -138,13 +136,13 @@ export default function FieldForm() {
           onClick={() => navigate("/admin/fields")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Fields
+          <ArrowLeft className="w-4 h-4" /> Retour aux domaines
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Field" : "New Field"}
+          {isEditing ? "Modifier le domaine" : "Nouveau domaine"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
-          {isEditing ? "Update this domain field card" : "Add a new domain field card to the home page"}
+          {isEditing ? "Mettez à jour cette carte de domaine." : "Ajoutez une carte de domaine à la page d’accueil."}
         </p>
       </div>
 
@@ -162,19 +160,19 @@ export default function FieldForm() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         {/* Language tabs */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink/70">Content language:</span>
+          <span className="text-sm font-medium text-ink/70">Langue du contenu :</span>
           <LangTabs lang={lang} setLang={setLang} />
         </div>
 
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            {lang === "fr" ? "French" : "English"} Content
+            Contenu {lang === "fr" ? "français" : "anglais"}
           </h4>
 
           {/* Title */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Title ({lang.toUpperCase()})
+              Titre ({lang.toUpperCase()})
             </label>
             <input
               type="text"
@@ -203,7 +201,7 @@ export default function FieldForm() {
         {/* Image & settings */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Image & Settings
+            Image et paramètres
           </h4>
 
           <ImageUpload
@@ -217,7 +215,7 @@ export default function FieldForm() {
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Gradient Color
+                Couleur du dégradé
               </label>
               <div className="flex items-center gap-3">
                 <div className="relative flex-1 h-10 rounded-lg overflow-hidden border border-ink/10 cursor-pointer">
@@ -254,7 +252,7 @@ export default function FieldForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                Sort Order
+                Ordre d’affichage
               </label>
               <input
                 type="number"
@@ -266,21 +264,6 @@ export default function FieldForm() {
           </div>
         </div>
 
-        {/* Published toggle */}
-        <div className="border-t border-ink/5 pt-5">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.is_published}
-              onChange={(e) => set("is_published", e.target.checked)}
-              className="w-5 h-5 rounded border-ink/20 text-[#489e42] focus:ring-[#489e42]"
-            />
-            <span className="text-sm font-medium text-ink/80">
-              Published (visible on site)
-            </span>
-          </label>
-        </div>
-
         {/* Action buttons */}
         <div className="border-t border-ink/5 pt-5 flex gap-3">
           <button
@@ -290,14 +273,14 @@ export default function FieldForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/fields")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

@@ -47,7 +47,7 @@ export default function ProjectsList() {
 
         {departments.length === 0 && (
           <div className="flex min-h-64 items-center justify-center bg-white p-10 text-center text-ink/42">
-            {locale === 'fr' ? 'Aucun département publié pour le moment.' : 'No departments published yet.'}
+            {locale === 'fr' ? 'Aucun département pour le moment.' : 'No departments yet.'}
           </div>
         )}
 
@@ -99,8 +99,8 @@ export default function ProjectsList() {
                     {projects.length === 0 ? (
                       <p className="py-8 text-center text-sm text-ink/40">
                         {locale === 'fr'
-                          ? 'Aucun projet publié.'
-                          : 'No published projects.'}
+                          ? 'Aucun projet.'
+                          : 'No projects.'}
                       </p>
                     ) : (
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

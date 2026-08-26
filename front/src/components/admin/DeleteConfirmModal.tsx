@@ -11,7 +11,7 @@ interface DeleteConfirmModalProps {
 
 export default function DeleteConfirmModal({
   open,
-  title = "Confirm Delete",
+  title = "Confirmer la suppression",
   message,
   itemName,
   onConfirm,
@@ -33,7 +33,7 @@ export default function DeleteConfirmModal({
           onClick={onCancel}
           className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-label="Fermer" />
         </button>
 
         <div className="flex items-start gap-3 mb-4">
@@ -54,7 +54,7 @@ export default function DeleteConfirmModal({
         </div>
 
         <p className="text-xs text-ink/40 mb-5">
-          This action cannot be undone.
+          Cette action est irréversible.
         </p>
 
         <div className="flex justify-end gap-3">
@@ -62,13 +62,13 @@ export default function DeleteConfirmModal({
             onClick={onCancel}
             className="px-4 py-2 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors text-sm"
           >
-            Cancel
+            Annuler
           </button>
           <button
             onClick={onConfirm}
             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors text-sm"
           >
-            Delete
+            Supprimer
           </button>
         </div>
       </div>

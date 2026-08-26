@@ -44,7 +44,6 @@ const emptyForm = {
   description_en: "",
   image: "",
   sort_order: 0,
-  is_published: false,
 };
 
 export default function DepartmentForm() {
@@ -74,7 +73,6 @@ export default function DepartmentForm() {
           description_en: dept.description_en || "",
           image: dept.image || "",
           sort_order: dept.sort_order ?? 0,
-          is_published: dept.is_published ?? false,
         });
         setSlug(dept.slug || "");
       }
@@ -109,7 +107,7 @@ export default function DepartmentForm() {
       } else {
         await createDepartment(token, form);
       }
-      setSuccess("Department saved successfully!");
+      setSuccess("Département enregistré avec succès.");
       setTimeout(() => navigate("/admin/departments"), 800);
     } catch (err: any) {
       setError(err.message);
@@ -136,15 +134,15 @@ export default function DepartmentForm() {
           onClick={() => navigate("/admin/departments")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Departments
+          <ArrowLeft className="w-4 h-4" /> Retour aux départements
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Edit Department" : "New Department"}
+          {isEditing ? "Modifier le département" : "Nouveau département"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
           {isEditing
-            ? "Update this department"
-            : "Add a new department — projects will be grouped under it on /projects"}
+            ? "Mettez à jour ce département."
+            : "Ajoutez un département. Les projets seront regroupés sous celui-ci sur /projects."}
         </p>
       </div>
 
@@ -162,19 +160,19 @@ export default function DepartmentForm() {
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
         {/* Language tabs */}
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink/70">Content language:</span>
+          <span className="text-sm font-medium text-ink/70">Langue du contenu :</span>
           <LangTabs lang={lang} setLang={setLang} />
         </div>
 
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            {lang === "fr" ? "French" : "English"} Content
+            Contenu {lang === "fr" ? "français" : "anglais"}
           </h4>
 
           {/* Title */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Title ({lang.toUpperCase()})
+              Titre ({lang.toUpperCase()})
             </label>
             <input
               type="text"
@@ -202,19 +200,19 @@ export default function DepartmentForm() {
         {/* Image & settings */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Image & Settings
+            Image et paramètres
           </h4>
 
           <ImageUpload
             value={form.image}
             onChange={(url) => set("image", url)}
             section="departments"
-            label="Department image"
+            label="Image du département"
           />
 
           <div className="mt-4 mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Sort Order
+              Ordre d’affichage
             </label>
             <input
               type="number"
@@ -231,31 +229,16 @@ export default function DepartmentForm() {
             <div className="flex items-start gap-2 text-sm text-ink/50 bg-ink/5 px-4 py-3 rounded-lg">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-ink/70">URL slug</p>
+                <p className="font-medium text-ink/70">Identifiant d’URL</p>
                 <p className="mt-0.5">
-                  The department is available at{" "}
+                  Le département est accessible à l’adresse{" "}
                   <code className="bg-white px-1.5 py-0.5 rounded text-xs">/projects/{slug}</code>.
-                  The slug is auto-generated and cannot be changed (stable URLs for SEO).
+                  L’identifiant est généré automatiquement et ne peut pas être modifié afin de conserver une URL stable.
                 </p>
               </div>
             </div>
           </div>
         )}
-
-        {/* Published toggle */}
-        <div className="border-t border-ink/5 pt-5">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.is_published}
-              onChange={(e) => set("is_published", e.target.checked)}
-              className="w-5 h-5 rounded border-ink/20 text-[#489e42] focus:ring-[#489e42]"
-            />
-            <span className="text-sm font-medium text-ink/80">
-              Published (visible on site)
-            </span>
-          </label>
-        </div>
 
         {/* Action buttons */}
         <div className="border-t border-ink/5 pt-5 flex gap-3">
@@ -266,14 +249,14 @@ export default function DepartmentForm() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin/departments")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
-            Cancel
+            Annuler
           </button>
         </div>
       </div>

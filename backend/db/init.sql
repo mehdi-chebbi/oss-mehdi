@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS pages (
     slug        VARCHAR(100) NOT NULL UNIQUE,
     title_fr    VARCHAR(255) NOT NULL,
     title_en    VARCHAR(255) NOT NULL,
-    is_published BOOLEAN NOT NULL DEFAULT true,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -55,7 +54,6 @@ CREATE TABLE IF NOT EXISTS hero (
     cta_secondary_label_en  VARCHAR(255) NOT NULL,
     cta_secondary_link      VARCHAR(500) NOT NULL DEFAULT '#',
     background_image        VARCHAR(500) NOT NULL DEFAULT '/hero.jpg',
-    is_published            BOOLEAN NOT NULL DEFAULT true,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -85,7 +83,6 @@ CREATE TABLE IF NOT EXISTS stats (
     value       VARCHAR(50) NOT NULL,
     suffix      VARCHAR(50) NOT NULL DEFAULT '',
     sort_order  INT NOT NULL DEFAULT 0,
-    is_published BOOLEAN NOT NULL DEFAULT true,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -103,7 +100,6 @@ CREATE TABLE IF NOT EXISTS fields (
     image           VARCHAR(500) NOT NULL,
     gradient_hue    INT NOT NULL DEFAULT 120,
     sort_order      INT NOT NULL DEFAULT 0,
-    is_published    BOOLEAN NOT NULL DEFAULT true,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -123,7 +119,6 @@ CREATE TABLE IF NOT EXISTS news (
     thumbnail_index INT NOT NULL DEFAULT 0,            -- which image to use as the card thumbnail
     date            DATE NOT NULL DEFAULT CURRENT_DATE,
     slug            VARCHAR(200) NOT NULL UNIQUE,
-    is_published    BOOLEAN NOT NULL DEFAULT false,
     index_status    VARCHAR(20) NOT NULL DEFAULT 'pending'
                     CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
     index_error     TEXT NOT NULL DEFAULT '',
@@ -135,7 +130,6 @@ CREATE TABLE IF NOT EXISTS news (
 );
 
 CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
-CREATE INDEX IF NOT EXISTS idx_news_published ON news (is_published);
 CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
 CREATE INDEX IF NOT EXISTS idx_news_category ON news (category);
 CREATE INDEX IF NOT EXISTS idx_news_index_status ON news (index_status, index_started_at);
@@ -153,7 +147,6 @@ CREATE TABLE IF NOT EXISTS tools (
     image           VARCHAR(500) NOT NULL,
     link            VARCHAR(500) NOT NULL DEFAULT '#',
     sort_order      INT NOT NULL DEFAULT 0,
-    is_published    BOOLEAN NOT NULL DEFAULT true,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -168,7 +161,6 @@ CREATE TABLE IF NOT EXISTS partners (
     image       VARCHAR(500) NOT NULL,
     row_number  INT NOT NULL DEFAULT 1,
     sort_order  INT NOT NULL DEFAULT 0,
-    is_published BOOLEAN NOT NULL DEFAULT true,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -184,7 +176,6 @@ CREATE TABLE IF NOT EXISTS contact_info (
     value       TEXT NOT NULL,
     icon        VARCHAR(100) NOT NULL DEFAULT '',
     sort_order  INT NOT NULL DEFAULT 0,
-    is_published BOOLEAN NOT NULL DEFAULT true,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -269,13 +260,11 @@ CREATE TABLE IF NOT EXISTS departments (
     image           VARCHAR(500) NOT NULL DEFAULT '',
     slug            VARCHAR(200) NOT NULL UNIQUE,
     sort_order      INT NOT NULL DEFAULT 0,
-    is_published    BOOLEAN NOT NULL DEFAULT false,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
-CREATE INDEX IF NOT EXISTS idx_departments_published ON departments (is_published);
 
 -- ═══════════════════════════════════════════
 -- Projects (belong to a department)
@@ -302,14 +291,12 @@ CREATE TABLE IF NOT EXISTS projects (
     budget          VARCHAR(100) NOT NULL DEFAULT '',
     slug            VARCHAR(200) NOT NULL UNIQUE,
     sort_order      INT NOT NULL DEFAULT 0,
-    is_published    BOOLEAN NOT NULL DEFAULT false,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_projects_department ON projects (department_id);
 CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
-CREATE INDEX IF NOT EXISTS idx_projects_published ON projects (is_published);
 
 -- ═══════════════════════════════════════════
 -- Team (Notre équipe)
@@ -362,6 +349,23 @@ CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
 CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
 
 -- ═══════════════════════════════════════════
+-- Newsletter subscribers
+-- ═══════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id              BIGSERIAL PRIMARY KEY,
+    email           VARCHAR(254) NOT NULL UNIQUE,
+    locale          VARCHAR(2) NOT NULL DEFAULT 'fr'
+                    CHECK (locale IN ('fr', 'en')),
+    is_active       BOOLEAN NOT NULL DEFAULT true,
+    welcome_sent_at TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_active
+    ON newsletter_subscribers (is_active, created_at DESC);
+
+-- ═══════════════════════════════════════════
 -- Knowledge resources (public document library)
 -- Files are stored locally under uploads/resources and served publicly.
 -- A resource may provide a French PDF, an English PDF, or both.
@@ -396,7 +400,6 @@ CREATE TABLE IF NOT EXISTS resources (
     file_en_path            VARCHAR(1000),
     file_en_original_name   VARCHAR(500),
     file_en_size            INT,
-    is_published            BOOLEAN NOT NULL DEFAULT false,
     index_status            VARCHAR(20) NOT NULL DEFAULT 'pending'
                             CHECK (index_status IN ('pending', 'processing', 'ready', 'failed')),
     index_error             TEXT NOT NULL DEFAULT '',
@@ -413,7 +416,6 @@ CREATE TABLE IF NOT EXISTS resources (
 CREATE INDEX IF NOT EXISTS idx_resources_publication_date ON resources (publication_date DESC);
 CREATE INDEX IF NOT EXISTS idx_resources_document_type ON resources (document_type);
 CREATE INDEX IF NOT EXISTS idx_resources_fields ON resources USING GIN (fields);
-CREATE INDEX IF NOT EXISTS idx_resources_published ON resources (is_published);
 CREATE INDEX IF NOT EXISTS idx_resources_index_status ON resources (index_status, index_started_at);
 
 CREATE TABLE IF NOT EXISTS knowledge_chunks (

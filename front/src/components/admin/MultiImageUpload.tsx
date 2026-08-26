@@ -48,7 +48,7 @@ export default function MultiImageUpload({
     setUploading(true);
     setError("");
     try {
-      // Upload sequentially — avoids overwhelming the server and preserves order.
+      // Upload sequentially to preserve order without overwhelming the server.
       const newUrls: string[] = [];
       for (const file of files) {
         const result = await uploadFile(token, section, file);
@@ -67,10 +67,10 @@ export default function MultiImageUpload({
     const next = value.filter((_, i) => i !== index);
     let nextThumb = thumbnailIndex;
     if (index === thumbnailIndex) {
-      // Removed the thumbnail — reset to 0
+      // Reset to the first image when the thumbnail is removed.
       nextThumb = 0;
     } else if (index < thumbnailIndex) {
-      // Removed an image before the thumbnail — shift index down
+      // Shift the index down when an earlier image is removed.
       nextThumb = thumbnailIndex - 1;
     }
     onChange(next, nextThumb);
@@ -121,10 +121,10 @@ export default function MultiImageUpload({
                     ? "bg-[#489e42] text-white opacity-100"
                     : "bg-black/50 text-white opacity-0 group-hover:opacity-100 hover:bg-[#489e42]"
                 }`}
-                title={i === thumbnailIndex ? "Thumbnail" : "Set as thumbnail"}
+                title={i === thumbnailIndex ? "Image principale" : "Définir comme image principale"}
               >
                 <Star className="w-2.5 h-2.5" fill={i === thumbnailIndex ? "currentColor" : "none"} />
-                {i === thumbnailIndex ? "Thumb" : "Set"}
+                {i === thumbnailIndex ? "Principale" : "Définir"}
               </button>
 
               {/* Remove button */}
@@ -132,7 +132,7 @@ export default function MultiImageUpload({
                 type="button"
                 onClick={() => handleRemove(i)}
                 className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
-                title="Remove image"
+                title="Supprimer l’image"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -157,19 +157,19 @@ export default function MultiImageUpload({
             <Plus className="w-3.5 h-3.5" />
           )}
           {uploading
-            ? "Uploading…"
+            ? "Importation..."
             : value.length === 0
-              ? "Upload images"
-              : "Add more"}
+              ? "Importer des images"
+              : "Ajouter"}
         </button>
         {value.length === 0 && (
           <span className="text-xs text-ink/40">
-            You can select multiple files at once
+            Vous pouvez sélectionner plusieurs fichiers à la fois.
           </span>
         )}
         {value.length > 0 && (
           <span className="text-xs text-ink/40">
-            Click <Star className="inline w-2.5 h-2.5" /> to pick the thumbnail (shown on cards)
+            Cliquez sur <Star className="inline w-2.5 h-2.5" /> pour choisir l’image principale affichée sur les cartes.
           </span>
         )}
       </div>

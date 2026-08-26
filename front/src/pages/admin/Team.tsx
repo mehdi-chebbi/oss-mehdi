@@ -73,16 +73,16 @@ export default function AdminTeam() {
     <div className="p-8 max-w-5xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Team</h2>
+          <h2 className="text-2xl font-bold text-ink">Équipe</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage team members by department
+            Gérez les membres de l’équipe par département.
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/team/new")}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm"
         >
-          <Plus className="w-4 h-4" /> Add Member
+          <Plus className="w-4 h-4" /> Ajouter un membre
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export default function AdminTeam() {
 
       {members.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No members in {DEPARTMENTS.find((d) => d.key === activeDept)?.label}. Click "Add Member" to create one.
+          Aucun membre dans « {DEPARTMENTS.find((d) => d.key === activeDept)?.label} ». Cliquez sur « Ajouter un membre » pour en créer un.
         </div>
       ) : (
         <div className="space-y-2">
@@ -131,7 +131,7 @@ export default function AdminTeam() {
                     }}
                   />
                 ) : (
-                  <span className="text-ink/20 text-xs">No img</span>
+                  <span className="text-ink/20 text-xs">Aucune image</span>
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -149,12 +149,12 @@ export default function AdminTeam() {
                 onClick={() => navigate(`/admin/team/${m.id}`)}
                 className="flex items-center gap-1 text-xs text-ink/60 hover:text-[#489e42] font-medium transition-colors"
               >
-                <Pencil className="w-3 h-3" /> Edit
+                <Pencil className="w-3 h-3" /> Modifier
               </button>
               <button
                 onClick={() => setDeleteTarget(m)}
                 className="text-ink/30 hover:text-red-500 transition-colors"
-                title="Delete"
+                title="Supprimer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -165,7 +165,7 @@ export default function AdminTeam() {
 
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this team member?"
+        message="Voulez-vous vraiment supprimer ce membre de l’équipe ?"
         itemName={deleteTarget?.name}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

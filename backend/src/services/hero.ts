@@ -14,15 +14,14 @@ export interface HeroRow {
   cta_secondary_label_en: string;
   cta_secondary_link: string;
   background_image: string;
-  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
 
-// Public: returns published hero for a page
-export async function getPublishedHero(pageId: number) {
+// Public: returns the latest hero for a page
+export async function getPageHero(pageId: number) {
   const result = await query(
-    "SELECT * FROM hero WHERE page_id = $1 AND is_published = true ORDER BY id DESC LIMIT 1",
+    "SELECT * FROM hero WHERE page_id = $1 ORDER BY id DESC LIMIT 1",
     [pageId],
   );
   return result.rows[0] || null;
@@ -54,20 +53,19 @@ export async function createHero(data: {
   cta_secondary_label_en: string;
   cta_secondary_link?: string;
   background_image?: string;
-  is_published?: boolean;
 }) {
   const result = await query(
     `INSERT INTO hero (page_id, title_fr, title_en, subtitle_fr, subtitle_en,
      cta_primary_label_fr, cta_primary_label_en, cta_primary_link,
      cta_secondary_label_fr, cta_secondary_label_en, cta_secondary_link,
-     background_image, is_published)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+     background_image)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
      RETURNING *`,
     [
       data.page_id, data.title_fr, data.title_en, data.subtitle_fr, data.subtitle_en,
       data.cta_primary_label_fr, data.cta_primary_label_en, data.cta_primary_link || "#",
       data.cta_secondary_label_fr, data.cta_secondary_label_en, data.cta_secondary_link || "#",
-      data.background_image || "/hero.jpg", data.is_published ?? true,
+      data.background_image || "/hero.jpg",
     ],
   );
   return result.rows[0];
@@ -83,7 +81,7 @@ export async function updateHero(id: number, data: Partial<HeroRow>) {
     "title_fr", "title_en", "subtitle_fr", "subtitle_en",
     "cta_primary_label_fr", "cta_primary_label_en", "cta_primary_link",
     "cta_secondary_label_fr", "cta_secondary_label_en", "cta_secondary_link",
-    "background_image", "is_published",
+    "background_image",
   ];
 
   for (const key of allowed) {

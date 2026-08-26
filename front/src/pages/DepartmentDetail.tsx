@@ -83,15 +83,15 @@ export default function DepartmentDetail() {
           </h2>
 
           {projects.length === 0 ? (
-            /* Empty state — no published projects yet */
+            /* Empty state — no projects yet */
             <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-12 text-center">
               <div className="w-14 h-14 rounded-full bg-ink/5 flex items-center justify-center mx-auto mb-4">
                 <FolderOpen className="w-6 h-6 text-ink/30" />
               </div>
               <p className="text-ink/50 mb-1">
                 {locale === 'fr'
-                  ? 'Aucun projet publié dans ce département pour le moment.'
-                  : 'No projects published in this department yet.'}
+                  ? 'Aucun projet dans ce département pour le moment.'
+                  : 'No projects in this department yet.'}
               </p>
               <p className="text-sm text-ink/40">
                 {locale === 'fr' ? 'Revenez bientôt.' : 'Check back soon.'}

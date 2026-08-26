@@ -64,9 +64,9 @@ export default function AdminFields() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Fields</h2>
+          <h2 className="text-2xl font-bold text-ink">Domaines</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage the domain field cards on the home page
+            Gérez les cartes des domaines affichées sur la page d’accueil.
           </p>
         </div>
         <button
@@ -74,7 +74,7 @@ export default function AdminFields() {
           disabled={atMax}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Plus className="w-4 h-4" /> Add Field
+          <Plus className="w-4 h-4" /> Ajouter un domaine
         </button>
       </div>
 
@@ -86,13 +86,13 @@ export default function AdminFields() {
 
       {atMax && (
         <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg text-sm mb-6">
-          Maximum of {MAX_FIELDS} fields reached. Remove one to add a new one.
+          La limite de {MAX_FIELDS} domaines est atteinte. Supprimez-en un pour pouvoir en ajouter un nouveau.
         </div>
       )}
 
       {fields.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No fields yet. Click "Add Field" to create one.
+          Aucun domaine. Cliquez sur « Ajouter un domaine » pour en créer un.
         </div>
       )}
 
@@ -128,31 +128,20 @@ export default function AdminFields() {
             <div
               className="w-4 h-4 rounded-full flex-shrink-0"
               style={{ backgroundColor: `hsl(${field.gradient_hue}, 60%, 45%)` }}
-              title={`Hue: ${field.gradient_hue}`}
+              title={`Teinte : ${field.gradient_hue}`}
             />
-
-            {/* Published badge */}
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${
-                field.is_published
-                  ? "bg-[#489e42]/10 text-[#489e42]"
-                  : "bg-ink/5 text-ink/40"
-              }`}
-            >
-              {field.is_published ? "Published" : "Draft"}
-            </span>
 
             {/* Actions */}
             <button
               onClick={() => navigate(`/admin/fields/${field.id}`)}
               className="flex items-center gap-1 text-sm text-ink/60 hover:text-[#489e42] font-medium transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5" /> Edit
+              <Pencil className="w-3.5 h-3.5" /> Modifier
             </button>
             <button
               onClick={() => setDeleteTarget(field)}
               className="text-ink/30 hover:text-red-500 transition-colors"
-              title="Delete"
+              title="Supprimer"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -163,7 +152,7 @@ export default function AdminFields() {
       {/* Delete confirmation modal */}
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this field?"
+        message="Voulez-vous vraiment supprimer ce domaine ?"
         itemName={deleteTarget?.title_fr}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

@@ -17,7 +17,6 @@ export interface ProjectRow {
   budget: string;
   slug: string;
   sort_order: number;
-  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -76,16 +75,16 @@ function slugify(text: string, fallback = "project"): string {
   );
 }
 
-// ── Public: published projects for a department (by dept slug) ──
+// ── Public: projects for a department (by dept slug) ──
 // Joins departments so the response includes dept slug + title for breadcrumbs.
-export async function getPublishedProjectsByDeptSlug(deptSlug: string) {
+export async function getPublicProjectsByDeptSlug(deptSlug: string) {
   const result = await query(
     `SELECT p.id, p.title_fr, p.title_en, p.description_fr, p.description_en, p.image,
             p.year_start, p.year_end, p.status, p.budget, p.slug, p.sort_order,
             d.slug AS department_slug, d.title_fr AS department_title_fr, d.title_en AS department_title_en
      FROM projects p
      JOIN departments d ON d.id = p.department_id
-     WHERE d.slug = $1 AND p.is_published = true AND d.is_published = true
+     WHERE d.slug = $1
      ORDER BY p.sort_order ASC, p.id ASC`,
     [deptSlug],
   );
@@ -94,21 +93,21 @@ export async function getPublishedProjectsByDeptSlug(deptSlug: string) {
 
 // ── Public: single project by slug ──
 // Joins departments for breadcrumb context.
-export async function getPublishedProjectBySlug(slug: string) {
+export async function getPublicProjectBySlug(slug: string) {
   const result = await query(
     `SELECT p.*, d.slug AS department_slug, d.title_fr AS department_title_fr, d.title_en AS department_title_en
      FROM projects p
      JOIN departments d ON d.id = p.department_id
-     WHERE p.slug = $1 AND p.is_published = true AND d.is_published = true`,
+     WHERE p.slug = $1`,
     [slug],
   );
   return result.rows[0] || null;
 }
 
-// ── Authenticated: list all projects for a department (admin, includes drafts) ──
+// ── Authenticated: list all projects for a department ──
 export async function listAllProjectsByDept(departmentId: number) {
   const result = await query(
-    `SELECT id, title_fr, title_en, year_start, year_end, status, budget, slug, sort_order, is_published, created_at, updated_at
+    `SELECT id, title_fr, title_en, year_start, year_end, status, budget, slug, sort_order, created_at, updated_at
      FROM projects
      WHERE department_id = $1
      ORDER BY sort_order ASC, id ASC`,
@@ -140,13 +139,12 @@ export async function createProject(data: {
   status?: "en_cours" | "cloture";
   budget?: string;
   sort_order?: number;
-  is_published?: boolean;
 }) {
   const result = await query(
     `INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en,
      results_fr, results_en, result_files, image, year_start, year_end, status, budget, slug,
-     sort_order, is_published)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11, $12, $13, $14, $15, $16)
+     sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11, $12, $13, $14, $15)
      RETURNING *`,
     [
       data.department_id,
@@ -164,7 +162,6 @@ export async function createProject(data: {
       data.budget || "",
       "placeholder",
       data.sort_order ?? 0,
-      data.is_published ?? false,
     ],
   );
 
@@ -198,7 +195,6 @@ export async function updateProject(id: number, data: Partial<ProjectRow>) {
     "status",
     "budget",
     "sort_order",
-    "is_published",
   ];
 
   for (const key of allowed) {

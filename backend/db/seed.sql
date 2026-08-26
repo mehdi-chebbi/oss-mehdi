@@ -4,145 +4,144 @@
 -- ═══════════════════════════════════════════════════════════════
 
 -- ── Fields (Nos domaines d'action) ──
-INSERT INTO fields (page_id, title_fr, title_en, description_fr, description_en, image, gradient_hue, sort_order, is_published) VALUES
+INSERT INTO fields (page_id, title_fr, title_en, description_fr, description_en, image, gradient_hue, sort_order) VALUES
   (1,
    'Eau', 'Water',
    'Gestion durable des ressources en eau dans les zones arides et semi-arides du Sahara et du Sahel.',
    'Sustainable management of water resources in the arid and semi-arid zones of the Sahara and Sahel.',
-   '/eau.jpg', 200, 1, true),
+   '/eau.jpg', 200, 1),
 
   (1,
    'Terre', 'Land',
    'Lutte contre la dégradation des terres et la désertification pour préserver les moyens de subsistance des populations.',
    'Combating land degradation and desertification to preserve the livelihoods of populations.',
-   '/terre.jpg', 30, 2, true),
+   '/terre.jpg', 30, 2),
 
   (1,
    'Climat', 'Climate',
    'Adaptation au changement climatique et renforcement de la résilience des communautés et des écosystèmes.',
    'Adaptation to climate change and strengthening the resilience of communities and ecosystems.',
-   '/climat.jpg', 10, 3, true),
+   '/climat.jpg', 10, 3),
 
   (1,
    'Biodiversité', 'Biodiversity',
    'Protection du patrimoine biologique et promotion d''une gestion intégrée des écosystèmes en Afrique.',
    'Protecting biological heritage and promoting integrated ecosystem management in Africa.',
-   '/terre.jpg', 140, 4, true);
+   '/terre.jpg', 140, 4);
 
 
 -- ── News (Actualités) ──
-INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug, is_published) VALUES
+INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug) VALUES
   ('L''OSS et l''ICARDA renforcent leur coopération en faveur des zones arides',
    'OSS and ICARDA strengthen cooperation in favor of drylands',
    'L''Observatoire du Sahara et du Sahel (OSS) et le Centre international de recherche agricole dans les zones arides (ICARDA) ont renforcé leur coopération afin de répondre aux défis communs liés à la gestion durable des ressources naturelles dans les zones arides d''Afrique. Ce partenariat vise à développer des approches innovantes pour l''adaptation au changement climatique et la lutte contre la désertification.',
    'The Sahara and Sahel Observatory (OSS) and the International Center for Agricultural Research in the Dry Areas (ICARDA) have strengthened their cooperation to address common challenges related to sustainable natural resource management in Africa''s drylands. This partnership aims to develop innovative approaches for climate change adaptation and combating desertification.',
-   'partnership', '["/act1.jpg"]', 0, '2025-01-15', 'oss-icarda-cooperation-zones-arides', true),
+   'partnership', '["/act1.jpg"]', 0, '2025-01-15', 'oss-icarda-cooperation-zones-arides'),
 
   ('L''OSS a pris part à la session de renforcement et de mobilisation des financements pour promouvoir l''agroécologie',
    'OSS took part in the session on strengthening and mobilizing financing to promote agroecology',
    'L''OSS a participé activement à la session dédiée au renforcement des capacités et à la mobilisation des financements en faveur de l''agroécologie. Cette initiative s''inscrit dans le cadre des efforts continus de l''Observatoire pour promouvoir des pratiques agricoles durables et résilientes face aux défis environnementaux en Afrique.',
    'OSS actively participated in the session dedicated to capacity building and financing mobilization in favor of agroecology. This initiative is part of the Observatory''s ongoing efforts to promote sustainable and resilient agricultural practices in the face of environmental challenges in Africa.',
-   'event', '["/act2.jpg"]', 0, '2025-01-10', 'oss-session-mobilisation-financements-agroecologie', true),
+   'event', '["/act2.jpg"]', 0, '2025-01-10', 'oss-session-mobilisation-financements-agroecologie'),
 
   ('De l''engagement à l''action : renforcer la résilience climatique en Guinée-Bissau',
    'From commitment to action: strengthening climate resilience in Guinea-Bissau',
    'En collaboration avec ses partenaires, l''OSS accompagne la Guinée-Bissau dans le renforcement de sa résilience climatique. Ce projet illustre la transition d''engagements politiques vers des actions concrètes sur le terrain, intégrant les communautés locales dans l''adaptation aux impacts du changement climatique.',
    'In collaboration with its partners, OSS supports Guinea-Bissau in strengthening its climate resilience. This project illustrates the transition from political commitments to concrete actions on the ground, integrating local communities in adapting to the impacts of climate change.',
-   'project', '["/act3.jpg"]', 0, '2025-01-05', 'engagement-action-resilience-climatique-guinee-bissau', true),
+   'project', '["/act3.jpg"]', 0, '2025-01-05', 'engagement-action-resilience-climatique-guinee-bissau'),
 
   ('Deuxième réunion du Comité de pilotage du processus d''élaboration du premier rapport national sur la mise en œuvre du Protocole de Nagoya en Tunisie',
    'Second meeting of the Steering Committee for the development of the first national report on the implementation of the Nagoya Protocol in Tunisia',
    'La deuxième réunion du Comité de pilotage s''est tenue pour faire le point sur l''avancement du processus d''élaboration du premier rapport national tunisien sur la mise en œuvre du Protocole de Nagoya. Les participants ont examiné les progrès réalisés et défini les prochaines étapes pour finaliser ce rapport stratégique.',
    'The second Steering Committee meeting was held to review progress on developing Tunisia''s first national report on the implementation of the Nagoya Protocol. Participants examined the progress made and defined the next steps to finalize this strategic report.',
-   'institutional', '["/act4.jpg"]', 0, '2024-12-20', 'comite-pilotage-rapport-national-protocole-nagoya-tunisie', true);
+   'institutional', '["/act4.jpg"]', 0, '2024-12-20', 'comite-pilotage-rapport-national-protocole-nagoya-tunisie');
 
 
 -- ── Partners (top row = row_number 1, bottom row = row_number 2) ──
-INSERT INTO partners (page_id, name, image, row_number, sort_order, is_published) VALUES
+INSERT INTO partners (page_id, name, image, row_number, sort_order) VALUES
   -- Top row
-  (1, 'Adaptation Fund',                '/logo/adaptation-fund.png', 1, 1, true),
-  (1, 'Green Climate Fund',            '/logo/green-climate-fund.png', 1, 2, true),
-  (1, 'GEF',                           '/logo/gef.avif', 1, 3, true),
-  (1, 'FFEM',                          '/logo/ffem.webp', 1, 4, true),
-  (1, 'World Bank',                    '/logo/world-bank.webp', 1, 5, true),
-  (1, 'African Union',                 '/logo/african-union.png', 1, 6, true),
-  (1, 'African Development Bank',      '/logo/african-development-bank.png', 1, 7, true),
-  (1, 'African Water Facility',        '/logo/awf.png', 1, 8, true),
-  (1, 'UNEP',                          '/logo/unep.png', 1, 9, true),
+  (1, 'Adaptation Fund',                '/logo/adaptation-fund.png', 1, 1),
+  (1, 'Green Climate Fund',            '/logo/green-climate-fund.png', 1, 2),
+  (1, 'GEF',                           '/logo/gef.avif', 1, 3),
+  (1, 'FFEM',                          '/logo/ffem.webp', 1, 4),
+  (1, 'World Bank',                    '/logo/world-bank.webp', 1, 5),
+  (1, 'African Union',                 '/logo/african-union.png', 1, 6),
+  (1, 'African Development Bank',      '/logo/african-development-bank.png', 1, 7),
+  (1, 'African Water Facility',        '/logo/awf.png', 1, 8),
+  (1, 'UNEP',                          '/logo/unep.png', 1, 9),
 
   -- Bottom row
-  (1, 'COOP',                          '/logo/coop.png', 2, 1, true),
-  (1, 'GIZ',                           '/logo/giz.png', 2, 2, true),
-  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', '/logo/luxembourg-environment.png', 2, 3, true),
-  (1, 'Swiss Confederation',           '/logo/swiss-confederation.svg', 2, 4, true),
-  (1, 'European Union',               '/logo/european-union.svg', 2, 5, true),
-  (1, 'Europe et Étranger',           '/logo/europe-foreign-affairs.jpg', 2, 6, true),
-  (1, 'Ministère de la Transition Écologique et Solidaire', '/logo/france-ecological-transition.svg', 2, 7, true),
-  (1, 'AFD',                           '/logo/afd.png', 2, 8, true);
+  (1, 'COOP',                          '/logo/coop.png', 2, 1),
+  (1, 'GIZ',                           '/logo/giz.png', 2, 2),
+  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', '/logo/luxembourg-environment.png', 2, 3),
+  (1, 'Swiss Confederation',           '/logo/swiss-confederation.svg', 2, 4),
+  (1, 'European Union',               '/logo/european-union.svg', 2, 5),
+  (1, 'Europe et Étranger',           '/logo/europe-foreign-affairs.jpg', 2, 6),
+  (1, 'Ministère de la Transition Écologique et Solidaire', '/logo/france-ecological-transition.svg', 2, 7),
+  (1, 'AFD',                           '/logo/afd.png', 2, 8);
 
 
 -- ── Tools (Nos outils) ──
-INSERT INTO tools (page_id, title_fr, title_en, description_fr, description_en, image, link, sort_order, is_published) VALUES
+INSERT INTO tools (page_id, title_fr, title_en, description_fr, description_en, image, link, sort_order) VALUES
   (1, 'MISLAND', 'MISLAND',
    'Un système intégré de surveillance de la dégradation des terres utilisant des données d''observation de la Terre pour fournir des informations.',
    'An integrated land degradation surveillance system using Earth observation data to provide information.',
-   '/misland.jpg', 'http://misland-africa.oss-online.org', 1, true),
+   '/misland.jpg', 'http://misland-africa.oss-online.org', 1),
 
   (1, 'MISBAR', 'MISBAR',
    'Un système de suivi et de contrôle des aires irriguées, basé sur des données spatiales à haute résolution.',
    'A monitoring and control system for irrigated areas, based on high-resolution spatial data.',
-   '/misbar.jpg', 'http://misbar.oss-online.org/', 2, true),
+   '/misbar.jpg', 'http://misbar.oss-online.org/', 2),
 
   (1, 'SAP-MR Complexe WAP', 'SAP-MR WAP Complex',
    'Un outil pour anticiper et gérer les risques liés à la sécheresse, aux inondations, aux feux de végétation et aux conflits homme-faune dans le complexe W-Arly-Pendjari.',
    'A tool for anticipating and managing risks related to drought, flooding, vegetation fires and human-wildlife conflicts in the W-Arly-Pendjari complex.',
-   '/wap.jpg', 'http://sapmr.oss-online.org', 3, true),
+   '/wap.jpg', 'http://sapmr.oss-online.org', 3),
 
   (1, 'Copernicea', 'Copernicea',
    'Une plateforme de mesure et de suivi du capital naturel et de la résilience des écosystèmes aux niveaux continental, national et local.',
    'A platform for measuring and monitoring natural capital and ecosystem resilience at continental, national and local levels.',
-   '/copernicea.webp', 'http://copernicea.oss-online.org', 4, true),
+   '/copernicea.webp', 'http://copernicea.oss-online.org', 4),
 
   (1, 'Umbrella Seychelles', 'Umbrella Seychelles',
    'Une plateforme d''aide à la décision dédiée aux acteurs seychellois, pour la planification et le suivi de la neutralité de la dégradation des terres (NDT) à l''échelle nationale.',
    'A decision-support platform dedicated to Seychellois stakeholders, for planning and monitoring Land Degradation Neutrality (LDN) at the national scale.',
-   '/umbrella-sych.webp', 'https://umbrella-sych.oss-online.org/', 5, true),
+   '/umbrella-sych.webp', 'https://umbrella-sych.oss-online.org/', 5),
 
   (1, 'Umbrella Libya', 'Umbrella Libya',
    'Une plateforme d''aide à la décision dédiée aux acteurs libyens, pour la planification et le suivi de la neutralité de la dégradation des terres (NDT) à l''échelle nationale.',
    'A decision-support platform dedicated to Libyan stakeholders, for planning and monitoring Land Degradation Neutrality (LDN) at the national scale.',
-   '/umbrella-lyb.webp', 'https://umbrella-lyb.oss-online.org/', 6, true),
+   '/umbrella-lyb.webp', 'https://umbrella-lyb.oss-online.org/', 6),
 
   (1, 'Umbrella Tunisia', 'Umbrella Tunisia',
    'Une plateforme d''aide à la décision dédiée aux acteurs tunisiens, pour la planification et le suivi de la neutralité de la dégradation des terres (NDT) à l''échelle nationale.',
    'A decision-support platform dedicated to Tunisian stakeholders, for planning and monitoring Land Degradation Neutrality (LDN) at the national scale.',
-   '/umbrella-tun.webp', 'https://umbrella-tun.oss-online.org/', 7, true),
+   '/umbrella-tun.webp', 'https://umbrella-tun.oss-online.org/', 7),
 
   (1, 'LDN Africa', 'LDN Africa',
    'Une plateforme panafricaine d''aide à la décision, fournissant à l''ensemble des pays du continent des outils de planification et de suivi pour atteindre la neutralité de la dégradation des terres (NDT).',
    'A pan-African decision-support platform, providing all countries on the continent with planning and monitoring tools to achieve Land Degradation Neutrality (LDN).',
-   '/ldn.webp', 'https://ldn-africa.oss-online.org/', 8, true),
+   '/ldn.webp', 'https://ldn-africa.oss-online.org/', 8),
 
   (1, 'Readiness Eritrea', 'Readiness Eritrea',
    'Une plateforme d''aide à la décision dédiée aux acteurs érythréens, développée dans le cadre du projet Readiness pour appuyer la planification environnementale et le suivi des actions sur le terrain.',
    'A decision-support platform dedicated to Eritrean stakeholders, developed under the Readiness project to support environmental planning and monitoring of field actions.',
-   '/readiness-eritrea.webp', 'https://readiness-ery.oss-online.org/', 9, true);
+   '/readiness-eritrea.webp', 'https://readiness-ery.oss-online.org/', 9);
 
 
 -- ── Departments — Climate ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
   ('Département Climat',
    'Climate Department',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS)',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS)',
    '',
    'climate-department',
-   1,
-   true);
+   1);
 
 
 -- ── Projects — Climate Department ──
-INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order, is_published) VALUES
+INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'DRESS-EA : Renforcement de la résilience à la sécheresse des petits exploitants agricoles et pasteurs dans la région de l''IGAD',
    'DRESS-EA: Strengthening drought resilience of smallholder farmers and pastoralists in the IGAD region',
@@ -152,8 +151,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    2020, 2026, 'en_cours',
    '13 079,54 KUS$ (FA)',
    'dress-ea-drought-resilience',
-   1,
-   true),
+   1),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'ADSWAC : Renforcement de la capacité d''adaptation au changement climatique des communautés du Sud-Ouest de l''Afrique touchées par la sécheresse',
@@ -164,8 +162,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '11 941,038 KUS$ (FA)',
    'adswac-climate-adaptation',
-   2,
-   true),
+   2),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'RICOWAS : Mise à l''échelle de la production de riz résiliente au climat en Afrique de l''Ouest',
@@ -176,8 +173,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '14 000 KUS$ (FA)',
    'ricowas-climate-resilient-rice',
-   3,
-   true),
+   3),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'APICA-GNB : Adaptation des systèmes de production agricole dans les zones côtières du Nord-Ouest de la Guinée-Bissau',
@@ -188,8 +184,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '9 955 KUS$ (FA)',
    'apica-gnb-coastal-agriculture',
-   4,
-   true),
+   4),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'Readiness Libye 2 : Renforcer les capacités institutionnelles, humaines et techniques du système libyen de financement climatique',
@@ -200,8 +195,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '765 KUS$ (GCF)',
    'readiness-libya-2',
-   5,
-   true),
+   5),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'Readiness Érythrée 1 : Renforcement des capacités institutionnelles, humaines et techniques du système érythréen de financement climatique',
@@ -212,8 +206,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    2024, 2025, 'en_cours',
    '319 KUS$ (GCF)',
    'readiness-eritrea-1',
-   6,
-   true),
+   6),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'CREW Angola : Autonomisation des groupes de femmes pour renforcer la résilience aux impacts climatiques dans la province de Cunene, Sud-Ouest de l''Angola',
@@ -224,8 +217,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    2025, 2029, 'en_cours',
    '10 000 000 US$ (GCF)',
    'crew-angola',
-   7,
-   true),
+   7),
 
   ((SELECT id FROM departments WHERE slug = 'climate-department'),
    'CCAILSO : Adaptation au changement climatique pour l''amélioration des moyens de subsistance dans l''oasis de Siwa',
@@ -236,24 +228,22 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '8 000 000 US$ (FA)',
    'ccailso-siwa-oasis',
-   8,
-   true);
+   8);
 
 
 -- ── Departments — Technology, Information and Remote Sensing ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
   ('Département Technologie, Information et Télédétection',
    'Department of Technology, Information and Remote Sensing',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS). Démarche stratégique intégrée pour transformer la donnée environnementale en appui direct à la décision, s''appuyant sur des services géospatiaux, le cloud computing et l''intelligence artificielle.',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS). Integrated strategic approach to transform environmental data into direct decision support, relying on geospatial services, cloud computing and artificial intelligence.',
    '',
    'technology-information-remote-sensing',
-   2,
-   true);
+   2);
 
 
 -- ── Projects — Technology, Information and Remote Sensing ──
-INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order, is_published) VALUES
+INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'GMES : Appui à la gestion durable de l''eau et des ressources naturelles à travers la valorisation des données et technologies d''Observation de la Terre',
    'GMES: Support for sustainable water and natural resource management through the valorization of Earth Observation data and technologies',
@@ -263,8 +253,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    2022, 2025, 'cloture',
    '1 700 K€ (UA)',
    'gmes-earth-observation',
-   1,
-   true),
+   1),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Digital Earth Africa : Renforcement des capacités en Observation de la Terre',
@@ -275,8 +264,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    2021, 2023, 'en_cours',
    '300 K$ australiens (Geoscience Australia–SANSA)',
    'digital-earth-africa',
-   2,
-   true),
+   2),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Partenariat OSS/AIR-CAS : Suivi et évaluation des ressources en eau et de leur utilisation à des fins agricoles en Tunisie',
@@ -287,8 +275,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'oss-air-cas-watermap',
-   3,
-   true),
+   3),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Transformation numérique — Systèmes et applications d''aide à la décision',
@@ -299,8 +286,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'digital-transformation-decision-support',
-   4,
-   true),
+   4),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Programme Veille et Prospective (V&P) : Livre documentaire sur le changement climatique en Afrique',
@@ -311,8 +297,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'monitoring-foresight-climate-book',
-   5,
-   true),
+   5),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Écosystèmes et adaptation au changement climatique au Maghreb/Sahel',
@@ -323,8 +308,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, 2026, 'en_cours',
    '120 K€ (AFD — COPAR)',
    'ecosystems-climate-adaptation-maghreb-sahel',
-   6,
-   true),
+   6),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Notes de synthèse, articles thématiques et mise en débat des connaissances',
@@ -335,8 +319,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'knowledge-notes-thematic-articles',
-   7,
-   true),
+   7),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Développement de requêtes de projets',
@@ -347,8 +330,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'project-proposal-development',
-   8,
-   true),
+   8),
 
   ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
    'Évaluation à mi-parcours de la Stratégie 2030',
@@ -359,31 +341,28 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    NULL, NULL, 'en_cours',
    '',
    'strategy-2030-mid-term-evaluation',
-   9,
-   true);
+   9);
 
 
 -- ── Department - Land and Biodiversity ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
   ('Département Terre et Biodiversité',
    'Land and Biodiversity Department',
    'Préserver la biodiversité, restaurer les écosystèmes et renforcer la résilience des territoires et des communautés.',
    'Preserving biodiversity, restoring ecosystems and strengthening the resilience of territories and communities.',
    '',
    'land-biodiversity-department',
-   3,
-   true);
+   3);
 
 -- ── Department - Water ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order, is_published) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
   ('Département Eau',
    'Water Department',
    'Améliorer la connaissance, la gouvernance et la gestion durable des ressources en eau souterraines et de surface.',
    'Improving knowledge, governance and sustainable management of groundwater and surface water resources.',
    '',
    'water-department',
-   4,
-   true);
+   4);
 
 
 -- ── Project editorial content — overviews and results ──

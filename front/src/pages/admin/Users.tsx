@@ -49,7 +49,7 @@ export default function AdminUsers() {
         await updateUser(token, editingUser.id, data);
       } else {
         if (!form.password) {
-          setError("Password is required for new users");
+          setError("Le mot de passe est obligatoire pour un nouvel utilisateur.");
           setSubmitting(false);
           return;
         }
@@ -67,7 +67,7 @@ export default function AdminUsers() {
   const handleDelete = async (u: User) => {
     if (!token) return;
     if (u.id === currentUser?.id) return;
-    if (!confirm(`Delete ${u.name}?`)) return;
+    if (!confirm(`Supprimer ${u.name} ?`)) return;
     setError("");
     try {
       await deleteUser(token, u.id);
@@ -81,15 +81,15 @@ export default function AdminUsers() {
     <div className="p-8 max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Users</h2>
-          <p className="text-ink/50 text-sm mt-1">{users.length} total</p>
+          <h2 className="text-2xl font-bold text-ink">Utilisateurs</h2>
+          <p className="text-ink/50 text-sm mt-1">{users.length} au total</p>
         </div>
         <button
           onClick={openCreate}
           className="flex items-center gap-2 bg-[#489e42] hover:bg-[#3d8a37] text-white px-4 py-2.5 rounded-lg font-medium transition-colors"
         >
           <UserPlus className="w-4 h-4" />
-          Add User
+          Ajouter un utilisateur
         </button>
       </div>
 
@@ -100,16 +100,16 @@ export default function AdminUsers() {
       )}
 
       {loading ? (
-        <div className="text-center py-16 text-ink/40">Loading users…</div>
+        <div className="text-center py-16 text-ink/40">Chargement des utilisateurs...</div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="bg-ink/5 text-left text-sm text-ink/60">
-                <th className="px-6 py-3 font-medium">Name</th>
-                <th className="px-6 py-3 font-medium">Email</th>
-                <th className="px-6 py-3 font-medium">Role</th>
-                <th className="px-6 py-3 font-medium">Created</th>
+                <th className="px-6 py-3 font-medium">Nom</th>
+                <th className="px-6 py-3 font-medium">E-mail</th>
+                <th className="px-6 py-3 font-medium">Rôle</th>
+                <th className="px-6 py-3 font-medium">Création</th>
                 <th className="px-6 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -126,18 +126,18 @@ export default function AdminUsers() {
                           : "bg-blue-100 text-blue-700"
                       }`}
                     >
-                      {u.role}
+                      {u.role === "admin" ? "Administrateur" : "Éditeur"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-ink/50">
-                    {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString("fr-FR") : "Indisponible"}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(u)}
                         className="p-2 text-ink/40 hover:text-[#489e42] hover:bg-[#489e42]/5 rounded-lg transition-colors"
-                        title="Edit"
+                        title="Modifier"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
@@ -145,7 +145,7 @@ export default function AdminUsers() {
                         <button
                           onClick={() => handleDelete(u)}
                           className="p-2 text-ink/40 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
+                          title="Supprimer"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -165,7 +165,7 @@ export default function AdminUsers() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
             <div className="flex items-center justify-between px-6 py-4 border-b border-ink/10">
               <h3 className="text-lg font-semibold text-ink">
-                {editingUser ? "Edit User" : "New User"}
+                {editingUser ? "Modifier l’utilisateur" : "Nouvel utilisateur"}
               </h3>
               <button onClick={() => setModalOpen(false)} className="text-ink/40 hover:text-ink">
                 <X className="w-5 h-5" />
@@ -178,7 +178,7 @@ export default function AdminUsers() {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-ink/80 mb-1.5">Name</label>
+                <label className="block text-sm font-medium text-ink/80 mb-1.5">Nom</label>
                 <input
                   type="text"
                   value={form.name}
@@ -188,7 +188,7 @@ export default function AdminUsers() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink/80 mb-1.5">Email</label>
+                <label className="block text-sm font-medium text-ink/80 mb-1.5">Adresse e-mail</label>
                 <input
                   type="email"
                   value={form.email}
@@ -199,7 +199,7 @@ export default function AdminUsers() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-ink/80 mb-1.5">
-                  Password{editingUser ? " (leave blank to keep)" : ""}
+                  Mot de passe{editingUser ? " (laisser vide pour le conserver)" : ""}
                 </label>
                 <input
                   type="password"
@@ -210,14 +210,14 @@ export default function AdminUsers() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink/80 mb-1.5">Role</label>
+                <label className="block text-sm font-medium text-ink/80 mb-1.5">Rôle</label>
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
                   className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
                 >
-                  <option value="editor">Editor</option>
-                  <option value="admin">Admin</option>
+                  <option value="editor">Éditeur</option>
+                  <option value="admin">Administrateur</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
@@ -226,14 +226,14 @@ export default function AdminUsers() {
                   onClick={() => setModalOpen(false)}
                   className="flex-1 py-2.5 border border-ink/15 rounded-lg text-ink/70 font-medium hover:bg-ink/5 transition-colors"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="flex-1 py-2.5 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
                 >
-                  {submitting ? "Saving…" : editingUser ? "Update" : "Create"}
+                  {submitting ? "Enregistrement..." : editingUser ? "Mettre à jour" : "Créer"}
                 </button>
               </div>
             </form>

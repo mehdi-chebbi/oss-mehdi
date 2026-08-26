@@ -51,7 +51,7 @@ export async function retrieveResourceContext(question: string) {
         FROM knowledge_chunks c
         JOIN resources r
           ON c.source_id = r.id::text AND r.active_index_version = c.index_version
-        WHERE c.source_type = 'resource' AND r.is_published = true AND r.index_status = 'ready'
+        WHERE c.source_type = 'resource' AND r.index_status = 'ready'
         ORDER BY c.embedding <=> $1::vector
         LIMIT 30)
        UNION ALL
@@ -64,7 +64,7 @@ export async function retrieveResourceContext(question: string) {
         FROM knowledge_chunks c
         JOIN news n
           ON c.source_id = n.id::text AND n.active_index_version = c.index_version
-        WHERE c.source_type = 'news' AND n.is_published = true AND n.index_status = 'ready'
+        WHERE c.source_type = 'news' AND n.index_status = 'ready'
         ORDER BY c.embedding <=> $1::vector
         LIMIT 30)
      ) AS candidates

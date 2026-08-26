@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedTeam,
+  getPublicTeam,
   listTeam,
   getTeamMember,
   createTeamMember,
@@ -13,7 +13,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const department = req.query.department as string | undefined;
-  const team = await getPublishedTeam(department);
+  const team = await getPublicTeam(department);
   res.json(team);
 });
 

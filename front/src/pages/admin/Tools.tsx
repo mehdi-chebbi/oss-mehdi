@@ -60,16 +60,16 @@ export default function AdminTools() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-ink">Tools</h2>
+          <h2 className="text-2xl font-bold text-ink">Outils</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Manage the OSS tools carousel on the home page
+            Gérez le carrousel des outils OSS sur la page d’accueil.
           </p>
         </div>
         <button
           onClick={() => navigate("/admin/tools/new")}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm"
         >
-          <Plus className="w-4 h-4" /> Add Tool
+          <Plus className="w-4 h-4" /> Ajouter un outil
         </button>
       </div>
 
@@ -81,7 +81,7 @@ export default function AdminTools() {
 
       {tools.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-          No tools yet. Click "Add Tool" to create one.
+          Aucun outil. Cliquez sur « Ajouter un outil » pour en créer un.
         </div>
       )}
 
@@ -126,28 +126,17 @@ export default function AdminTools() {
               </a>
             )}
 
-            {/* Published badge */}
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${
-                tool.is_published
-                  ? "bg-[#489e42]/10 text-[#489e42]"
-                  : "bg-ink/5 text-ink/40"
-              }`}
-            >
-              {tool.is_published ? "Published" : "Draft"}
-            </span>
-
             {/* Actions */}
             <button
               onClick={() => navigate(`/admin/tools/${tool.id}`)}
               className="flex items-center gap-1 text-sm text-ink/60 hover:text-[#489e42] font-medium transition-colors"
             >
-              <Pencil className="w-3.5 h-3.5" /> Edit
+              <Pencil className="w-3.5 h-3.5" /> Modifier
             </button>
             <button
               onClick={() => setDeleteTarget(tool)}
               className="text-ink/30 hover:text-red-500 transition-colors"
-              title="Delete"
+              title="Supprimer"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -158,7 +147,7 @@ export default function AdminTools() {
       {/* Delete confirmation modal */}
       <DeleteConfirmModal
         open={!!deleteTarget}
-        message="Are you sure you want to delete this tool?"
+        message="Voulez-vous vraiment supprimer cet outil ?"
         itemName={deleteTarget?.title_fr}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

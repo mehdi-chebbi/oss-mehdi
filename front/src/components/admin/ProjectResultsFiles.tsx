@@ -39,8 +39,8 @@ function withoutExtension(filename: string) {
 
 function formatSize(size?: number) {
   if (!size) return "";
-  if (size < 1024 * 1024) return `${Math.ceil(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  if (size < 1024 * 1024) return `${Math.ceil(size / 1024)} Ko`;
+  return `${(size / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
 export default function ProjectResultsFiles({
@@ -117,10 +117,10 @@ export default function ProjectResultsFiles({
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-ink/80">
-            Result documents
+            Documents de résultat
           </p>
           <p className="mt-1 text-xs leading-relaxed text-ink/45">
-            PDF, Word, Excel, PowerPoint, CSV, text, or ZIP. Maximum 10 MB per file.
+            PDF, Word, Excel, PowerPoint, CSV, texte ou ZIP. Maximum 10 Mo par fichier.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -135,7 +135,7 @@ export default function ProjectResultsFiles({
             ) : (
               <Upload className="h-3.5 w-3.5" />
             )}
-            {uploading ? "Uploading..." : "Upload files"}
+            {uploading ? "Importation..." : "Importer des fichiers"}
           </button>
           <button
             type="button"
@@ -143,7 +143,7 @@ export default function ProjectResultsFiles({
             className="inline-flex items-center gap-1.5 rounded-lg border border-ink/15 px-3 py-2 text-sm font-medium text-ink/65 transition-colors hover:border-ink/25 hover:text-ink"
           >
             <Plus className="h-3.5 w-3.5" />
-            Add link
+            Ajouter un lien
           </button>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function ProjectResultsFiles({
       {value.length === 0 ? (
         <div className="rounded-xl border border-dashed border-ink/15 px-5 py-7 text-center">
           <FileText className="mx-auto mb-2 h-5 w-5 text-ink/25" />
-          <p className="text-sm text-ink/45">No result documents added.</p>
+          <p className="text-sm text-ink/45">Aucun document de résultat ajouté.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -175,7 +175,7 @@ export default function ProjectResultsFiles({
                 <div className="flex min-w-0 items-center gap-2 text-xs text-ink/45">
                   <FileText className="h-4 w-4 shrink-0 text-forest-700" />
                   <span className="truncate">
-                    {file.mime_type || "Linked document"}
+                    {file.mime_type || "Document lié"}
                     {formatSize(file.size) ? `, ${formatSize(file.size)}` : ""}
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export default function ProjectResultsFiles({
                     onClick={() => move(index, -1)}
                     disabled={index === 0}
                     className="rounded-md p-1.5 text-ink/40 hover:bg-white hover:text-ink disabled:opacity-25"
-                    title="Move up"
+                    title="Déplacer vers le haut"
                   >
                     <ArrowUp className="h-3.5 w-3.5" />
                   </button>
@@ -194,7 +194,7 @@ export default function ProjectResultsFiles({
                     onClick={() => move(index, 1)}
                     disabled={index === value.length - 1}
                     className="rounded-md p-1.5 text-ink/40 hover:bg-white hover:text-ink disabled:opacity-25"
-                    title="Move down"
+                    title="Déplacer vers le bas"
                   >
                     <ArrowDown className="h-3.5 w-3.5" />
                   </button>
@@ -202,7 +202,7 @@ export default function ProjectResultsFiles({
                     type="button"
                     onClick={() => onChange(value.filter((_, i) => i !== index))}
                     className="rounded-md p-1.5 text-ink/40 hover:bg-red-50 hover:text-red-600"
-                    title="Remove document"
+                    title="Supprimer le document"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -212,7 +212,7 @@ export default function ProjectResultsFiles({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-ink/65">
-                    Display name (FR)
+                    Nom affiché (FR)
                   </label>
                   <input
                     type="text"
@@ -225,7 +225,7 @@ export default function ProjectResultsFiles({
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-ink/65">
-                    Display name (EN)
+                    Nom affiché (EN)
                   </label>
                   <input
                     type="text"
@@ -240,7 +240,7 @@ export default function ProjectResultsFiles({
 
               <div className="mt-3">
                 <label className="mb-1.5 block text-xs font-medium text-ink/65">
-                  File URL
+                  URL du fichier
                 </label>
                 <div className="relative">
                   <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-ink/30" />

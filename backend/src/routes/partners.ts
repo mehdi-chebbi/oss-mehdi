@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedPartners,
+  getPagePartners,
   listPartners,
   getPartner,
   createPartner,
@@ -13,7 +13,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
-  const partners = await getPublishedPartners(pageId);
+  const partners = await getPagePartners(pageId);
   res.json(partners);
 });
 

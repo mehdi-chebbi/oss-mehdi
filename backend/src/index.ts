@@ -20,6 +20,7 @@ import uploadRoutes from "./routes/upload.js";
 import reportsRoutes from "./routes/reports.js";
 import resourcesRoutes from "./routes/resources.js";
 import chatRoutes from "./routes/chat.js";
+import mailRoutes from "./routes/mail.js";
 import { startResourceIndexer } from "./services/resourceIndexer.js";
 import { startNewsIndexer } from "./services/newsIndexer.js";
 
@@ -174,6 +175,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/mail", mailRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {

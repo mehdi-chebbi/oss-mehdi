@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublishedTools,
+  getPageTools,
   listTools,
   getTool,
   createTool,
@@ -11,10 +11,10 @@ import {
 
 const router = Router();
 
-// Public: get published tools for a page
+// Public: get tools for a page
 router.get("/", async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
-  const tools = await getPublishedTools(pageId);
+  const tools = await getPageTools(pageId);
   res.json(tools);
 });
 
