@@ -54,9 +54,10 @@ services:
       MICROSOFT_TENANT_ID: "${MICROSOFT_TENANT_ID:-}"
       MICROSOFT_CLIENT_ID: "${MICROSOFT_CLIENT_ID:-}"
       MICROSOFT_CLIENT_SECRET: "${MICROSOFT_CLIENT_SECRET:-}"
-      MAIL_SENDER_ADDRESS: "${MAIL_SENDER_ADDRESS:-platform@oss.org.tn}"
+      MAIL_SENDER_ADDRESS: "${MAIL_SENDER_ADDRESS:-plateforme@oss.org.tn}"
       MAIL_SENDER_NAME: "${MAIL_SENDER_NAME:-OSS}"
-      CONTACT_RECIPIENT_ADDRESS: "${CONTACT_RECIPIENT_ADDRESS:-platform@oss.org.tn}"
+      CONTACT_RECIPIENT_ADDRESS: "${CONTACT_RECIPIENT_ADDRESS:-plateforme@oss.org.tn}"
+      PUBLIC_SITE_URL: "${PUBLIC_SITE_URL:-http://localhost:3000}"
       # ── Runtime config ──
       NODE_ENV: production
       COOKIE_SECURE: "false"   # HTTP locally — browsers reject Secure cookies over http://

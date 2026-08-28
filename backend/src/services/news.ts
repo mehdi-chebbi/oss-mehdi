@@ -1,4 +1,5 @@
 import { pool, query } from "../config/db.js";
+import { enqueueNewsForSubscribers } from "./newsletter.js";
 
 export const NEWS_CATEGORIES = [
   "partnership",
@@ -222,32 +223,43 @@ export async function createNews(data: {
 }) {
   const images = normalizeImages(data.images);
   const thumbnail_index = clampThumbnailIndex(data.thumbnail_index, images);
+  const client = await pool.connect();
 
-  const result = await query(
-    `INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-     RETURNING *`,
-    [
-      data.title_fr,
-      data.title_en,
-      data.body_fr || "",
-      data.body_en || "",
-      data.category,
-      JSON.stringify(images),
-      thumbnail_index,
-      data.date || new Date().toISOString().slice(0, 10),
-      "placeholder", // will be replaced below
-    ],
-  );
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbnail_index, date, slug)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING *`,
+      [
+        data.title_fr,
+        data.title_en,
+        data.body_fr || "",
+        data.body_en || "",
+        data.category,
+        JSON.stringify(images),
+        thumbnail_index,
+        data.date || new Date().toISOString().slice(0, 10),
+        "placeholder",
+      ],
+    );
 
-  const row = result.rows[0];
-  const finalSlug = `${slugifyTitle(data.title_en)}-${row.id}`;
+    const row = result.rows[0];
+    const finalSlug = `${slugifyTitle(data.title_en)}-${row.id}`;
+    await client.query("UPDATE news SET slug = $1 WHERE id = $2", [finalSlug, row.id]);
+    await enqueueNewsForSubscribers(client, row.id);
+    await client.query("COMMIT");
 
-  await query("UPDATE news SET slug = $1 WHERE id = $2", [finalSlug, row.id]);
-  row.slug = finalSlug;
-  row.images = normalizeImages(row.images);
-  row.thumbnail_index = clampThumbnailIndex(row.thumbnail_index, row.images);
-  return row;
+    row.slug = finalSlug;
+    row.images = normalizeImages(row.images);
+    row.thumbnail_index = clampThumbnailIndex(row.thumbnail_index, row.images);
+    return row;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 // ── Authenticated: update news ──

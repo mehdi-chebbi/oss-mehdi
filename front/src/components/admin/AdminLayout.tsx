@@ -71,8 +71,9 @@ const pages = [
 ];
 
 const topItems = [
+  { to: "/admin/dashboard", label: "Tableau de bord", icon: LayoutDashboard, adminOnly: false },
   { to: "/admin/users", label: "Utilisateurs", icon: Users, adminOnly: true },
-  { to: "/admin/reports", label: "Signalements", icon: AlertCircle, adminOnly: true },
+  { to: "/admin/reports", label: "Signalements", icon: AlertCircle, adminOnly: false },
 ];
 
 /* Collapsible page group */

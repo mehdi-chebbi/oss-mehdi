@@ -5,6 +5,12 @@ metadata:
   namespace: oss-site
 data:
   init.sql: |
+    -- Runs ONCE when the postgres container initialises for the first time.
+    -- /docker-entrypoint-initdb.d/ is only executed on a fresh volume.
+
+    -- ═══════════════════════════════════════════
+    -- Users
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS users (
         id          SERIAL PRIMARY KEY,
         name        VARCHAR(255) NOT NULL,
@@ -15,11 +21,16 @@ data:
         created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-    CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
-    INSERT INTO users (name, email, password, role) VALUES
-        ('Admin', 'admin@oss.org', '$2a$12$ySwsn.8Ox8yaGbV4CFL2IeM2nWeyl3HgKHJorpWyBWLuWsJXdwYw6', 'admin')
-        ON CONFLICT DO NOTHING;
 
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
+
+    -- Default admin (password: 123)
+    INSERT INTO users (name, email, password, role) VALUES
+        ('Admin', 'admin@oss.org', '$2a$12$ySwsn.8Ox8yaGbV4CFL2IeM2nWeyl3HgKHJorpWyBWLuWsJXdwYw6', 'admin');
+
+    -- ═══════════════════════════════════════════
+    -- Pages
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS pages (
         id          SERIAL PRIMARY KEY,
         slug        VARCHAR(100) NOT NULL UNIQUE,
@@ -28,10 +39,14 @@ data:
         created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-    INSERT INTO pages (slug, title_fr, title_en) VALUES
-        ('home', 'Accueil', 'Home')
-        ON CONFLICT DO NOTHING;
 
+    -- Default home page
+    INSERT INTO pages (slug, title_fr, title_en) VALUES
+        ('home', 'Accueil', 'Home');
+
+    -- ═══════════════════════════════════════════
+    -- Hero
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS hero (
         id                      SERIAL PRIMARY KEY,
         page_id                 INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -50,6 +65,23 @@ data:
         updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- Default hero content
+    INSERT INTO hero (page_id, title_fr, title_en, subtitle_fr, subtitle_en,
+                      cta_primary_label_fr, cta_primary_label_en, cta_primary_link,
+                      cta_secondary_label_fr, cta_secondary_label_en, cta_secondary_link,
+                      background_image) VALUES
+        (1,
+         'L''avenir du Sahel se decide sur le terrain',
+         'The future of the Sahel is decided on the ground',
+         'Surveillance, donnees et action pour 22 Etats membres face a la degradation des terres.',
+         'Monitoring, data and action for 22 member states facing land degradation.',
+         'Voir nos actions', 'See our actions', '#',
+         'Dernieres actualites', 'Latest news', '#',
+         '/hero.jpg');
+
+    -- ═══════════════════════════════════════════
+    -- Stats
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS stats (
         id          SERIAL PRIMARY KEY,
         page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -62,6 +94,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Fields (Nos domaines d'action)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS fields (
         id              SERIAL PRIMARY KEY,
         page_id         INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -76,6 +111,9 @@ data:
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- News (Actualités) — full articles in DB, bilingual, slug-based URLs
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS news (
         id              SERIAL PRIMARY KEY,
         title_fr        TEXT NOT NULL,
@@ -84,8 +122,8 @@ data:
         body_en         TEXT NOT NULL DEFAULT '',
         category        VARCHAR(30) NOT NULL DEFAULT 'institutional'
                         CHECK (category IN ('partnership', 'event', 'project', 'institutional', 'publication', 'opportunity')),
-        images          JSONB NOT NULL DEFAULT '[]',
-        thumbnail_index INT NOT NULL DEFAULT 0,
+        images          JSONB NOT NULL DEFAULT '[]',       -- array of image URL strings
+        thumbnail_index INT NOT NULL DEFAULT 0,            -- which image to use as the card thumbnail
         date            DATE NOT NULL DEFAULT CURRENT_DATE,
         slug            VARCHAR(200) NOT NULL UNIQUE,
         index_status    VARCHAR(20) NOT NULL DEFAULT 'pending'
@@ -97,11 +135,15 @@ data:
         created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_news_date ON news (date DESC);
     CREATE INDEX IF NOT EXISTS idx_news_slug ON news (slug);
     CREATE INDEX IF NOT EXISTS idx_news_category ON news (category);
     CREATE INDEX IF NOT EXISTS idx_news_index_status ON news (index_status, index_started_at);
 
+    -- ═══════════════════════════════════════════
+    -- Tools (Nos outils)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS tools (
         id              SERIAL PRIMARY KEY,
         page_id         INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -116,6 +158,9 @@ data:
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Partners
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS partners (
         id          SERIAL PRIMARY KEY,
         page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -127,6 +172,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Contact Info
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS contact_info (
         id          SERIAL PRIMARY KEY,
         page_id     INT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -139,6 +187,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Socials
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS socials (
         id          SERIAL PRIMARY KEY,
         platform    VARCHAR(50) NOT NULL UNIQUE,
@@ -150,6 +201,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Navigation
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS navigation (
         id          SERIAL PRIMARY KEY,
         label_fr    VARCHAR(255) NOT NULL,
@@ -160,6 +214,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Site Settings
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS site_settings (
         id          SERIAL PRIMARY KEY,
         key         VARCHAR(100) NOT NULL UNIQUE,
@@ -169,6 +226,9 @@ data:
         updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Media (uploaded files)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS media (
         id              SERIAL PRIMARY KEY,
         filename        VARCHAR(255) NOT NULL,
@@ -179,6 +239,9 @@ data:
         uploaded_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- ═══════════════════════════════════════════
+    -- Preview Tokens
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS preview_tokens (
         id          SERIAL PRIMARY KEY,
         token       VARCHAR(255) NOT NULL UNIQUE,
@@ -187,8 +250,14 @@ data:
         expires_at  TIMESTAMPTZ NOT NULL,
         created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_preview_tokens_token ON preview_tokens (token);
 
+    -- ═══════════════════════════════════════════
+    -- Departments (for /projects section)
+    -- Top-level grouping for projects. Projects table (added later) will
+    -- reference departments(id). Slug auto-generated from title_en, stable.
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS departments (
         id              SERIAL PRIMARY KEY,
         title_fr        TEXT NOT NULL,
@@ -201,8 +270,16 @@ data:
         created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
 
+    -- ═══════════════════════════════════════════
+    -- Projects (belong to a department)
+    -- year_end is nullable (ongoing projects have no end year yet).
+    -- status is an enum: 'en_cours' (in progress) | 'cloture' (closed).
+    -- budget is a free-text string (e.g. "1.2M EUR", "$500,000") for admin flexibility.
+    -- Slug auto-generated from title_en + id, stable, never regenerated.
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS projects (
         id              SERIAL PRIMARY KEY,
         department_id   INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
@@ -224,9 +301,13 @@ data:
         created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_projects_department ON projects (department_id);
     CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
 
+    -- ═══════════════════════════════════════════
+    -- Team (Notre équipe)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS team (
         id              SERIAL PRIMARY KEY,
         name            VARCHAR(255) NOT NULL,
@@ -240,6 +321,9 @@ data:
         department      VARCHAR(50) NOT NULL DEFAULT 'direction'
     );
 
+    -- ═══════════════════════════════════════════
+    -- Refresh Tokens (rotation + reuse detection)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS refresh_tokens (
         id          SERIAL PRIMARY KEY,
         user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -249,10 +333,14 @@ data:
         revoked_at  TIMESTAMPTZ,
         created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens (user_id);
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_family ON refresh_tokens (family);
 
+    -- ═══════════════════════════════════════════
+    -- Reports (complaint / integrity submissions)
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS reports (
         id          SERIAL PRIMARY KEY,
         category    VARCHAR(50) NOT NULL
@@ -263,9 +351,13 @@ data:
         email       VARCHAR(255),
         created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
     CREATE INDEX IF NOT EXISTS idx_reports_category ON reports (category);
     CREATE INDEX IF NOT EXISTS idx_reports_created ON reports (created_at DESC);
 
+    -- ═══════════════════════════════════════════
+    -- Newsletter subscribers
+    -- ═══════════════════════════════════════════
     CREATE TABLE IF NOT EXISTS newsletter_subscribers (
         id              BIGSERIAL PRIMARY KEY,
         email           VARCHAR(254) NOT NULL UNIQUE,
@@ -280,7 +372,30 @@ data:
     CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_active
         ON newsletter_subscribers (is_active, created_at DESC);
 
-    -- Knowledge resources and unified vector index for resources, news and projects.
+    -- Per-subscriber delivery queue for newly created news articles.
+    CREATE TABLE IF NOT EXISTS newsletter_deliveries (
+        id              BIGSERIAL PRIMARY KEY,
+        news_id         INT NOT NULL REFERENCES news(id) ON DELETE CASCADE,
+        subscriber_id   BIGINT NOT NULL REFERENCES newsletter_subscribers(id) ON DELETE CASCADE,
+        status          VARCHAR(20) NOT NULL DEFAULT 'pending'
+                        CHECK (status IN ('pending', 'processing', 'sent', 'failed')),
+        attempts        INT NOT NULL DEFAULT 0,
+        next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_error      TEXT NOT NULL DEFAULT '',
+        sent_at         TIMESTAMPTZ,
+        created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (news_id, subscriber_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_newsletter_deliveries_pending
+        ON newsletter_deliveries (status, next_attempt_at, id);
+
+    -- ═══════════════════════════════════════════
+    -- Knowledge resources (public document library)
+    -- Files are stored locally under uploads/resources and served publicly.
+    -- A resource may provide a French PDF, an English PDF, or both.
+    -- ═══════════════════════════════════════════
     CREATE EXTENSION IF NOT EXISTS vector;
 
     CREATE TABLE IF NOT EXISTS resources (
@@ -385,6 +500,10 @@ spec:
           ports:
             - containerPort: 5432
           env:
+            # Longhorn volumes contain a lost+found directory at their root.
+            # PostgreSQL therefore needs a dedicated empty subdirectory.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:

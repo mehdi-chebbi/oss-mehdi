@@ -1179,3 +1179,19 @@ export async function deleteReport(token: string, id: number) {
     headers: authHeader(token),
   });
 }
+
+// ── Admin dashboard ──
+export interface DashboardStats {
+  news: number;
+  projects: number;
+  resources: number;
+  newsletter_subscribers: number;
+  reports_total: number;
+  reports_last_30_days: number;
+}
+
+export async function getDashboardStats(token: string) {
+  return request<DashboardStats>("/dashboard/stats", {
+    headers: authHeader(token),
+  });
+}

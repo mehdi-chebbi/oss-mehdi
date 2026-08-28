@@ -19,14 +19,15 @@ data:
   RESOURCE_RETRIEVAL_MAX_DISTANCE: "0.65"
 
   # ── Microsoft Graph mail ──
-  MAIL_SENDER_ADDRESS: "platform@oss.org.tn"
+  MAIL_SENDER_ADDRESS: "plateforme@oss.org.tn"
   MAIL_SENDER_NAME: "OSS"
-  CONTACT_RECIPIENT_ADDRESS: "platform@oss.org.tn"
+  CONTACT_RECIPIENT_ADDRESS: "plateforme@oss.org.tn"
+  PUBLIC_SITE_URL: "http://192.168.2.32"
 
   # ── Runtime ──
   NODE_ENV: "production"
   COOKIE_SECURE: "false"
   COOKIE_DOMAIN: ""
-  CSRF_ORIGIN: ""
-  ALLOWED_ORIGINS: ""
+  CSRF_ORIGIN: "http://192.168.2.32"
+  ALLOWED_ORIGINS: "http://192.168.2.32"
   TRUST_PROXY: "true"

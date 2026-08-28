@@ -19,7 +19,6 @@ const copy = {
     resourceMode: "Mode ressources OSS",
     resourceModeHelp: "Répond uniquement à partir des documents publiés par l’OSS",
     sources: "Sources",
-    suggestions: ["Quels sont vos domaines d’action ?", "Présentez-moi vos outils", "Comment contacter l’OSS ?"],
   },
   en: {
     title: "OSS Assistant",
@@ -34,7 +33,6 @@ const copy = {
     resourceMode: "OSS resource mode",
     resourceModeHelp: "Answers only from documents published by OSS",
     sources: "Sources",
-    suggestions: ["What are your areas of work?", "Tell me about your tools", "How can I contact OSS?"],
   },
 } as const;
 
@@ -46,10 +44,25 @@ type DisplayMessage = ChatMessage & {
 
 function stripKnowledgeMarkers(value: string) {
   return value
-    .replace(/\[SOURCE_\d+\]/g, "")
-    .replace(/\[(?:S(?:O(?:U(?:R(?:C(?:E(?:_\d*)?)?)?)?)?)?)?$/g, "")
+    .replace(/\[\s*SOURCE\\?_\d+(?:\s*,[^\]\n]*)?\s*\]/gi, "")
+    .replace(/\[\s*SOURCE\\?_\d+[^\]\n]*$/i, "")
+    .replace(/\[\s*(?:S(?:O(?:U(?:R(?:C(?:E(?:\\?_(?:\d*)?)?)?)?)?)?)?)?$/i, "")
     .replace(/[ \t]+\n/g, "\n")
     .trimStart();
+}
+
+function extractKnowledgeSourceIds(value: string) {
+  const ids = new Set<string>();
+  const markers = value.match(/\[\s*SOURCE\\?_\d+(?:\s*,[^\]\n]*)?\s*\]/gi) ?? [];
+
+  for (const marker of markers) {
+    const sourceIds = marker.match(/SOURCE\\?_\d+/gi) ?? [];
+    for (const sourceId of sourceIds) {
+      ids.add(sourceId.replace("\\_", "_").toUpperCase());
+    }
+  }
+
+  return ids;
 }
 
 const markdownComponents = {
@@ -137,7 +150,8 @@ export default function Chatbot() {
         const next = [...current];
         const lastIndex = next.length - 1;
         if (next[lastIndex]?.role === "assistant") {
-          const citedSources = result.sources.filter((source) => result.message.includes(`[${source.id}]`));
+          const citedSourceIds = extractKnowledgeSourceIds(result.message);
+          const citedSources = result.sources.filter((source) => citedSourceIds.has(source.id.toUpperCase()));
           next[lastIndex] = {
             ...next[lastIndex],
             rawContent: result.message,
@@ -236,26 +250,6 @@ export default function Chatbot() {
           </div>
 
           <div className="border-t border-[#3183d4]/10 bg-white">
-            <div className="px-3 pt-2.5">
-              <button
-                type="button"
-                aria-pressed={resourceMode}
-                title={labels.resourceModeHelp}
-                disabled={sending}
-                onClick={() => setResourceMode((value) => !value)}
-                className={`inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors disabled:opacity-50 ${resourceMode ? "border-[#489e42]/35 bg-[#489e42]/10 text-[#347b30]" : "border-ink/10 bg-ink/[0.025] text-ink/55 hover:border-[#489e42]/25 hover:text-[#3d8a37]"}`}
-              >
-                <BookOpen className="h-3.5 w-3.5" /> {labels.resourceMode}
-              </button>
-            </div>
-            {messages.length === 0 && (
-              <div className="flex flex-wrap gap-1.5 px-3 pt-2.5">
-                {labels.suggestions.map((suggestion) => (
-                  <button key={suggestion} type="button" disabled={sending} onClick={() => submitMessage(suggestion)} className="rounded-md border border-[#3183d4]/10 bg-[#3183d4]/[0.04] px-2.5 py-1 text-[11.5px] font-medium text-[#3183d4] transition-colors hover:border-[#3183d4]/20 hover:bg-[#3183d4]/[0.08] disabled:opacity-40">{suggestion}</button>
-                ))}
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="px-3 py-2.5">
               <div className="flex items-center gap-2">
                 <input
@@ -267,8 +261,19 @@ export default function Chatbot() {
                   onChange={(event) => setInput(event.target.value)}
                   placeholder={labels.placeholder}
                   aria-label={labels.placeholder}
-                  className="flex-1 rounded-lg border border-[#3183d4]/10 bg-[#3183d4]/[0.04] px-3.5 py-2.5 text-[13.5px] text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-[#3183d4]/40 focus:bg-white disabled:opacity-60"
+                  className="min-w-0 flex-1 rounded-lg border border-[#3183d4]/10 bg-[#3183d4]/[0.04] px-3.5 py-2.5 text-[13.5px] text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-[#3183d4]/40 focus:bg-white disabled:opacity-60"
                 />
+                <button
+                  type="button"
+                  aria-label={labels.resourceMode}
+                  aria-pressed={resourceMode}
+                  title={`${labels.resourceMode} — ${labels.resourceModeHelp}`}
+                  disabled={sending}
+                  onClick={() => setResourceMode((value) => !value)}
+                  className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg border transition-colors disabled:opacity-50 ${resourceMode ? "border-[#489e42]/35 bg-[#489e42]/10 text-[#347b30]" : "border-ink/10 bg-ink/[0.025] text-ink/55 hover:border-[#489e42]/25 hover:text-[#3d8a37]"}`}
+                >
+                  <BookOpen className="h-4 w-4" />
+                </button>
                 <button type="submit" disabled={sending || !input.trim()} aria-label={labels.send} className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#3183d4] text-white transition-colors hover:bg-[#2a6db8] disabled:cursor-not-allowed disabled:opacity-40">
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </button>

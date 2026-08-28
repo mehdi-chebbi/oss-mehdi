@@ -85,7 +85,7 @@ export default function NewsArticle() {
         <header className="px-6 pb-14 pt-12 sm:px-8 lg:px-12 lg:pb-16 lg:pt-16">
           <div className="mx-auto max-w-[1400px] rounded-[28px] bg-white px-6 py-8 sm:px-9 sm:py-10 lg:rounded-[36px] lg:px-12 lg:py-12">
 
-            <div className={`grid gap-10 ${images.length > 0 ? 'lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16' : ''}`}>
+            <div className={`grid gap-10 ${images.length > 0 ? 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16' : ''}`}>
               <div className="animate-[news-article-rise_750ms_cubic-bezier(0.16,1,0.3,1)_both]">
                 <h1 className="max-w-3xl text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-[58px]">
                   {title}
@@ -109,13 +109,13 @@ export default function NewsArticle() {
               </div>
 
               {images.length > 0 && (
-                <div className="animate-[news-article-rise_850ms_cubic-bezier(0.16,1,0.3,1)_160ms_both]">
+                <div className="min-w-0 w-full animate-[news-article-rise_850ms_cubic-bezier(0.16,1,0.3,1)_160ms_both]">
                   {images.length === 1 ? (
                     <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-oss-paper lg:rounded-[28px]">
                       <img src={images[0]} alt={title} className="absolute inset-0 h-full w-full object-cover" />
                     </figure>
                   ) : (
-                    <div className="news-detail-carousel group relative aspect-[4/3] overflow-hidden rounded-2xl bg-oss-paper lg:rounded-[28px]">
+                    <div className="news-detail-carousel group relative aspect-[4/3] min-w-0 w-full max-w-full overflow-hidden rounded-2xl bg-oss-paper lg:rounded-[28px]">
                       <Swiper
                         modules={[Autoplay, EffectFade, Pagination, Navigation]}
                         effect="fade"
@@ -125,7 +125,7 @@ export default function NewsArticle() {
                         pagination={{ clickable: true }}
                         navigation={{ nextEl: '.news-carousel-next', prevEl: '.news-carousel-prev' }}
                         onSlideChange={(swiper) => setActiveImage(swiper.realIndex)}
-                        className="h-full w-full"
+                        className="h-full min-w-0 w-full max-w-full"
                       >
                         {images.map((url, index) => (
                           <SwiperSlide key={`${url}-${index}`}>

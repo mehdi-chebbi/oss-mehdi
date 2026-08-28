@@ -17,6 +17,7 @@ spec:
       containers:
         - name: front
           image: mehdino123/oss-site-front:latest1
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
 ---
@@ -27,6 +28,7 @@ metadata:
   namespace: oss-site
 spec:
   type: LoadBalancer
+  loadBalancerIP: 192.168.2.32
   selector:
     app: front
   ports:

@@ -29,6 +29,7 @@ spec:
       containers:
         - name: backend
           image: mehdino123/oss-site-back:latest1
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           envFrom:

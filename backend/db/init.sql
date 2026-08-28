@@ -365,6 +365,27 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_active
     ON newsletter_subscribers (is_active, created_at DESC);
 
+-- Per-subscriber delivery queue for newly created news articles.
+-- The unique constraint prevents duplicate queue entries for the same article
+-- and subscriber.
+CREATE TABLE IF NOT EXISTS newsletter_deliveries (
+    id              BIGSERIAL PRIMARY KEY,
+    news_id         INT NOT NULL REFERENCES news(id) ON DELETE CASCADE,
+    subscriber_id   BIGINT NOT NULL REFERENCES newsletter_subscribers(id) ON DELETE CASCADE,
+    status          VARCHAR(20) NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'processing', 'sent', 'failed')),
+    attempts        INT NOT NULL DEFAULT 0,
+    next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_error      TEXT NOT NULL DEFAULT '',
+    sent_at         TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (news_id, subscriber_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_newsletter_deliveries_pending
+    ON newsletter_deliveries (status, next_attempt_at, id);
+
 -- ═══════════════════════════════════════════
 -- Knowledge resources (public document library)
 -- Files are stored locally under uploads/resources and served publicly.

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { adminOnly } from "../middleware/admin.js";
+import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import { listReports, getReport, createReport, deleteReport } from "../services/reports.js";
 
 const router = Router();
@@ -19,14 +19,14 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Admin: list all reports
-router.get("/", adminOnly, async (_req, res) => {
+// Editors and admins: list all reports
+router.get("/", editorOrAdmin, async (_req, res) => {
   const reports = await listReports();
   res.json(reports);
 });
 
-// Admin: get single report
-router.get("/:id", adminOnly, async (req, res) => {
+// Editors and admins: get single report
+router.get("/:id", editorOrAdmin, async (req, res) => {
   const report = await getReport(Number(req.params.id));
   if (!report) {
     res.status(404).json({ error: "Report not found" });
@@ -35,8 +35,8 @@ router.get("/:id", adminOnly, async (req, res) => {
   res.json(report);
 });
 
-// Admin: delete report
-router.delete("/:id", adminOnly, async (req, res) => {
+// Editors and admins: delete report
+router.delete("/:id", editorOrAdmin, async (req, res) => {
   const deleted = await deleteReport(Number(req.params.id));
   if (!deleted) {
     res.status(404).json({ error: "Report not found" });

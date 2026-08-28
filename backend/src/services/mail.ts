@@ -23,13 +23,17 @@ let accessTokenExpiresAt = 0;
 
 export class MailConfigurationError extends Error {}
 
+export function isMailConfigured() {
+  return Boolean(
+    env.microsoftTenantId &&
+    env.microsoftClientId &&
+    env.microsoftClientSecret &&
+    env.mailSenderAddress
+  );
+}
+
 function assertConfigured() {
-  if (
-    !env.microsoftTenantId ||
-    !env.microsoftClientId ||
-    !env.microsoftClientSecret ||
-    !env.mailSenderAddress
-  ) {
+  if (!isMailConfigured()) {
     throw new MailConfigurationError("Microsoft Graph mail is not configured");
   }
 }

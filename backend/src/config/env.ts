@@ -40,10 +40,15 @@ export const env = {
   microsoftTenantId: process.env.MICROSOFT_TENANT_ID || "",
   microsoftClientId: process.env.MICROSOFT_CLIENT_ID || "",
   microsoftClientSecret: process.env.MICROSOFT_CLIENT_SECRET || "",
-  mailSenderAddress: process.env.MAIL_SENDER_ADDRESS || "platform@oss.org.tn",
+  mailSenderAddress: process.env.MAIL_SENDER_ADDRESS || "plateforme@oss.org.tn",
   mailSenderName: process.env.MAIL_SENDER_NAME || "OSS",
   contactRecipientAddress:
-    process.env.CONTACT_RECIPIENT_ADDRESS || "platform@oss.org.tn",
+    process.env.CONTACT_RECIPIENT_ADDRESS || "plateforme@oss.org.tn",
+  publicSiteUrl: (
+    process.env.PUBLIC_SITE_URL ||
+    process.env.ALLOWED_ORIGINS?.split(",")[0]?.trim() ||
+    "http://localhost:3000"
+  ).replace(/\/+$/, ""),
 
   // ── Per-email fail tracking ──
   maxFails: 5, // after this many fails in the window, CAPTCHA is required for this email

@@ -21,8 +21,13 @@ import reportsRoutes from "./routes/reports.js";
 import resourcesRoutes from "./routes/resources.js";
 import chatRoutes from "./routes/chat.js";
 import mailRoutes from "./routes/mail.js";
+import dashboardRoutes from "./routes/dashboard.js";
 import { startResourceIndexer } from "./services/resourceIndexer.js";
 import { startNewsIndexer } from "./services/newsIndexer.js";
+import {
+  ensureNewsletterDeliverySchema,
+  startNewsletterDeliveryWorker,
+} from "./services/newsletterDelivery.js";
 
 // ── Fail-fast env validation ──
 // In production, refuse to boot if secrets are missing or still set to their
@@ -176,6 +181,7 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/resources", resourcesRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/mail", mailRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {
@@ -189,8 +195,10 @@ app.get("/api/health", async (_req, res) => {
 
 // Start server
 async function start() {
+  await ensureNewsletterDeliverySchema();
   startResourceIndexer();
   startNewsIndexer();
+  startNewsletterDeliveryWorker();
   // Periodic cleanup of expired refresh tokens (every hour)
   const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
   setInterval(async () => {
@@ -213,4 +221,7 @@ async function start() {
   });
 }
 
-start();
+start().catch((error) => {
+  console.error("FATAL: Backend startup failed:", error);
+  process.exit(1);
+});

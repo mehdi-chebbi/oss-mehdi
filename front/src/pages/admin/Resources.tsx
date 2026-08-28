@@ -31,6 +31,7 @@ import {
 } from "../../api/auth";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
 import { useAuth } from "../../context/auth";
+import { createClientId } from "../../lib/utils";
 
 type PendingUpload = {
   clientId: string;
@@ -53,7 +54,7 @@ const inputClass = "w-full rounded-lg border border-ink/15 bg-white px-3 py-2.5 
 
 function createPendingUpload(file: File): PendingUpload {
   return {
-    clientId: crypto.randomUUID(),
+    clientId: createClientId(),
     primaryFile: file,
     primaryLanguage: "",
     translationFile: null,

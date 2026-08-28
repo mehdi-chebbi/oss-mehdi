@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg";
 import { query } from "../config/db.js";
 
 export async function registerNewsletterSubscriber(email: string, locale: "fr" | "en") {
@@ -16,5 +17,16 @@ export async function markNewsletterWelcomeSent(email: string) {
   await query(
     "UPDATE newsletter_subscribers SET welcome_sent_at = NOW(), updated_at = NOW() WHERE email = $1",
     [email.toLowerCase()],
+  );
+}
+
+export async function enqueueNewsForSubscribers(client: PoolClient, newsId: number) {
+  await client.query(
+    `INSERT INTO newsletter_deliveries (news_id, subscriber_id)
+     SELECT $1, id
+     FROM newsletter_subscribers
+     WHERE is_active = true
+     ON CONFLICT (news_id, subscriber_id) DO NOTHING`,
+    [newsId],
   );
 }

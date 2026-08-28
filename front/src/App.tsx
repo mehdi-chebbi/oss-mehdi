@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/auth";
+import { AuthProvider } from "./context/auth";
 import PublicLayout from "./components/shared/PublicLayout";
 import RouteProgress from "./components/shared/RouteProgress";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -42,6 +42,7 @@ import TeamForm from "./pages/admin/TeamForm";
 import AdminReports from "./pages/admin/Reports";
 import AdminResources from "./pages/admin/Resources";
 import ResourceForm from "./pages/admin/ResourceForm";
+import AdminDashboard from "./pages/admin/Dashboard";
 import {
   homeLoader,
   newsListLoader,
@@ -56,10 +57,9 @@ import {
   knowledgeSharingLoader,
 } from "./loaders/public";
 
-/** Redirect /admin → /admin/hero (content editors) or /admin/users (admins) */
+/** Redirect /admin to the shared operational dashboard. */
 function AdminIndexRedirect() {
-  const { user } = useAuth();
-  return <Navigate to={user?.role === "admin" ? "/admin/users" : "/admin/hero"} replace />;
+  return <Navigate to="/admin/dashboard" replace />;
 }
 
 /**
@@ -123,6 +123,7 @@ export const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           { index: true, element: <AdminIndexRedirect /> },
+          { path: "dashboard", element: <AdminDashboard /> },
           { path: "users", element: <AdminUsers /> },
           { path: "hero", element: <AdminHero /> },
 
