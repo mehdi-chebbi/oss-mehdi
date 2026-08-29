@@ -22,6 +22,7 @@ import resourcesRoutes from "./routes/resources.js";
 import chatRoutes from "./routes/chat.js";
 import mailRoutes from "./routes/mail.js";
 import dashboardRoutes from "./routes/dashboard.js";
+import searchRoutes from "./routes/search.js";
 import { startResourceIndexer } from "./services/resourceIndexer.js";
 import { startNewsIndexer } from "./services/newsIndexer.js";
 import {
@@ -182,6 +183,7 @@ app.use("/api/resources", resourcesRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/mail", mailRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/search", searchRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {

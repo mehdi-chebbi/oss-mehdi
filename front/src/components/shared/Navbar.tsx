@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getNavItems } from '@/data/navigation';
 import type { Locale } from '@/context/locale';
 import BrandBands from './BrandBands';
+import GlobalSearchPanel from './GlobalSearchPanel';
 
 const languages = [
   { code: 'fr', label: 'Français', display: 'FR' },
@@ -14,6 +15,8 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const langRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,6 +28,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
     setMobileOpen(false);
     setLangOpen(false);
     setOpenDropdown(null);
+    setSearchOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -102,7 +106,15 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
           </ul>
 
           <div className="ml-auto hidden items-center gap-2 lg:ml-0 lg:flex">
-            <button type="button" className="grid h-9 w-9 place-items-center border border-oss-blue/20 text-oss-blue transition-colors hover:bg-oss-blue hover:text-white" aria-label={currentLang === 'en' ? 'Search' : 'Rechercher'}>
+            <button
+              type="button"
+              data-global-search-trigger
+              onClick={() => setSearchOpen((value) => !value)}
+              className="grid h-9 w-9 place-items-center border border-oss-blue/20 text-oss-blue transition-colors hover:bg-oss-blue hover:text-white"
+              aria-label={currentLang === 'en' ? 'Search' : 'Rechercher'}
+              aria-expanded={searchOpen}
+              aria-controls="global-search-panel"
+            >
               <Search className="h-4 w-4" />
             </button>
             <div className="relative" ref={langRef}>
@@ -151,6 +163,20 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
 
         <div className={`overflow-y-auto border-t border-oss-blue/10 bg-white transition-[max-height,opacity] duration-200 lg:hidden ${mobileOpen ? 'max-h-[calc(100dvh-80px)] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="mx-auto max-w-7xl px-5 py-4">
+            <button
+              type="button"
+              data-global-search-trigger
+              onClick={() => {
+                setMobileOpen(false);
+                setSearchOpen(true);
+              }}
+              className="mb-3 flex min-h-11 w-full items-center gap-3 border border-oss-blue/20 px-4 text-left text-sm font-bold text-oss-blue-dark"
+              aria-expanded={searchOpen}
+              aria-controls="global-search-panel"
+            >
+              <Search className="h-4 w-4 text-oss-blue" />
+              {currentLang === 'en' ? 'Search the site' : 'Rechercher dans le site'}
+            </button>
             {navItems.map((item) => (
               <div key={item.label} className="border-b border-oss-blue/10 py-1">
                 {item.children ? (
@@ -182,6 +208,14 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
             </Link>
           </div>
         </div>
+
+        <GlobalSearchPanel
+          open={searchOpen}
+          locale={currentLang}
+          query={searchQuery}
+          onQueryChange={setSearchQuery}
+          onClose={() => setSearchOpen(false)}
+        />
       </header>
       {!overlay && <div className="h-20" aria-hidden="true" />}
     </>

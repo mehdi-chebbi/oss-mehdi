@@ -257,7 +257,6 @@ CREATE TABLE IF NOT EXISTS departments (
     title_en        TEXT NOT NULL,
     description_fr  TEXT NOT NULL DEFAULT '',
     description_en  TEXT NOT NULL DEFAULT '',
-    image           VARCHAR(500) NOT NULL DEFAULT '',
     slug            VARCHAR(200) NOT NULL UNIQUE,
     sort_order      INT NOT NULL DEFAULT 0,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),

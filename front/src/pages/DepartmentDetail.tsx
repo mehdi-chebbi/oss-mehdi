@@ -65,17 +65,6 @@ export default function DepartmentDetail() {
           )}
         </div>
 
-        {/* Department hero image */}
-        {dept.image && (
-          <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl mb-12">
-            <img
-              src={dept.image}
-              alt={title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-        )}
-
         {/* Projects in this department */}
         <div className="border-t border-ink/10 pt-10">
           <h2 className="font-serif font-bold text-2xl text-ink mb-6">

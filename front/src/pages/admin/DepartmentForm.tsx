@@ -7,7 +7,6 @@ import {
   createDepartment,
   updateDepartment,
 } from "../../api/auth";
-import ImageUpload from "../../components/admin/ImageUpload";
 import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
 
 type Lang = "fr" | "en";
@@ -42,7 +41,6 @@ const emptyForm = {
   title_en: "",
   description_fr: "",
   description_en: "",
-  image: "",
   sort_order: 0,
 };
 
@@ -71,7 +69,6 @@ export default function DepartmentForm() {
           title_en: dept.title_en || "",
           description_fr: dept.description_fr || "",
           description_en: dept.description_en || "",
-          image: dept.image || "",
           sort_order: dept.sort_order ?? 0,
         });
         setSlug(dept.slug || "");
@@ -197,20 +194,13 @@ export default function DepartmentForm() {
           </div>
         </div>
 
-        {/* Image & settings */}
+        {/* Settings */}
         <div className="border-t border-ink/5 pt-5">
           <h4 className="text-sm font-semibold text-ink/60 uppercase tracking-wider mb-3">
-            Image et paramètres
+            Paramètres
           </h4>
 
-          <ImageUpload
-            value={form.image}
-            onChange={(url) => set("image", url)}
-            section="departments"
-            label="Image du département"
-          />
-
-          <div className="mt-4 mb-4">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-ink/80 mb-1.5">
               Ordre d’affichage
             </label>

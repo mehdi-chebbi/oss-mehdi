@@ -43,6 +43,7 @@ import AdminReports from "./pages/admin/Reports";
 import AdminResources from "./pages/admin/Resources";
 import ResourceForm from "./pages/admin/ResourceForm";
 import AdminDashboard from "./pages/admin/Dashboard";
+import Search from "./pages/Search";
 import {
   homeLoader,
   newsListLoader,
@@ -110,6 +111,7 @@ export const router = createBrowserRouter([
               { path: "domains/land", loader: landLoader, element: <Land /> },
               { path: "knowledge-sharing", loader: knowledgeSharingLoader, element: <KnowledgeSharing /> },
               { path: "integrity", element: <Integrity /> },
+              { path: "search", element: <Search /> },
             ],
           },
         ],

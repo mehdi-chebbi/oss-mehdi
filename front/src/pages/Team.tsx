@@ -16,7 +16,7 @@ function MemberCard({ m, locale, featured = false }: { m: TeamMemberData; locale
   const nationality = locale === "en" ? m.nationality_en : m.nationality_fr;
 
   return (
-    <article className={`group relative w-full overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/35 hover:bg-oss-blue/5 ${featured ? 'max-w-[340px]' : ''}`}>
+    <article className={`group relative flex h-full w-full flex-col overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/35 hover:bg-oss-blue/5 ${featured ? 'max-w-[340px]' : ''}`}>
       <span className={`absolute inset-x-0 top-0 z-10 h-1.5 ${featured ? 'bg-oss-ochre' : 'bg-oss-blue'}`} aria-hidden="true" />
       <div className={`overflow-hidden bg-oss-paper ${featured ? 'aspect-[1/1.08]' : 'aspect-[1/1.12]'}`}>
         {m.image ? (
@@ -27,11 +27,20 @@ function MemberCard({ m, locale, featured = false }: { m: TeamMemberData; locale
           </div>
         )}
       </div>
-      <div className="min-h-40 p-5 sm:p-6">
-        <h3 className="text-lg font-bold leading-tight text-oss-blue-dark">{m.name}</h3>
-        {title && <p className="mt-2 text-sm font-medium leading-snug text-ink/68">{title}</p>}
-        {nationality && <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.07em] text-oss-blue">{nationality}</p>}
-        {diplomas && <p className="mt-3 border-t border-oss-line pt-3 text-xs leading-relaxed text-ink/52">{diplomas}</p>}
+      <div className="flex min-h-[260px] flex-1 flex-col p-5 sm:p-6">
+        <div className="min-h-[15px]">
+          {nationality && <p className="text-[11px] font-bold uppercase leading-[15px] tracking-[0.07em] text-oss-blue">{nationality}</p>}
+        </div>
+
+        <h3 className="mt-3 min-h-[46px] line-clamp-2 text-lg font-bold leading-tight text-oss-blue-dark">{m.name}</h3>
+
+        <div className="mt-2 min-h-[58px]">
+          {title && <p className="line-clamp-3 text-sm font-medium leading-snug text-ink/68">{title}</p>}
+        </div>
+
+        <div className="mt-auto min-h-[72px] border-t border-oss-line pt-3">
+          {diplomas && <p className="line-clamp-3 text-xs leading-relaxed text-ink/52">{diplomas}</p>}
+        </div>
       </div>
     </article>
   );
@@ -71,7 +80,7 @@ export default function Team() {
 
       <section className="mx-auto max-w-[1400px] px-6 pb-24 pt-2 sm:px-8 lg:px-12 lg:pb-28">
         <div className="mb-10 grid border border-oss-line bg-white sm:grid-cols-2 lg:grid-cols-4" role="tablist" aria-label={locale === "en" ? "Team departments" : "Départements de l'équipe"}>
-          {DEPARTMENTS.map((department, index) => (
+          {DEPARTMENTS.map((department) => (
             <button
               key={department.key}
               type="button"
@@ -80,7 +89,6 @@ export default function Team() {
               onClick={() => setActiveDept(department.key)}
               className={`relative min-h-16 px-5 py-4 text-left text-sm font-bold transition-colors duration-300 lg:border-l lg:first:border-l-0 ${activeDept === department.key ? "bg-oss-blue text-white" : "border-oss-line text-ink/52 hover:bg-oss-blue/5 hover:text-oss-blue-dark"}`}
             >
-              <span className={`mr-3 text-xs ${activeDept === department.key ? 'text-oss-ochre' : 'text-oss-blue/48'}`}>0{index + 1}</span>
               {locale === "en" ? department.labelEn : department.label}
               {activeDept === department.key && <span className="absolute inset-x-0 bottom-0 h-1 bg-oss-ochre" aria-hidden="true" />}
             </button>

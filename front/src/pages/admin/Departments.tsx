@@ -91,18 +91,7 @@ export default function AdminDepartments() {
           >
             {/* Thumbnail */}
             <div className="w-14 h-14 rounded-lg overflow-hidden bg-ink/5 flex-shrink-0 flex items-center justify-center">
-              {dept.image ? (
-                <img
-                  src={dept.image}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              ) : (
-                <Building2 className="w-5 h-5 text-ink/20" />
-              )}
+              <Building2 className="w-5 h-5 text-ink/20" />
             </div>
 
             {/* Info */}

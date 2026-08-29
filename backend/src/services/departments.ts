@@ -6,7 +6,6 @@ export interface DepartmentRow {
   title_en: string;
   description_fr: string;
   description_en: string;
-  image: string;
   slug: string;
   sort_order: number;
   created_at: string;
@@ -38,7 +37,7 @@ function slugify(text: string, fallback = "department"): string {
 // ── Public: departments ordered by sort_order ──
 export async function getPublicDepartments() {
   const result = await query(
-    `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order
+    `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order
      FROM departments
      ORDER BY sort_order ASC, id ASC`,
   );
@@ -48,7 +47,7 @@ export async function getPublicDepartments() {
 // ── Public: single department by slug ──
 export async function getPublicDepartmentBySlug(slug: string) {
   const result = await query(
-    `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order, created_at
+    `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order, created_at
      FROM departments
      WHERE slug = $1`,
     [slug],
@@ -59,7 +58,7 @@ export async function getPublicDepartmentBySlug(slug: string) {
 // ── Authenticated: list all departments (admin) ──
 export async function listAllDepartments() {
   const result = await query(
-    `SELECT id, title_fr, title_en, description_fr, description_en, image, slug, sort_order, created_at, updated_at
+    `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order, created_at, updated_at
      FROM departments
      ORDER BY sort_order ASC, id ASC`,
   );
@@ -80,19 +79,17 @@ export async function createDepartment(data: {
   title_en: string;
   description_fr?: string;
   description_en?: string;
-  image?: string;
   sort_order?: number;
 }) {
   const result = await query(
-    `INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [
       data.title_fr,
       data.title_en,
       data.description_fr || "",
       data.description_en || "",
-      data.image || "",
       "placeholder", // replaced below
       data.sort_order ?? 0,
     ],
@@ -118,7 +115,6 @@ export async function updateDepartment(id: number, data: Partial<DepartmentRow>)
     "title_en",
     "description_fr",
     "description_en",
-    "image",
     "sort_order",
   ];
 

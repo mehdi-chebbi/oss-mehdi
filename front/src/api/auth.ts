@@ -898,7 +898,6 @@ export interface DepartmentData {
   title_en: string;
   description_fr: string;
   description_en: string;
-  image: string;
   slug: string;
   sort_order: number;
   created_at?: string;

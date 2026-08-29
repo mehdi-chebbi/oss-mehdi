@@ -53,7 +53,7 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 // Create department
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
-    const { title_fr, title_en, description_fr, description_en, image, sort_order } = req.body;
+    const { title_fr, title_en, description_fr, description_en, sort_order } = req.body;
     if (!title_fr || !title_en) {
       res.status(400).json({ error: "title_fr and title_en are required" });
       return;
@@ -63,7 +63,6 @@ router.post("/", editorOrAdmin, async (req, res) => {
       title_en,
       description_fr,
       description_en,
-      image,
       sort_order,
     });
     res.status(201).json(dept);

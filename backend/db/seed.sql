@@ -130,12 +130,11 @@ INSERT INTO tools (page_id, title_fr, title_en, description_fr, description_en, 
 
 
 -- ── Departments — Climate ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
   ('Département Climat',
    'Climate Department',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS)',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS)',
-   '',
    'climate-department',
    1);
 
@@ -232,12 +231,11 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
 
 
 -- ── Departments — Technology, Information and Remote Sensing ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
   ('Département Technologie, Information et Télédétection',
    'Department of Technology, Information and Remote Sensing',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS). Démarche stratégique intégrée pour transformer la donnée environnementale en appui direct à la décision, s''appuyant sur des services géospatiaux, le cloud computing et l''intelligence artificielle.',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS). Integrated strategic approach to transform environmental data into direct decision support, relying on geospatial services, cloud computing and artificial intelligence.',
-   '',
    'technology-information-remote-sensing',
    2);
 
@@ -345,22 +343,20 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
 
 
 -- ── Department - Land and Biodiversity ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
   ('Département Terre et Biodiversité',
    'Land and Biodiversity Department',
    'Préserver la biodiversité, restaurer les écosystèmes et renforcer la résilience des territoires et des communautés.',
    'Preserving biodiversity, restoring ecosystems and strengthening the resilience of territories and communities.',
-   '',
    'land-biodiversity-department',
    3);
 
 -- ── Department - Water ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, image, slug, sort_order) VALUES
+INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
   ('Département Eau',
    'Water Department',
    'Améliorer la connaissance, la gouvernance et la gestion durable des ressources en eau souterraines et de surface.',
    'Improving knowledge, governance and sustainable management of groundwater and surface water resources.',
-   '',
    'water-department',
    4);
 
@@ -489,7 +485,7 @@ WHERE slug = 'strategy-2030-mid-term-evaluation';
 -- ── Team — Direction ──
 -- Members are displayed by id; the first Direction member is featured separately.
 INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationality_fr, nationality_en, image, department) VALUES
-  ('M. Nabil BEN KHATRA',
+  ('Nabil BEN KHATRA',
    'Secrétaire Exécutif',
    'Executive Secretary',
    'Agronome et spécialiste en télédétection',
@@ -498,7 +494,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/NbK200.jpg',
    'direction'),
 
-  ('M. Mourad BRIKI',
+  ('Mourad BRIKI',
    'Directeur du Département Communication et Savoir',
    'Director of the Communication and Knowledge Department',
    'Ingénieur Ecologue',
@@ -507,7 +503,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/_MB200.jpg',
    'direction'),
 
-  ('M. Abina Abdoulkarim BELLO',
+  ('Abina Abdoulkarim BELLO',
    'Directeur du Département Terre et Biodiversité par intérim',
    'Acting Director of the Land and Biodiversity Department',
    'DEA en Science de la production animale',
@@ -516,7 +512,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-02/Bello200.jpg',
    'direction'),
 
-  ('Mme Khaoula JAOUI',
+  ('Khaoula JAOUI',
    'Coordinatrice des Programmes Techniques, Directrice du Département Climat, et Directrice du Département Développement et Mobilisation',
    'Technical Programmes Coordinator, Director of the Climate Department, and Director of the Development and Resource Mobilization Department',
    'Experte en Finance Climatique et GRN',
@@ -525,7 +521,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-08/KhaoulaJaoui.jpg',
    'direction'),
 
-  ('M. Nabil HAMADA',
+  ('Nabil HAMADA',
    'Directeur du Département administratif et financier',
    'Director of the Administrative and Financial Department',
    'Ingénieur Général, Forêt, Ecologie et GRN',
@@ -534,7 +530,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/N-Hamada.jpg',
    'direction'),
 
-  ('M. Mohamedou SY',
+  ('Mohamedou SY',
    'Directeur du Département Eau',
    'Director of the Water Department',
    'Dr. en Hydrogéologie',
@@ -543,7 +539,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-01/BabaSy.jpg',
    'direction'),
 
-  ('M. Mustapha MIMOUNI',
+  ('Mustapha MIMOUNI',
    'Département Veille & Prospective, Data et Plateforme Numérique',
    'Foresight and Prospective, Data and Digital Platform Department',
    'Expert en Télédétection',
@@ -552,7 +548,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-01/Mustapha200.jpg',
    'direction'),
 
-  ('M. Adel REKIK',
+  ('Adel REKIK',
    'Auditeur Interne',
    'Internal Auditor',
    '', '',
@@ -563,7 +559,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
 
 -- ── Team — Technique ──
 INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationality_fr, nationality_en, image, department) VALUES
-  ('Mme Abir BEN ROMDHANE',
+  ('Abir BEN ROMDHANE',
    'Cheffe de la Division de la Biodiversité et des Ecosystèmes',
    'Head of the Biodiversity and Ecosystems Division',
    'Dr. en géologie',
@@ -572,7 +568,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-02/Abir%201.jpg',
    'technique'),
 
-  ('M. Evence LOUIS ZOUNGRANA',
+  ('Evence LOUIS ZOUNGRANA',
    'Chef de la Division Systèmes d’Information & Géomatique',
    'Head of the Information Systems and Geomatics Division',
    'Géographe, expert en SIG, TD et Suivi-Evaluation, Dr. en Sciences Agronomiques',
@@ -581,7 +577,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Zoungrana_0.jpg',
    'technique'),
 
-  ('M. Youssouf AMADOU',
+  ('Youssouf AMADOU',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Spécialiste de Développement Durable',
@@ -590,7 +586,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Youssouf200_0.jpg',
    'technique'),
 
-  ('M. Haithem RAJEB',
+  ('Haithem RAJEB',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Ingénieur en Génie Hydraulique et Environnement',
@@ -599,7 +595,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Haithem200_0.jpg',
    'technique'),
 
-  ('M. Steve MUHANJI',
+  ('Steve MUHANJI',
    'Chef de la Division du Développement et du Montage de projets',
    'Head of the Project Development and Design Division',
    'Master en Sciences de l''Environnement et de la GRN',
@@ -608,7 +604,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-03/SteveMuhanji_0.jpg',
    'technique'),
 
-  ('M. Hamda FOUGHALI',
+  ('Hamda FOUGHALI',
    'Chef de la Division du Renforcement des Capacités',
    'Head of the Capacity Building Division',
    'Master en géomatique d’ingénieur',
@@ -617,7 +613,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Hamda_0.jpg',
    'technique'),
 
-  ('M. Amjed HADJ TAIEB',
+  ('Amjed HADJ TAIEB',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Ingénieur en GRN, Géo-information dans la gestion de l''environnement',
@@ -626,7 +622,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Amjed200_0.jpg',
    'technique'),
 
-  ('M. Aziz BELHAMRA',
+  ('Aziz BELHAMRA',
    'Chef de la Division de l’Adaptation et de l’Atténuation',
    'Head of the Adaptation and Mitigation Division',
    'Ingénieur agronome, Master en Lutte Contre la Désertification',
@@ -635,7 +631,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-01/Aziz.jpg',
    'technique'),
 
-  ('M. Robert David ONYANGO',
+  ('Robert David ONYANGO',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Dr. en changement climatique et adaptation',
@@ -644,7 +640,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-12/Robert-New.jpg',
    'technique'),
 
-  ('M. Omar ENNAIFER',
+  ('Omar ENNAIFER',
    'Chef de l’Unité de la conformité et de l’intégrité',
    'Head of the Compliance and Integrity Unit',
    'Biologiste avec spécialisation en Evolution, Ecologie et Environnement',
@@ -653,7 +649,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Omar200.jpg',
    'technique'),
 
-  ('Mme Leila BENNANI',
+  ('Leila BENNANI',
    'Chargée de Communication',
    'Communications Officer',
    'Spécialiste en stratégie de communication et contenus multimédias',
@@ -662,7 +658,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/leila_bennani.jpg',
    'technique'),
 
-  ('Mme Olfa OTHMAN',
+  ('Olfa OTHMAN',
    'Cheffe de la Division des Publications et de la Gestion des Savoirs',
    'Head of the Publications and Knowledge Management Division',
    'Maîtrise en DBA',
@@ -671,7 +667,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-06/Olfa.jpg',
    'technique'),
 
-  ('Mme Kaouther HAMROUNI',
+  ('Kaouther HAMROUNI',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Dr. en Agronomie',
@@ -680,7 +676,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Kaouther.jpg',
    'technique'),
 
-  ('Mme Olfa Karous',
+  ('Olfa Karous',
    'Cheffe de Division Veille et Prospective par intérim',
    'Acting Head of the Foresight and Prospective Division',
    'Ingénieure-Dr. en sciences agronomiques',
@@ -689,7 +685,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2023-10/OlfaKarous.jpg',
    'technique'),
 
-  ('M. Mohamed AZZABI',
+  ('Mohamed AZZABI',
    'Chargé du Parc Informatique',
    'IT Infrastructure Officer',
    'Ingénieur Système d''Information',
@@ -698,7 +694,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-09/MA_1.jpg',
    'technique'),
 
-  ('Mme Wafa Ameur',
+  ('Wafa Ameur',
    'Assistante Technique',
    'Technical Assistant',
    'Dr. en sciences agronomiques et environnementales',
@@ -707,7 +703,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2023-10/WafaAmeur.jpg',
    'technique'),
 
-  ('M. Aymen BENAHMED',
+  ('Aymen BENAHMED',
    'Assistant Technique',
    'Technical Assistant',
    'Ingénieur Agronome, Master de recherche en Géomatique Appliquée à l’Agr. et à l’Env.',
@@ -716,7 +712,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-12/AymenBENAHMED.jpg',
    'technique'),
 
-  ('M. Khaled LACHAAL',
+  ('Khaled LACHAAL',
    'Chef de la Division Data, IA et Innovation',
    'Head of the Data, AI and Innovation Division',
    'Master en Sécurité des Systèmes d''Information',
@@ -725,7 +721,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-06/khaled.jpg',
    'technique'),
 
-  ('Mme Safa ARFAOUI',
+  ('Safa ARFAOUI',
    'Assistante technique',
    'Technical Assistant',
    'Ingénieure Agronome, Master en Conservation et Restauration des Ecosystèmes Marins',
@@ -734,7 +730,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-12/SafaARFAOUI_0.jpg',
    'technique'),
 
-  ('M. Pouwédéou KAMBIA',
+  ('Pouwédéou KAMBIA',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
    'Master en Télédétection et en Systèmes d''Information Géographique',
@@ -743,7 +739,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-12/Kambia.jpg',
    'technique'),
 
-  ('M. Youssef HADDOUK',
+  ('Youssef HADDOUK',
    'Chargé de la sécurité des Systèmes d''Information',
    'Information Systems Security Officer',
    '', '',
@@ -751,7 +747,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-05/Youssef-Haddouk.jpg',
    'technique'),
 
-  ('Mme Soumaya MOUHLI',
+  ('Soumaya MOUHLI',
    'Cheffe de la Division de l’Hydrologie et des Eaux Partagées',
    'Head of the Hydrology and Shared Waters Division',
    'Ingénieure en Hydraulique',
@@ -760,7 +756,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-09/Soumaya%20FB.png',
    'technique'),
 
-  ('M. Pape Ndiaye',
+  ('Pape Ndiaye',
    'Chef de la Division de la Communication Institutionnelle',
    'Head of the Institutional Communication Division',
    'Master en Communication des Organisations',
@@ -769,7 +765,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-01/Pape.png',
    'technique'),
 
-  ('M. Mehdi CHEBBI',
+  ('Mehdi CHEBBI',
    'Ingénieur DevOps',
    'DevOps Engineer',
    'Ingénierie en Informatique',
@@ -778,7 +774,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-05/Mehdi.jpg',
    'technique'),
 
-  ('Mme Nadia KHAMMARI',
+  ('Nadia KHAMMARI',
    'Cheffe de l’Unité Partenariats et Plaidoyer',
    'Head of the Partnerships and Advocacy Unit',
    'Master en lettres françaises modernes, Arts et Spectacles',
@@ -790,7 +786,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
 
 -- ── Team — Administratif ──
 INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationality_fr, nationality_en, image, department) VALUES
-  ('Mme Sonia ABASSI',
+  ('Sonia ABASSI',
    'Cheffe de l’Unité des Relations Extérieures',
    'Head of the External Relations Unit',
    'Maîtrise Combinée de Langues (MCL)',
@@ -799,7 +795,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Sonia-A.jpg',
    'administratif'),
 
-  ('Mme Souhir BEN HEDIA',
+  ('Souhir BEN HEDIA',
    'Responsable des Affaires Sociales et Logistiques',
    'Social Affairs and Logistics Officer',
    'Maîtrise en droit privé',
@@ -808,7 +804,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Souhir.png',
    'administratif'),
 
-  ('Mme Sonia NJAH',
+  ('Sonia NJAH',
    'Cheffe de la Division des Affaires Administratives et des Moyens Généraux',
    'Head of the Administrative Affairs and General Services Division',
    'Maîtrise en Economie et Relations Internationales',
@@ -817,7 +813,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/_SoniaNjah.jpg',
    'administratif'),
 
-  ('Mme Nadia MATHLOUTHI',
+  ('Nadia MATHLOUTHI',
    'Agent d''accueil',
    'Receptionist',
    '', '',
@@ -825,7 +821,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Nadia-M.jpg',
    'administratif'),
 
-  ('M. Rafik ZIADI',
+  ('Rafik ZIADI',
    'Chef de la Division de la Comptabilité',
    'Head of the Accounting Division',
    'Maîtrise en Gestion Comptable',
@@ -834,7 +830,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Rafik-1.jpg',
    'administratif'),
 
-  ('Mme Henda BELKHODJA',
+  ('Henda BELKHODJA',
    'Assistante Administrative',
    'Administrative Assistant',
    'Licence en Management',
@@ -843,7 +839,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2024-12/HendaBELKHODJA.jpg',
    'administratif'),
 
-  ('Mme Sarra DARDOUR',
+  ('Sarra DARDOUR',
    'Gestionnaire Comptable',
    'Accounting Manager',
    'Diplôme national de Master professionnel en comptabilité',
@@ -852,7 +848,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2025-05/Sarra-Dardour.jpg',
    'administratif'),
 
-  ('M. Karim BEN TRAD',
+  ('Karim BEN TRAD',
    'Chef de la Division des Ressources Humaines',
    'Head of the Human Resources Division',
    'Ecole Nationale d''Administration',
@@ -861,7 +857,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-01/KarimTrad.jpg',
    'administratif'),
 
-  ('Mme Hayet Dorii',
+  ('Hayet Dorii',
    'Assistante administrative',
    'Administrative Assistant',
    '', '',
@@ -869,7 +865,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    '',
    'administratif'),
 
-  ('M. Tarek LARBI',
+  ('Tarek LARBI',
    'Responsable Fiduciaire',
    'Fiduciary Officer',
    'Maîtrise en gestion, marketing',
@@ -878,7 +874,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-06/Tarek-Larbi.jpg',
    'administratif'),
 
-  ('M. Zied SEDIRI',
+  ('Zied SEDIRI',
    'Responsable Financier',
    'Financial Officer',
    'Master professionnel en ingénierie financière et finance d''entreprise',
@@ -890,7 +886,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
 
 -- ── Team — Appui ──
 INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationality_fr, nationality_en, image, department) VALUES
-  ('Mme Souad NAKAA',
+  ('Souad NAKAA',
    'Agent d''entretien',
    'Maintenance Worker',
    '', '',
@@ -898,7 +894,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Souad.jpg',
    'appui'),
 
-  ('M. Fathi ELLALI',
+  ('Fathi ELLALI',
    'Chauffeur',
    'Driver',
    '', '',
@@ -906,7 +902,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Fethi.jpg',
    'appui'),
 
-  ('Mme Najeh EL HADJ AHMED',
+  ('Najeh EL HADJ AHMED',
    'Agent d''entretien',
    'Maintenance Worker',
    '', '',
@@ -914,7 +910,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Najeh.jpg',
    'appui'),
 
-  ('M. Achref OUERTANI',
+  ('Achref OUERTANI',
    'Chauffeur - Agent de liaison',
    'Driver - Liaison Officer',
    '', '',
@@ -922,7 +918,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-01/Achraf-2.jpg',
    'appui'),
 
-  ('M. Louay AZIZI',
+  ('Louay AZIZI',
    'Factotum',
    'General Assistant',
    '', '',
@@ -930,7 +926,7 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2026-01/Louay.jpg',
    'appui'),
 
-  ('Mme Mouna ALLAGUI',
+  ('Mouna ALLAGUI',
    'Agent d''entretien',
    'Maintenance Worker',
    '', '',
