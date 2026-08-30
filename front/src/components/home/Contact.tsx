@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { ArrowRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { contactInfo } from '@/data/contact';
+import { getContactInfo, type ContactInfoKind } from '@/data/contact';
 import type { Locale } from '@/context/locale';
 import { sendContactMessage } from '@/api/mail';
 
-const iconMap: Record<string, React.ElementType> = {
-  Adresse: MapPin,
-  Téléphone: Phone,
-  Email: Mail,
-  Horaires: Clock,
+const iconMap: Record<ContactInfoKind, React.ElementType> = {
+  address: MapPin,
+  phone: Phone,
+  email: Mail,
+  hours: Clock,
 };
 
 export default function Contact() {
@@ -18,6 +18,7 @@ export default function Contact() {
   const [error, setError] = useState('');
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
+  const contactInfo = getContactInfo(locale);
 
   const labels = locale === 'en'
     ? { title: 'Contact us', intro: 'A question, partnership proposal or information request? Our team is ready to help.', name: 'Full name', namePlaceholder: 'Your name', subject: 'Subject', subjectPlaceholder: 'Subject of your message', message: 'Message', messagePlaceholder: 'Your message...', send: 'Send message', sending: 'Sending…', sent: 'Message sent', thanks: 'Thank you for your message. Our team will reply as soon as possible.', error: 'The message could not be sent. Please try again.' }
@@ -57,7 +58,7 @@ export default function Contact() {
             <p className="border-l-4 border-oss-ochre pl-5 text-lg leading-relaxed text-white/80">{labels.intro}</p>
             <ul className="mt-9 grid gap-6">
               {contactInfo.map((item) => {
-                const Icon = iconMap[item.label] ?? MapPin;
+                const Icon = iconMap[item.kind];
                 return (
                   <li key={item.label} className="flex items-start gap-4">
                     <span className="grid h-10 w-10 shrink-0 place-items-center bg-oss-blue text-white">

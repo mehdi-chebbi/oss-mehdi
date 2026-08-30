@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { Check, Clock, Mail, MapPin, Phone, Send } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { BriefcaseBusiness, Check, Clock, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { contactInfo } from '@/data/contact';
-import { getFooterNavLinks, getLegalLinks } from '@/data/navigation';
-import { socials } from '@/data/socials';
+import { getContactInfo, type ContactInfoKind } from '@/data/contact';
+import { getFooterNavLinks } from '@/data/navigation';
 import type { Locale } from '@/context/locale';
 import BrandBands from './BrandBands';
 import { subscribeToNewsletter } from '@/api/mail';
+import { getSocials, type SocialData } from '@/api/auth';
 
-const iconMap: Record<string, React.ElementType> = {
-  Adresse: MapPin,
-  Téléphone: Phone,
-  Email: Mail,
-  Horaires: Clock,
+const iconMap: Record<ContactInfoKind, React.ElementType> = {
+  address: MapPin,
+  phone: Phone,
+  email: Mail,
+  hours: Clock,
 };
 
 export default function Footer() {
@@ -22,8 +23,13 @@ export default function Footer() {
   const [subscriptionError, setSubscriptionError] = useState(false);
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
+  const contactInfo = getContactInfo(locale);
   const footerNavLinks = getFooterNavLinks(locale);
-  const legalLinks = getLegalLinks(locale);
+  const { data: socials = [] } = useQuery<SocialData[]>({
+    queryKey: ['socials'],
+    queryFn: getSocials,
+    staleTime: Infinity,
+  });
 
   const handleSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,7 +54,7 @@ export default function Footer() {
     <footer className="font-oss mt-auto bg-oss-blue-dark text-white">
       <BrandBands />
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
-        <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.15fr_0.8fr_1fr_1.15fr] lg:gap-12 lg:py-16">
+        <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.15fr_1.2fr_1fr_1.15fr] lg:gap-12 lg:py-16">
           <div>
             <div className="inline-block bg-white p-3">
               <img src="/logo-h.webp" alt="Observatoire du Sahara et du Sahel" className="h-16 w-auto" />
@@ -60,8 +66,20 @@ export default function Footer() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {socials.map((social) => (
-                <a key={social.name} href={social.href} aria-label={social.name} className="grid h-9 w-9 place-items-center border border-white/25 text-white/70 transition-colors hover:border-oss-ochre hover:bg-oss-ochre hover:text-oss-blue-dark">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={social.path} /></svg>
+                <a key={social.id} href={social.url} aria-label={social.platform} className="grid h-9 w-9 place-items-center border border-white/25 text-white/70 transition-colors hover:border-oss-ochre hover:bg-oss-ochre hover:text-oss-blue-dark">
+                  {social.icon_file ? (
+                    <img
+                      src={social.icon_file}
+                      alt=""
+                      width="15"
+                      height="15"
+                      className="h-[15px] w-[15px] object-contain"
+                    />
+                  ) : (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d={social.icon_svg} />
+                    </svg>
+                  )}
                 </a>
               ))}
             </div>
@@ -69,7 +87,7 @@ export default function Footer() {
 
           <div>
             <h2 className="border-b border-white/15 pb-3 text-sm font-bold uppercase tracking-[0.1em] text-oss-ochre">Navigation</h2>
-            <ul className="mt-5 grid gap-3">
+            <ul className="mt-5 grid grid-cols-2 gap-x-5 gap-y-3">
               {footerNavLinks.map((link) => (
                 <li key={link.label}>{footerLink(link.href, link.label, 'text-sm text-white/70 transition-colors hover:text-white')}</li>
               ))}
@@ -80,7 +98,7 @@ export default function Footer() {
             <h2 className="border-b border-white/15 pb-3 text-sm font-bold uppercase tracking-[0.1em] text-oss-ochre">Contact</h2>
             <ul className="mt-5 grid gap-4">
               {contactInfo.map((item) => {
-                const Icon = iconMap[item.label] ?? MapPin;
+                const Icon = iconMap[item.kind];
                 return (
                   <li key={item.label} className="flex items-start gap-3 text-sm leading-relaxed text-white/70">
                     <Icon className="mt-0.5 h-4 w-4 shrink-0 text-oss-blue-light" />
@@ -120,18 +138,22 @@ export default function Footer() {
                 </button>
               </form>
             )}
+            <a
+              href="https://application.oss-online.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:border-white hover:bg-white hover:text-oss-blue-dark active:-translate-y-px"
+            >
+              <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
+              {locale === 'en' ? 'Opportunities' : 'Opportunités'}
+            </a>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-white/15 py-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-t border-white/15 py-6 text-xs text-white/50">
           <p>
             © {new Date().getFullYear()} OSS - {locale === 'en' ? 'Sahara and Sahel Observatory. All rights reserved.' : 'Observatoire du Sahara et du Sahel. Tous droits réservés.'}
           </p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {legalLinks.map((link) => (
-              <a key={link.label} href={link.href} className="transition-colors hover:text-white">{link.label}</a>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

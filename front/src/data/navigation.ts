@@ -61,39 +61,5 @@ export function getNavItems(locale: Locale): NavItem[] {
 }
 
 export function getFooterNavLinks(locale: Locale): NavItem[] {
-  if (locale === 'en') {
-    return [
-      { label: 'About us', href: '#qui-sommes-nous' },
-      { label: 'Our fields', href: '#nos-domaines' },
-      { label: 'News', href: '/en/news' },
-      { label: 'Our tools', href: '#' },
-      { label: 'Partners', href: '#partenaires' },
-      { label: 'Opportunities', href: '#opportunites' },
-      { label: 'Contact', href: '#contact' },
-    ];
-  }
-  return [
-    { label: 'Qui sommes-nous', href: '#qui-sommes-nous' },
-    { label: 'Nos domaines', href: '#nos-domaines' },
-    { label: 'Actualités', href: '/fr/news' },
-    { label: 'Nos outils', href: '#' },
-    { label: 'Partenaires', href: '#partenaires' },
-    { label: 'Opportunités', href: '#opportunites' },
-    { label: 'Contact', href: '#contact' },
-  ];
-}
-
-export function getLegalLinks(locale: Locale): NavItem[] {
-  if (locale === 'en') {
-    return [
-      { label: 'Legal notice', href: '#' },
-      { label: 'Privacy policy', href: '#' },
-      { label: 'Sitemap', href: '#' },
-    ];
-  }
-  return [
-    { label: 'Mentions légales', href: '#' },
-    { label: 'Politique de confidentialité', href: '#' },
-    { label: 'Plan du site', href: '#' },
-  ];
+  return getNavItems(locale).flatMap((item) => item.children ?? [item]);
 }

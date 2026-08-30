@@ -577,15 +577,6 @@ INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationalit
    'https://www.oss-online.org/sites/default/files/2022-02/Zoungrana_0.jpg',
    'technique'),
 
-  ('Youssouf AMADOU',
-   'Responsable de Gestion de Projets',
-   'Project Management Officer',
-   'Spécialiste de Développement Durable',
-   'Sustainable Development Specialist',
-   'Centrafricaine', 'Central African',
-   'https://www.oss-online.org/sites/default/files/2022-02/Youssouf200_0.jpg',
-   'technique'),
-
   ('Haithem RAJEB',
    'Responsable de Gestion de Projets',
    'Project Management Officer',
