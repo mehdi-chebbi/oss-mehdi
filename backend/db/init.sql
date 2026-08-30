@@ -288,6 +288,7 @@ CREATE TABLE IF NOT EXISTS projects (
     status          VARCHAR(20) NOT NULL DEFAULT 'en_cours'
                     CHECK (status IN ('en_cours', 'cloture')),
     budget          VARCHAR(100) NOT NULL DEFAULT '',
+    beneficiary_country_codes TEXT[] NOT NULL DEFAULT '{}',
     slug            VARCHAR(200) NOT NULL UNIQUE,
     sort_order      INT NOT NULL DEFAULT 0,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),

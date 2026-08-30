@@ -7,14 +7,32 @@ import {
   getProject,
   createProject,
   updateProject,
+  getAfricanCountries,
   type DepartmentData,
+  type CountryData,
   type ProjectResultFile,
 } from "../../api/auth";
 import ImageUpload from "../../components/admin/ImageUpload";
 import ProjectResultsFiles from "../../components/admin/ProjectResultsFiles";
-import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
+import { Globe, Loader2, ArrowLeft, Info, MapPin, Plus, X } from "lucide-react";
 
 type Lang = "fr" | "en";
+
+interface CountrySelection {
+  key: number;
+  countryCode: string | null;
+  query: string;
+}
+
+let nextCountrySelectionKey = 1;
+
+function createCountrySelection(country?: CountryData): CountrySelection {
+  return {
+    key: nextCountrySelectionKey++,
+    countryCode: country?.iso_code ?? null,
+    query: country ? `${country.name_fr} / ${country.name_en} (${country.iso_code})` : "",
+  };
+}
 
 function LangTabs({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   return (
@@ -66,6 +84,10 @@ export default function ProjectForm() {
   const isEditing = !!id;
 
   const [departments, setDepartments] = useState<DepartmentData[]>([]);
+  const [countries, setCountries] = useState<CountryData[]>([]);
+  const [countrySelections, setCountrySelections] = useState<CountrySelection[]>([
+    createCountrySelection(),
+  ]);
   const [form, setForm] = useState(emptyForm);
   const [slug, setSlug] = useState<string>("");
   const [loading, setLoading] = useState(isEditing);
@@ -79,8 +101,12 @@ export default function ProjectForm() {
     if (!token) return;
     setLoading(true);
     try {
-      const depts = await listAllDepartments(token);
+      const [depts, countryOptions] = await Promise.all([
+        listAllDepartments(token),
+        getAfricanCountries(),
+      ]);
       setDepartments(depts);
+      setCountries(countryOptions);
 
       if (isEditing && id) {
         const project = await getProject(token, Number(id));
@@ -102,6 +128,11 @@ export default function ProjectForm() {
             sort_order: project.sort_order ?? 0,
           });
           setSlug(project.slug || "");
+          setCountrySelections(
+            project.countries?.length
+              ? project.countries.map((country) => createCountrySelection(country))
+              : [createCountrySelection()],
+          );
         }
       } else {
         // New project: pre-select department from ?dept= query param
@@ -135,12 +166,27 @@ export default function ProjectForm() {
       setError("Veuillez sélectionner un département.");
       return;
     }
+    const selectedCountryCodes = countrySelections
+      .map((selection) => selection.countryCode)
+      .filter((countryCode): countryCode is string => countryCode !== null);
+    if (
+      selectedCountryCodes.length !== countrySelections.length ||
+      selectedCountryCodes.length === 0
+    ) {
+      setError("Veuillez sélectionner au moins un pays bénéficiaire valide.");
+      return;
+    }
+    if (new Set(selectedCountryCodes).size !== selectedCountryCodes.length) {
+      setError("Un pays bénéficiaire ne peut être sélectionné qu’une seule fois.");
+      return;
+    }
     setSaving(true);
     setError("");
     setSuccess("");
     try {
       const payload = {
         ...form,
+        country_codes: selectedCountryCodes,
         year_start: form.year_start === "" ? null : Number(form.year_start),
         year_end: form.year_end === "" ? null : Number(form.year_end),
       };
@@ -159,6 +205,42 @@ export default function ProjectForm() {
   };
 
   const set = (key: string, value: any) => setForm((f) => ({ ...f, [key]: value }));
+
+  const countryLabel = (country: CountryData) =>
+    `${country.name_fr} / ${country.name_en} (${country.iso_code})`;
+
+  const updateCountrySelection = (key: number, query: string) => {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const match = countries.find((country) => {
+      const values = [
+        countryLabel(country),
+        country.name_fr,
+        country.name_en,
+        country.iso_code,
+      ];
+      return values.some((value) => value.toLocaleLowerCase() === normalizedQuery);
+    });
+
+    setCountrySelections((selections) =>
+      selections.map((selection) =>
+        selection.key === key
+          ? { ...selection, query, countryCode: match?.iso_code ?? null }
+          : selection,
+      ),
+    );
+  };
+
+  const addCountrySelection = () => {
+    setCountrySelections((selections) => [...selections, createCountrySelection()]);
+  };
+
+  const removeCountrySelection = (key: number) => {
+    setCountrySelections((selections) =>
+      selections.length === 1
+        ? selections
+        : selections.filter((selection) => selection.key !== key),
+    );
+  };
 
   if (loading) {
     return (
@@ -236,6 +318,87 @@ export default function ProjectForm() {
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Beneficiary countries */}
+        <div className="border-t border-ink/5 pt-5">
+          <div className="mb-3 flex items-start justify-between gap-4">
+            <div>
+              <h4 className="flex items-center gap-2 text-sm font-semibold text-ink/70">
+                <MapPin className="h-4 w-4 text-[#489e42]" aria-hidden="true" />
+                Pays bénéficiaires <span className="text-red-500">*</span>
+              </h4>
+              <p className="mt-1 text-xs leading-relaxed text-ink/45">
+                Saisissez quelques lettres, puis choisissez un pays africain dans la liste.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {countrySelections.map((selection, index) => {
+              const listId = `beneficiary-country-options-${selection.key}`;
+              const selectedElsewhere = new Set(
+                countrySelections
+                  .filter((item) => item.key !== selection.key)
+                  .map((item) => item.countryCode)
+                  .filter((countryCode): countryCode is string => countryCode !== null),
+              );
+
+              return (
+                <div key={selection.key} className="flex items-end gap-2">
+                  <label className="min-w-0 flex-1">
+                    <span className="mb-1.5 block text-xs font-medium text-ink/60">
+                      Pays {index + 1}
+                    </span>
+                    <input
+                      type="text"
+                      list={listId}
+                      value={selection.query}
+                      onChange={(event) =>
+                        updateCountrySelection(selection.key, event.target.value)
+                      }
+                      placeholder="Rechercher un pays..."
+                      autoComplete="off"
+                      aria-invalid={Boolean(selection.query && !selection.countryCode)}
+                      className="w-full rounded-lg border border-ink/15 px-4 py-2.5 text-ink outline-none focus:border-transparent focus:ring-2 focus:ring-[#489e42]"
+                    />
+                    <datalist id={listId}>
+                      {countries
+                        .filter(
+                          (country) =>
+                            country.iso_code === selection.countryCode ||
+                            !selectedElsewhere.has(country.iso_code),
+                        )
+                        .map((country) => (
+                          <option key={country.iso_code} value={countryLabel(country)} />
+                        ))}
+                    </datalist>
+                  </label>
+
+                  {countrySelections.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeCountrySelection(selection.key)}
+                      aria-label={`Supprimer le pays ${index + 1}`}
+                      className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-lg border border-red-200 text-red-600 transition-colors hover:bg-red-50 active:-translate-y-px"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={addCountrySelection}
+            disabled={countrySelections.length >= countries.length}
+            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[#489e42]/30 bg-[#489e42]/5 px-4 py-2.5 text-sm font-semibold text-[#3d8a37] transition-colors hover:border-[#489e42]/50 hover:bg-[#489e42]/10 active:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Ajouter un pays
+          </button>
         </div>
 
         {/* Language tabs */}

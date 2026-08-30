@@ -8,6 +8,7 @@ import {
   CircleDot,
   Download,
   FileText,
+  MapPinned,
   Wallet,
 } from 'lucide-react';
 import { statusLabel } from '@/api/auth';
@@ -58,9 +59,9 @@ function formatDuration(
     return locale === 'fr' ? `Jusqu’en ${end}` : `Until ${end}`;
   }
   if (end === null) {
-    return `${start}–${locale === 'fr' ? 'présent' : 'present'}`;
+    return `${start} - ${locale === 'fr' ? 'présent' : 'present'}`;
   }
-  return start === end ? String(start) : `${start}–${end}`;
+  return start === end ? String(start) : `${start} - ${end}`;
 }
 
 function formatFileSize(size?: number) {
@@ -110,6 +111,7 @@ export default function ProjectDetail() {
   const duration = formatDuration(project.year_start, project.year_end, locale);
   const results = locale === 'fr' ? project.results_fr : project.results_en;
   const resultFiles = (project.result_files || []).filter((file) => file.url);
+  const countries = project.countries || [];
   const hasResults = Boolean(results || resultFiles.length);
 
   return (
@@ -236,6 +238,29 @@ export default function ProjectDetail() {
                     <dd className="font-bold tabular-nums text-oss-blue-dark">{duration}</dd>
                   </div>
                 </div>
+
+                {countries.length > 0 && (
+                  <div className="flex items-start gap-3 py-5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-ochre/20 text-oss-blue-dark">
+                      <MapPinned className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <dt className="mb-2 text-xs font-medium text-ink/45">
+                        {locale === 'fr' ? 'Pays bénéficiaires' : 'Beneficiary countries'}
+                      </dt>
+                      <dd className="flex flex-wrap gap-2">
+                        {countries.map((country) => (
+                          <span
+                            key={country.iso_code}
+                            className="border border-oss-blue/20 bg-oss-blue/8 px-2.5 py-1.5 text-xs font-bold leading-snug text-oss-blue-dark"
+                          >
+                            {locale === 'fr' ? country.name_fr : country.name_en}
+                          </span>
+                        ))}
+                      </dd>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-start gap-3 py-5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-ochre/20 text-oss-blue-dark">

@@ -8,11 +8,18 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  listAfricanCountries,
 } from "../services/projects.js";
 
 const router = Router();
 
 // ── Public routes ──
+
+// Shared African-country catalogue for project forms and public metadata.
+router.get("/countries", async (_req, res) => {
+  const countries = await listAfricanCountries();
+  res.json(countries);
+});
 
 // Projects for a department (by dept slug)
 // GET /api/projects/dept/:deptSlug
@@ -74,10 +81,13 @@ router.post("/", editorOrAdmin, async (req, res) => {
       status,
       budget,
       sort_order,
+      country_codes,
     } = req.body;
 
-    if (!department_id || !title_fr || !title_en) {
-      res.status(400).json({ error: "department_id, title_fr and title_en are required" });
+    if (!department_id || !title_fr || !title_en || !Array.isArray(country_codes) || country_codes.length === 0) {
+      res.status(400).json({
+        error: "department_id, title_fr, title_en and at least one beneficiary country are required",
+      });
       return;
     }
 
@@ -96,6 +106,7 @@ router.post("/", editorOrAdmin, async (req, res) => {
       status,
       budget,
       sort_order,
+      country_codes,
     });
     res.status(201).json(project);
   } catch (err: any) {

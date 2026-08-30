@@ -342,6 +342,31 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    9);
 
 
+-- ── Beneficiary countries for seeded projects ──
+UPDATE projects AS p
+SET beneficiary_country_codes = mapping.country_codes
+FROM (VALUES
+  ('dress-ea-drought-resilience', ARRAY['DJ', 'KE', 'SD', 'UG']::TEXT[]),
+  ('adswac-climate-adaptation', ARRAY['AO', 'NA']::TEXT[]),
+  ('ricowas-climate-resilient-rice', ARRAY['BJ', 'BF', 'CI', 'GM', 'GH', 'GN', 'LR', 'ML', 'NE', 'NG', 'SN', 'SL', 'TG']::TEXT[]),
+  ('apica-gnb-coastal-agriculture', ARRAY['GW']::TEXT[]),
+  ('readiness-libya-2', ARRAY['LY']::TEXT[]),
+  ('readiness-eritrea-1', ARRAY['ER']::TEXT[]),
+  ('crew-angola', ARRAY['AO']::TEXT[]),
+  ('ccailso-siwa-oasis', ARRAY['EG']::TEXT[]),
+  ('gmes-earth-observation', ARRAY['DZ', 'EG', 'LY', 'MA', 'MR', 'TN']::TEXT[]),
+  ('digital-earth-africa', ARRAY['BF', 'TN']::TEXT[]),
+  ('oss-air-cas-watermap', ARRAY['TN']::TEXT[]),
+  ('digital-transformation-decision-support', ARRAY['BF', 'TD', 'ML', 'MR', 'NE', 'SN']::TEXT[]),
+  ('monitoring-foresight-climate-book', ARRAY['DZ', 'EG', 'KE', 'SN', 'TN', 'ZA']::TEXT[]),
+  ('ecosystems-climate-adaptation-maghreb-sahel', ARRAY['DZ', 'ML', 'MA', 'MR', 'NE', 'TN']::TEXT[]),
+  ('knowledge-notes-thematic-articles', ARRAY['EG', 'MR', 'SN', 'TN']::TEXT[]),
+  ('project-proposal-development', ARRAY['DZ', 'EG', 'LY', 'MA', 'TN']::TEXT[]),
+  ('strategy-2030-mid-term-evaluation', ARRAY['DZ', 'MA', 'MR', 'SN', 'TN']::TEXT[])
+) AS mapping(project_slug, country_codes)
+WHERE p.slug = mapping.project_slug;
+
+
 -- ── Department - Land and Biodiversity ──
 INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
   ('Département Terre et Biodiversité',

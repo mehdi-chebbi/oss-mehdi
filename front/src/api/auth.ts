@@ -968,6 +968,12 @@ export interface ProjectResultFile {
   size?: number;
 }
 
+export interface CountryData {
+  iso_code: string;
+  name_fr: string;
+  name_en: string;
+}
+
 export interface ProjectData {
   id: number;
   department_id: number;
@@ -983,6 +989,9 @@ export interface ProjectData {
   year_end: number | null;
   status: ProjectStatus;
   budget: string;
+  beneficiary_country_codes: string[];
+  countries: CountryData[];
+  country_codes?: string[];
   slug: string;
   sort_order: number;
   created_at?: string;
@@ -991,6 +1000,10 @@ export interface ProjectData {
   department_slug?: string;
   department_title_fr?: string;
   department_title_en?: string;
+}
+
+export async function getAfricanCountries() {
+  return request<CountryData[]>("/projects/countries");
 }
 
 // Status label helper (bilingual)
