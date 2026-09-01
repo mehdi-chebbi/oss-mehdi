@@ -27,7 +27,7 @@ INSERT INTO fields (page_id, title_fr, title_en, description_fr, description_en,
    'Biodiversité', 'Biodiversity',
    'Protection du patrimoine biologique et promotion d''une gestion intégrée des écosystèmes en Afrique.',
    'Protecting biological heritage and promoting integrated ecosystem management in Africa.',
-   '/terre.jpg', 140, 4);
+   '/hero.jpg', 140, 4);
 
 
 -- ── News (Actualités) ──

@@ -148,6 +148,12 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
               <AlertCircle className="h-4 w-4" />
               {currentLang === 'en' ? 'Complaints' : 'Plaintes'}
             </Link>
+            <button
+              type="button"
+              className="inline-flex h-9 items-center bg-oss-blue px-3 text-xs font-bold text-white transition-colors hover:bg-oss-blue-dark"
+            >
+              {currentLang === 'en' ? 'Members' : 'Membres'}
+            </button>
           </div>
 
           <button
@@ -199,13 +205,21 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                 ))}
               </div>
             </div>
-            <Link
-              to={`/${currentLang}/report`}
-              className="mt-4 flex min-h-11 items-center justify-center gap-2 bg-oss-ochre px-4 text-sm font-bold text-oss-blue-dark"
-            >
-              <AlertCircle className="h-4 w-4" />
-              {currentLang === 'en' ? 'File a complaint' : 'Déposer une plainte'}
-            </Link>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Link
+                to={`/${currentLang}/report`}
+                className="flex min-h-11 items-center justify-center gap-2 bg-oss-ochre px-4 text-center text-sm font-bold text-oss-blue-dark"
+              >
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {currentLang === 'en' ? 'File a complaint' : 'Déposer une plainte'}
+              </Link>
+              <button
+                type="button"
+                className="flex min-h-11 items-center justify-center bg-oss-blue px-4 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark"
+              >
+                {currentLang === 'en' ? 'Members' : 'Membres'}
+              </button>
+            </div>
           </div>
         </div>
 

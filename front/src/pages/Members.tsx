@@ -36,18 +36,18 @@ export default function Members() {
   ];
 
   const organisations = [
-    { abbr: 'APGMV', name: 'Agence Panafricaine de la Grande Muraille Verte' },
-    { abbr: 'CARI', name: "Centre d'Actions et de Réalisations Internationales" },
-    { abbr: 'CRTEAN', name: "Centre Régional de Télédétection des Etats de l'Afrique du Nord" },
-    { abbr: 'CILSS', name: "Comité permanent Inter-Etats de Lutte contre la Sécheresse dans le Sahel" },
-    { abbr: 'CBLT', name: 'Commission du Bassin du Lac Tchad' },
+    { abbr: 'APGMV', name: 'Agence Panafricaine de la Grande Muraille Verte', logo: '/member-logos/apgmv.jpg' },
+    { abbr: 'CARI', name: "Centre d'Actions et de Réalisations Internationales", logo: '/member-logos/cari.png' },
+    { abbr: 'CRTEAN', name: "Centre Régional de Télédétection des Etats de l'Afrique du Nord", logo: '/member-logos/crtean.jpg' },
+    { abbr: 'CILSS', name: "Comité permanent Inter-Etats de Lutte contre la Sécheresse dans le Sahel", logo: '/member-logos/cilss.png' },
+    { abbr: 'CBLT', name: 'Commission du Bassin du Lac Tchad', logo: '/member-logos/cblt.jpg' },
     { abbr: 'CENSAD', name: 'Communauté des Etats sahélo-sahariens' },
-    { abbr: 'CNULCD', name: 'Convention des Nations Unies sur la Lutte Contre la Désertification' },
+    { abbr: 'CNULCD', name: 'Convention des Nations Unies sur la Lutte Contre la Désertification', logo: '/member-logos/cnulcd.png' },
     { abbr: 'CRU-BN', name: "Coordination Régionale des Usagers.eres des ressources naturelles du Bassin du Niger" },
     { abbr: 'ENDA', name: 'Environnement et Développement du tiers-monde' },
-    { abbr: 'IGAD', name: 'Intergovernmental Authority on Development' },
-    { abbr: 'FAO', name: "Organisation des Nations Unies pour l'alimentation et l'agriculture" },
-    { abbr: 'UMA', name: 'Union du Maghreb Arabe' },
+    { abbr: 'IGAD', name: 'Intergovernmental Authority on Development', logo: '/member-logos/igad.png' },
+    { abbr: 'FAO', name: "Organisation des Nations Unies pour l'alimentation et l'agriculture", logo: '/member-logos/fao.png' },
+    { abbr: 'UMA', name: 'Union du Maghreb Arabe', logo: '/member-logos/uma.png' },
   ];
 
   const admissionSteps = [
@@ -154,7 +154,19 @@ export default function Members() {
           {organisations.map((org, index) => (
             <article key={org.abbr} className="group relative grid h-32 grid-cols-[8rem_1fr] overflow-hidden border-b border-r border-oss-line bg-white transition-colors duration-300 hover:bg-oss-blue/5">
               <span className={`absolute left-0 top-0 h-1 w-12 transition-all duration-300 group-hover:w-full ${index % 3 === 0 ? "bg-oss-blue" : index % 3 === 1 ? "bg-oss-green" : "bg-oss-ochre"}`} aria-hidden="true" />
-              <div className="flex min-h-full items-center justify-center border-r border-oss-line bg-oss-paper" aria-label={`Emplacement du logo ${org.abbr}`} />
+              <div className="flex min-h-full items-center justify-center overflow-hidden border-r border-oss-line bg-oss-paper">
+                {org.logo ? (
+                  <img
+                    src={org.logo}
+                    alt={`Logo ${org.abbr}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-contain p-3 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none"
+                  />
+                ) : (
+                  <span className="sr-only">Emplacement du logo {org.abbr}</span>
+                )}
+              </div>
               <div className="min-w-0 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-bold tracking-[0.06em] text-oss-blue">{org.abbr}</span>

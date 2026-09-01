@@ -6,7 +6,7 @@ interface AuthState {
   token: string | null;
   user: User | null;
   loading: boolean;
-  login: (accessToken: string) => void;
+  login: (accessToken: string, user: User) => void;
   logout: () => Promise<void>;
   logoutEverywhere: () => Promise<void>;
   logoutReason: string | null; // "reuse_detected" | "expired" | null
@@ -73,9 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const loginFn = useCallback((accessToken: string) => {
+  const loginFn = useCallback((accessToken: string, authenticatedUser: User) => {
     setAccessToken(accessToken);
     setToken(accessToken);
+    setUser(authenticatedUser);
     setLogoutReason(null);
   }, []);
 

@@ -95,7 +95,7 @@ export default function Login() {
     try {
       const data = await loginApi(email, password, captchaToken || undefined);
       // Refresh token is set as httpOnly cookie automatically by the server
-      login(data.accessToken);
+      login(data.accessToken, data.user);
       navigate("/admin");
     } catch (err: any) {
       const msg = err?.message || "";

@@ -58,7 +58,7 @@ const pillars: Record<PillarName, {
   Biodiversité: {
     text: 'Protection du patrimoine biologique et suivi environnemental pour préserver les écosystèmes africains face aux pressions anthropiques et climatiques.',
     tags: ['Suivi écologique', 'Solutions fondées sur la nature', 'Conservation des habitats'],
-    image: '/umbrella-tun.webp',
+    image: '/hero.jpg',
     accent: 'bg-oss-teal',
     surface: 'bg-oss-teal/10',
     active: 'border-oss-teal text-oss-blue-dark',
