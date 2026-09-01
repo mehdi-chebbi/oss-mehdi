@@ -6,7 +6,7 @@ import type { Locale } from '@/context/locale';
 interface DomainProjectsSectionProps {
   locale: Locale;
   projects: ProjectData[];
-  departmentSlug: string;
+  thematicSlug: string;
   description: Record<Locale, string>;
 }
 
@@ -22,7 +22,7 @@ function projectYears(start: number | null, end: number | null, locale: Locale) 
   return start === end ? `${start}` : `${start} - ${end}`;
 }
 
-export default function DomainProjectsSection({ locale, projects, departmentSlug, description }: DomainProjectsSectionProps) {
+export default function DomainProjectsSection({ locale, projects, thematicSlug, description }: DomainProjectsSectionProps) {
   return (
     <section className="mx-auto max-w-[1400px] px-6 pb-20 sm:px-8 sm:pb-24 lg:px-12 lg:pb-28">
       <div className="border-t border-oss-line pt-12 sm:pt-14">
@@ -40,7 +40,7 @@ export default function DomainProjectsSection({ locale, projects, departmentSlug
               const projectDescription = locale === 'fr' ? project.description_fr : project.description_en;
               const years = projectYears(project.year_start, project.year_end, locale);
               return (
-                <Link key={project.id} to={`/${locale}/projects/${departmentSlug}/${project.slug}`} className="group flex min-h-full flex-col overflow-hidden bg-white outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-oss-green">
+                <Link key={project.id} to={`/${locale}/projects/${thematicSlug}/${project.slug}`} className="group flex min-h-full flex-col overflow-hidden bg-white outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-oss-green">
                   <div className="relative aspect-[16/10] overflow-hidden bg-oss-blue-dark/5">
                     {project.image ? (
                       <img src={project.image} alt={title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -68,11 +68,11 @@ export default function DomainProjectsSection({ locale, projects, departmentSlug
           </div>
         ) : (
           <div className="mt-10 border-l-4 border-oss-green bg-white px-6 py-8 text-ink/60">
-            {locale === 'fr' ? 'Les projets de ce département seront bientôt disponibles.' : 'Projects from this department will be available soon.'}
+            {locale === 'fr' ? 'Les projets de cette thématique seront bientôt disponibles.' : 'Projects from this thematic area will be available soon.'}
           </div>
         )}
 
-        <Link to={`/${locale}/projects/${departmentSlug}`} className="mt-10 inline-flex min-h-12 items-center gap-3 bg-oss-blue px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oss-green focus-visible:ring-offset-2 active:translate-y-px">
+        <Link to={`/${locale}/projects/${thematicSlug}`} className="mt-10 inline-flex min-h-12 items-center gap-3 bg-oss-blue px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-oss-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oss-green focus-visible:ring-offset-2 active:translate-y-px">
           {locale === 'fr' ? 'Voir tous les projets' : 'View all projects'}
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>

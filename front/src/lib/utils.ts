@@ -23,3 +23,19 @@ export function createClientId() {
 
   return `client-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
+
+const frenchConnectorPattern =
+  /(^|[\s([{«])(à|a|au|aux|de|du|des|le|la|les|un|une|et|en|se|sur|pour|dans|par)[ \t]+(?=\S)/giu
+
+export function formatFrenchTypography(value: string) {
+  let formatted = value
+
+  for (let pass = 0; pass < 2; pass += 1) {
+    formatted = formatted.replace(
+      frenchConnectorPattern,
+      (_match, prefix: string, connector: string) => `${prefix}${connector}\u00a0`,
+    )
+  }
+
+  return formatted
+}

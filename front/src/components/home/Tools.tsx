@@ -22,9 +22,6 @@ export default function Tools({ items: tools }: ToolsProps) {
     <section className="overflow-hidden bg-oss-paper py-10 lg:py-12">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-3xl">
-          <p className="oss-kicker mb-4">
-            {locale === 'fr' ? 'Connaissance et décision' : 'Knowledge and decisions'}
-          </p>
           <h2 className="oss-section-title">
             {locale === 'fr' ? 'Nos outils' : 'Our tools'}
           </h2>

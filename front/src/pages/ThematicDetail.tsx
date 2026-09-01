@@ -2,7 +2,7 @@ import { useLoaderData, useParams, Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Briefcase, FolderOpen } from 'lucide-react';
 import { statusLabel, yearRange } from '@/api/auth';
 import type { Locale } from '@/context/locale';
-import type { DepartmentDetailLoaderData } from '@/loaders/public';
+import type { ThematicDetailLoaderData } from '@/loaders/public';
 
 function truncate(text: string, max = 130): string {
   if (!text) return '';
@@ -11,19 +11,19 @@ function truncate(text: string, max = 130): string {
   return clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
 }
 
-export default function DepartmentDetail() {
-  const { lang, deptSlug } = useParams<{ lang: string; deptSlug: string }>();
+export default function ThematicDetail() {
+  const { lang, thematicSlug } = useParams<{ lang: string; thematicSlug: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
-  const { dept, projects } = useLoaderData() as DepartmentDetailLoaderData;
+  const { thematic, projects } = useLoaderData() as ThematicDetailLoaderData;
 
   // 404
-  if (!dept) {
+  if (!thematic) {
     return (
       <div className="flex-1 flex items-center justify-center bg-bone py-20">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-ink mb-3">404</h1>
           <p className="text-ink/50 mb-6">
-            {locale === 'fr' ? 'Département introuvable.' : 'Department not found.'}
+            {locale === 'fr' ? 'Thématique introuvable.' : 'Thematic area not found.'}
           </p>
           <Link
             to={`/${locale}/projects`}
@@ -37,8 +37,8 @@ export default function DepartmentDetail() {
     );
   }
 
-  const title = locale === 'fr' ? dept.title_fr : dept.title_en;
-  const description = locale === 'fr' ? dept.description_fr : dept.description_en;
+  const title = locale === 'fr' ? thematic.title_fr : thematic.title_en;
+  const description = locale === 'fr' ? thematic.description_fr : thematic.description_en;
 
   return (
     <div className="bg-bone pb-20">
@@ -49,10 +49,10 @@ export default function DepartmentDetail() {
           className="inline-flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Tous les départements' : 'All departments'}
+          {locale === 'fr' ? 'Toutes les thématiques' : 'All thematic areas'}
         </Link>
 
-        {/* Department header */}
+        {/* Thematic header */}
         <div className="mb-10 max-w-2xl">
           <div className="h-1 w-12 bg-[#489e42] mb-5" />
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
@@ -65,10 +65,10 @@ export default function DepartmentDetail() {
           )}
         </div>
 
-        {/* Projects in this department */}
+        {/* Projects in this thematic area */}
         <div className="border-t border-ink/10 pt-10">
           <h2 className="font-serif font-bold text-2xl text-ink mb-6">
-            {locale === 'fr' ? 'Projets dans ce département' : 'Projects in this department'}
+            {locale === 'fr' ? 'Projets dans cette thématique' : 'Projects in this thematic area'}
           </h2>
 
           {projects.length === 0 ? (
@@ -79,8 +79,8 @@ export default function DepartmentDetail() {
               </div>
               <p className="text-ink/50 mb-1">
                 {locale === 'fr'
-                  ? 'Aucun projet dans ce département pour le moment.'
-                  : 'No projects in this department yet.'}
+                  ? 'Aucun projet dans cette thématique pour le moment.'
+                  : 'No projects in this thematic area yet.'}
               </p>
               <p className="text-sm text-ink/40">
                 {locale === 'fr' ? 'Revenez bientôt.' : 'Check back soon.'}
@@ -96,7 +96,7 @@ export default function DepartmentDetail() {
                 return (
                   <Link
                     key={project.id}
-                    to={`/${locale}/projects/${deptSlug}/${project.slug}`}
+                    to={`/${locale}/projects/${thematicSlug}/${project.slug}`}
                     className="group block bg-white rounded-xl shadow-sm border border-ink/5 overflow-hidden hover:shadow-md transition-shadow"
                   >
                     {/* Image */}
@@ -159,7 +159,7 @@ export default function DepartmentDetail() {
           className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-[#489e42] transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour aux départements' : 'Back to all departments'}
+          {locale === 'fr' ? 'Retour aux thématiques' : 'Back to all thematic areas'}
         </Link>
       </div>
     </div>

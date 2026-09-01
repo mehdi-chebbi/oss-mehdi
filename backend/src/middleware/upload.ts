@@ -13,7 +13,7 @@ const VALID_SECTIONS = [
   "partners",
   "socials",
   "news",
-  "departments",
+  "thematics",
   "projects",
   "project-results",
   "team",

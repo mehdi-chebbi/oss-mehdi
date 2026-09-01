@@ -129,19 +129,19 @@ INSERT INTO tools (page_id, title_fr, title_en, description_fr, description_en, 
    '/readiness-eritrea.webp', 'https://readiness-ery.oss-online.org/', 9);
 
 
--- ── Departments — Climate ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
-  ('Département Climat',
-   'Climate Department',
+-- ── Thematic area — Climate ──
+INSERT INTO thematics (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
+  ('Climat',
+   'Climate',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS)',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS)',
-   'climate-department',
+   'climate',
    1);
 
 
--- ── Projects — Climate Department ──
-INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+-- ── Projects — Climate thematic area ──
+INSERT INTO projects (thematic_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'DRESS-EA : Renforcement de la résilience à la sécheresse des petits exploitants agricoles et pasteurs dans la région de l''IGAD',
    'DRESS-EA: Strengthening drought resilience of smallholder farmers and pastoralists in the IGAD region',
    'Pays : Djibouti, Kenya, Soudan, Ouganda. Résultats clés 2025 : Harmonisation régionale des SAP, infrastructures météo équipées, ~1800 ménages desservis par infrastructures hydrauliques, distribution de chèvres et semences résistantes, 5 notes politiques transversales. Programme 2026 : Réhabilitation de haffiers, système micro-irrigation, renforcement du système d''alerte précoce, assurance contre la sécheresse.',
@@ -152,7 +152,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'dress-ea-drought-resilience',
    1),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'ADSWAC : Renforcement de la capacité d''adaptation au changement climatique des communautés du Sud-Ouest de l''Afrique touchées par la sécheresse',
    'ADSWAC: Strengthening the climate change adaptation capacity of drought-affected communities in South-West Africa',
    'Pays : Angola, Namibie. Résultats clés 2025 : 130 structures communautaires formées, 130 parcelles modèles confirmées, construction des Centres d''Action contre le Changement Climatique. Programme 2026 : Achèvement des infrastructures hydriques, lancement des activités génératrices de revenus, microfinance, production agroécologique.',
@@ -163,7 +163,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'adswac-climate-adaptation',
    2),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'RICOWAS : Mise à l''échelle de la production de riz résiliente au climat en Afrique de l''Ouest',
    'RICOWAS: Scaling up climate-resilient rice production in West Africa',
    'Pays : Bénin, Burkina Faso, Côte d''Ivoire, Gambie, Ghana, Guinée, Liberia, Mali, Niger, Nigeria, Sénégal, Sierra Leone, Togo. Résultats clés 2025 : 2e atelier ToT régional, ~300 formateurs nationaux formés, 8 682 producteurs renforcés sur le SRI. Programme 2026 : Finalisation de la revue à mi-parcours, intensification du modèle de formation en cascade, partenariats public-privé.',
@@ -174,7 +174,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'ricowas-climate-resilient-rice',
    3),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'APICA-GNB : Adaptation des systèmes de production agricole dans les zones côtières du Nord-Ouest de la Guinée-Bissau',
    'APICA-GNB: Adaptation of agricultural production systems in the coastal zones of North-West Guinea-Bissau',
    'Pays : Guinée-Bissau (Oio & Cacheu). Résultats clés 2025 : Entrée en phase d''exécution opérationnelle, études de référence, 2 Groupes d''Observation mis en place. Programme 2026 : Création des CCC, opérationnalisation des Groupes d''Observation, serres de multiplication des plants de mangrove, restauration écologique.',
@@ -185,7 +185,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'apica-gnb-coastal-agriculture',
    4),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'Readiness Libye 2 : Renforcer les capacités institutionnelles, humaines et techniques du système libyen de financement climatique',
    'Readiness Libya 2: Strengthening the institutional, human and technical capacities of the Libyan climate finance system',
    'Pays : Libye. Résultats clés 2025 : Élaboration du programme national GCF finalisée, 2 notes secteur public préparées, cadre national de suivi mis en place. Programme 2026 : Mise en œuvre du programme national GCF, accompagnement pour accréditation, structuration du cadre MRV.',
@@ -196,7 +196,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'readiness-libya-2',
    5),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'Readiness Érythrée 1 : Renforcement des capacités institutionnelles, humaines et techniques du système érythréen de financement climatique',
    'Readiness Eritrea 1: Strengthening the institutional, human and technical capacities of the Eritrean climate finance system',
    'Pays : Érythrée. Résultats clés 2025 : Secrétariat AND mis en place, atelier national sur procédures GCF, mécanisme de non-objection développé. Programme 2026 : Développement du programme pays GCF, accompagnement des entités identifiées pour accréditation, élaboration de 2 notes conceptuelles.',
@@ -207,7 +207,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'readiness-eritrea-1',
    6),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'CREW Angola : Autonomisation des groupes de femmes pour renforcer la résilience aux impacts climatiques dans la province de Cunene, Sud-Ouest de l''Angola',
    'CREW Angola: Empowering women''s groups to strengthen resilience to climate impacts in Cunene province, South-West Angola',
    'Pays : Angola (Cunene). Résultats 2025 : Projet approuvé par le GCF, planification des activités 2026. Programme 2026 : Atelier de lancement, équipe, études de base, mapping bénéficiaires.',
@@ -218,7 +218,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'crew-angola',
    7),
 
-  ((SELECT id FROM departments WHERE slug = 'climate-department'),
+  ((SELECT id FROM thematics WHERE slug = 'climate'),
    'CCAILSO : Adaptation au changement climatique pour l''amélioration des moyens de subsistance dans l''oasis de Siwa',
    'CCAILSO: Climate change adaptation for livelihoods improvement in the Siwa oasis',
    'Pays : Égypte (Oasis de Siwa). Résultats 2025 : Projet approuvé par le FA, planification des activités 2026. Programme 2026 : Atelier de lancement, équipe, études de base, mapping bénéficiaires.',
@@ -230,10 +230,10 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    8);
 
 
--- ── Departments — Technology, Information and Remote Sensing ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
-  ('Département Technologie, Information et Télédétection',
-   'Department of Technology, Information and Remote Sensing',
+-- ── Thematic area — Technology, Information and Remote Sensing ──
+INSERT INTO thematics (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
+  ('Technologie, Information et Télédétection',
+   'Technology, Information and Remote Sensing',
    'Rapport d''activité 2025 & Programme d''activité 2026 — Observatoire du Sahara et du Sahel (OSS). Démarche stratégique intégrée pour transformer la donnée environnementale en appui direct à la décision, s''appuyant sur des services géospatiaux, le cloud computing et l''intelligence artificielle.',
    '2025 Activity Report & 2026 Activity Program — Sahara and Sahel Observatory (OSS). Integrated strategic approach to transform environmental data into direct decision support, relying on geospatial services, cloud computing and artificial intelligence.',
    'technology-information-remote-sensing',
@@ -241,8 +241,8 @@ INSERT INTO departments (title_fr, title_en, description_fr, description_en, slu
 
 
 -- ── Projects — Technology, Information and Remote Sensing ──
-INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+INSERT INTO projects (thematic_id, title_fr, title_en, description_fr, description_en, image, year_start, year_end, status, budget, slug, sort_order) VALUES
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'GMES : Appui à la gestion durable de l''eau et des ressources naturelles à travers la valorisation des données et technologies d''Observation de la Terre',
    'GMES: Support for sustainable water and natural resource management through the valorization of Earth Observation data and technologies',
    'Résultats clés 2025 : FarmBot (outil de diagnostic des maladies des cultures), lancement de MISLAND-Africa (plateforme de suivi de la dégradation des terres, application mobile, plugin QGIS, réseau JIN de plus de 275 experts, versions nationales déployées en Égypte et Mauritanie). Programme 2026 : Désignation par la CNULCD comme partenaire technique régional pour 26 pays africains pour le rapportage ODD 15.3.1, cartographie continentale, formation des formateurs, opérationnalisation du FarmBot, hackathons.',
@@ -253,7 +253,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'gmes-earth-observation',
    1),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Digital Earth Africa : Renforcement des capacités en Observation de la Terre',
    'Digital Earth Africa: Capacity building in Earth Observation',
    'Pays : Burkina Faso, Tunisie. Résultats clés 2025 : Mise en place de communautés d''utilisateurs, plus de 160 experts et décideurs formés, développement de scripts pour le suivi de la dégradation des terres, ateliers nationaux sur l''Observation de la Terre, le cloud computing et l''IA.',
@@ -264,7 +264,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'digital-earth-africa',
    2),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Partenariat OSS/AIR-CAS : Suivi et évaluation des ressources en eau et de leur utilisation à des fins agricoles en Tunisie',
    'OSS/AIR-CAS Partnership: Monitoring and evaluation of water resources and their agricultural use in Tunisia',
    'Pays : Tunisie. Partenaire : Aerospace Information Research Institute (AIR-CAS). Résultats clés 2025 : Plateforme WaterMap N-Africa pour la diffusion de données géospatiales sur les besoins en eau des cultures et l''efficacité de l''utilisation agricole à échelle décadaire, session de formation sur le suivi de l''eau agricole.',
@@ -275,7 +275,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'oss-air-cas-watermap',
    3),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Transformation numérique — Systèmes et applications d''aide à la décision',
    'Digital transformation — Decision support systems and applications',
    'Résultats clés 2025 : Développement de plateformes décisionnelles incluant la gestion des appels d''offres, l''inventaire informatique, la gestion électronique des documents (GED), le suivi de la dégradation des terres au Sahel (15 pays) et la dissémination des résultats AdaptWAP.',
@@ -286,7 +286,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'digital-transformation-decision-support',
    4),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Programme Veille et Prospective (V&P) : Livre documentaire sur le changement climatique en Afrique',
    'Monitoring and Foresight Program (M&F): Documentary book on climate change in Africa',
    'Résultats 2025 : Progrès majeurs dans la conception et la production de l''ouvrage avec une approche participative, intégration d''exemples concrets d''adaptation et d''innovation africaines. Programme 2026 : Publication du livre lors d''événements OSS et production d''un policy brief.',
@@ -297,7 +297,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'monitoring-foresight-climate-book',
    5),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Écosystèmes et adaptation au changement climatique au Maghreb/Sahel',
    'Ecosystems and climate change adaptation in the Maghreb/Sahel',
    'Résultats 2025 : Fédération des communautés autour de la GDT et de l''adaptation au CC, plaidoyer pour la préservation des écosystèmes, diffusion des messages lors d''événements internationaux (GISS, UICN). Programme 2026 : Renforcement de la diffusion des outils de plaidoyer et production d''une vidéo documentaire.',
@@ -308,7 +308,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'ecosystems-climate-adaptation-maghreb-sahel',
    6),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Notes de synthèse, articles thématiques et mise en débat des connaissances',
    'Summary notes, thematic articles and knowledge debate',
    'Résultats 2025 : Publication d''articles thématiques (sécurité hydrique, biodiversité, pollution plastique), production d''un compendium sur les solutions fondées sur la nature, documents sur le méthane, engagement dans le consortium IYRP pour la région MENA. Programme 2026 : Production de notes d''orientation et contribution au Consortium IYRP 2026.',
@@ -319,7 +319,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'knowledge-notes-thematic-articles',
    7),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Développement de requêtes de projets',
    'Development of project proposals',
    'Résultats 2025 : Soumission à l''AFD (programme AdaptAction) d''une proposition de projet pour renforcer la résilience des systèmes alimentaires en Afrique du Nord et au Moyen-Orient par la co-création de connaissances et la valorisation des savoirs locaux face au stress hydrique et au changement climatique.',
@@ -330,7 +330,7 @@ INSERT INTO projects (department_id, title_fr, title_en, description_fr, descrip
    'project-proposal-development',
    8),
 
-  ((SELECT id FROM departments WHERE slug = 'technology-information-remote-sensing'),
+  ((SELECT id FROM thematics WHERE slug = 'technology-information-remote-sensing'),
    'Évaluation à mi-parcours de la Stratégie 2030',
    'Mid-term evaluation of the 2030 Strategy',
    'Résultats 2025 : Évaluation externe et indépendante couvrant la période 2020–2024, appréciation du degré de réalisation des objectifs, vérification de la pertinence et efficacité de la Stratégie 2030. Programme 2026 : Ajustement du cadre stratégique, consolidation du programme de veille et prospective, accélération de la mobilisation de la finance climat.',
@@ -367,22 +367,22 @@ FROM (VALUES
 WHERE p.slug = mapping.project_slug;
 
 
--- ── Department - Land and Biodiversity ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
-  ('Département Terre et Biodiversité',
-   'Land and Biodiversity Department',
+-- ── Thematic area - Land and Biodiversity ──
+INSERT INTO thematics (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
+  ('Terre et Biodiversité',
+   'Land and Biodiversity',
    'Préserver la biodiversité, restaurer les écosystèmes et renforcer la résilience des territoires et des communautés.',
    'Preserving biodiversity, restoring ecosystems and strengthening the resilience of territories and communities.',
-   'land-biodiversity-department',
+   'land-biodiversity',
    3);
 
--- ── Department - Water ──
-INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
-  ('Département Eau',
-   'Water Department',
+-- ── Thematic area - Water ──
+INSERT INTO thematics (title_fr, title_en, description_fr, description_en, slug, sort_order) VALUES
+  ('Eau',
+   'Water',
    'Améliorer la connaissance, la gouvernance et la gestion durable des ressources en eau souterraines et de surface.',
    'Improving knowledge, governance and sustainable management of groundwater and surface water resources.',
-   'water-department',
+   'water',
    4);
 
 

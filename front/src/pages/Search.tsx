@@ -145,7 +145,7 @@ export default function Search() {
                 {results.projects.map((item) => (
                   <ResultRow
                     key={item.id}
-                    to={`/${locale}/projects/${item.department_slug}/${item.slug}`}
+                    to={`/${locale}/projects/${item.thematic_slug}/${item.slug}`}
                     title={item.title}
                     excerpt={item.excerpt}
                   />

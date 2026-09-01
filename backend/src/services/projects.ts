@@ -10,7 +10,7 @@ export type ProjectCountry = AfricanCountry;
 
 export interface ProjectRow {
   id: number;
-  department_id: number;
+  thematic_id: number;
   title_fr: string;
   title_en: string;
   description_fr: string;
@@ -111,7 +111,7 @@ function normalizeResultFiles(value: unknown): ProjectResultFile[] {
 }
 
 // ── Slug generation ──
-// Same approach as news/departments: slugify(title_en) + "-" + id, stable, never regenerated.
+// Same approach as news/thematics: slugify(title_en) + "-" + id, stable, never regenerated.
 function slugify(text: string, fallback = "project"): string {
   return (
     text
@@ -129,45 +129,45 @@ function slugify(text: string, fallback = "project"): string {
   );
 }
 
-// ── Public: projects for a department (by dept slug) ──
-// Joins departments so the response includes dept slug + title for breadcrumbs.
-export async function getPublicProjectsByDeptSlug(deptSlug: string) {
+// ── Public: projects for a thematic area (by thematic slug) ──
+// Joins thematics so the response includes its slug and title for breadcrumbs.
+export async function getPublicProjectsByThematicSlug(thematicSlug: string) {
   const result = await query(
     `SELECT p.id, p.title_fr, p.title_en, p.description_fr, p.description_en, p.image,
             p.year_start, p.year_end, p.status, p.budget, p.beneficiary_country_codes,
             p.slug, p.sort_order,
-            d.slug AS department_slug, d.title_fr AS department_title_fr, d.title_en AS department_title_en
+            t.slug AS thematic_slug, t.title_fr AS thematic_title_fr, t.title_en AS thematic_title_en
      FROM projects p
-     JOIN departments d ON d.id = p.department_id
-     WHERE d.slug = $1
+     JOIN thematics t ON t.id = p.thematic_id
+     WHERE t.slug = $1
      ORDER BY p.sort_order ASC, p.id ASC`,
-    [deptSlug],
+    [thematicSlug],
   );
   return result.rows.map(withCountries);
 }
 
 // ── Public: single project by slug ──
-// Joins departments for breadcrumb context.
+// Joins thematics for breadcrumb context.
 export async function getPublicProjectBySlug(slug: string) {
   const result = await query(
-    `SELECT p.*, d.slug AS department_slug, d.title_fr AS department_title_fr, d.title_en AS department_title_en
+    `SELECT p.*, t.slug AS thematic_slug, t.title_fr AS thematic_title_fr, t.title_en AS thematic_title_en
      FROM projects p
-     JOIN departments d ON d.id = p.department_id
+     JOIN thematics t ON t.id = p.thematic_id
      WHERE p.slug = $1`,
     [slug],
   );
   return result.rows[0] ? withCountries(result.rows[0]) : null;
 }
 
-// ── Authenticated: list all projects for a department ──
-export async function listAllProjectsByDept(departmentId: number) {
+// ── Authenticated: list all projects for a thematic area ──
+export async function listAllProjectsByThematic(thematicId: number) {
   const result = await query(
     `SELECT p.id, p.title_fr, p.title_en, p.year_start, p.year_end, p.status, p.budget,
             p.beneficiary_country_codes, p.slug, p.sort_order, p.created_at, p.updated_at
      FROM projects p
-     WHERE p.department_id = $1
+     WHERE p.thematic_id = $1
      ORDER BY p.sort_order ASC, p.id ASC`,
-    [departmentId],
+    [thematicId],
   );
   return result.rows.map(withCountries);
 }
@@ -185,7 +185,7 @@ export async function getProject(id: number) {
 // ── Authenticated: create project ──
 // Slug = slugify(title_en) + "-" + id. Insert with placeholder, then UPDATE.
 export async function createProject(data: {
-  department_id: number;
+  thematic_id: number;
   title_fr: string;
   title_en: string;
   description_fr?: string;
@@ -206,13 +206,13 @@ export async function createProject(data: {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      `INSERT INTO projects (department_id, title_fr, title_en, description_fr, description_en,
+      `INSERT INTO projects (thematic_id, title_fr, title_en, description_fr, description_en,
        results_fr, results_en, result_files, image, year_start, year_end, status, budget,
        beneficiary_country_codes, slug, sort_order)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11, $12, $13, $14::text[], $15, $16)
        RETURNING *`,
       [
-        data.department_id,
+        data.thematic_id,
         data.title_fr,
         data.title_en,
         data.description_fr || "",
@@ -255,7 +255,7 @@ export async function updateProject(
   let idx = 1;
 
   const allowed = [
-    "department_id",
+    "thematic_id",
     "title_fr",
     "title_en",
     "description_fr",

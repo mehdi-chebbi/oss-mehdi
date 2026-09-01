@@ -31,10 +31,10 @@ import Water from "./pages/Water";
 import Land from "./pages/Land";
 import Integrity from "./pages/Integrity";
 import KnowledgeSharing from "./pages/KnowledgeSharing";
-import DepartmentDetail from "./pages/DepartmentDetail";
+import ThematicDetail from "./pages/ThematicDetail";
 import ProjectDetail from "./pages/ProjectDetail";
-import AdminDepartments from "./pages/admin/Departments";
-import DepartmentForm from "./pages/admin/DepartmentForm";
+import AdminThematics from "./pages/admin/Thematics";
+import ThematicForm from "./pages/admin/ThematicForm";
 import AdminProjects from "./pages/admin/Projects";
 import ProjectForm from "./pages/admin/ProjectForm";
 import AdminTeam from "./pages/admin/Team";
@@ -44,12 +44,13 @@ import AdminResources from "./pages/admin/Resources";
 import ResourceForm from "./pages/admin/ResourceForm";
 import AdminDashboard from "./pages/admin/Dashboard";
 import Search from "./pages/Search";
+import ContactPage from "./components/home/Contact";
 import {
   homeLoader,
   newsListLoader,
   newsArticleLoader,
   projectsListLoader,
-  departmentDetailLoader,
+  thematicDetailLoader,
   projectDetailLoader,
   biodiversityLoader,
   climateLoader,
@@ -98,8 +99,8 @@ export const router = createBrowserRouter([
               { path: "news", loader: newsListLoader, element: <NewsList /> },
               { path: "news/:slug", loader: newsArticleLoader, element: <NewsArticle /> },
               { path: "projects", loader: projectsListLoader, element: <ProjectsList /> },
-              { path: "projects/:deptSlug", loader: departmentDetailLoader, element: <DepartmentDetail /> },
-              { path: "projects/:deptSlug/:projectSlug", loader: projectDetailLoader, element: <ProjectDetail /> },
+              { path: "projects/:thematicSlug", loader: thematicDetailLoader, element: <ThematicDetail /> },
+              { path: "projects/:thematicSlug/:projectSlug", loader: projectDetailLoader, element: <ProjectDetail /> },
               { path: "about", element: <About /> },
               { path: "members", element: <Members /> },
               { path: "governance", element: <Governance /> },
@@ -112,6 +113,7 @@ export const router = createBrowserRouter([
               { path: "knowledge-sharing", loader: knowledgeSharingLoader, element: <KnowledgeSharing /> },
               { path: "integrity", element: <Integrity /> },
               { path: "search", element: <Search /> },
+              { path: "contact", element: <ContactPage /> },
             ],
           },
         ],
@@ -154,10 +156,10 @@ export const router = createBrowserRouter([
           { path: "news/new", element: <NewsForm /> },
           { path: "news/:id", element: <NewsForm /> },
 
-          // Departments
-          { path: "departments", element: <AdminDepartments /> },
-          { path: "departments/new", element: <DepartmentForm /> },
-          { path: "departments/:id", element: <DepartmentForm /> },
+          // Thematic areas
+          { path: "thematics", element: <AdminThematics /> },
+          { path: "thematics/new", element: <ThematicForm /> },
+          { path: "thematics/:id", element: <ThematicForm /> },
 
           // Projects
           { path: "projects", element: <AdminProjects /> },

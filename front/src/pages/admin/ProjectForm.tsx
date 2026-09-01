@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import {
-  listAllDepartments,
-  listAllProjectsByDept,
+  listAllThematics,
+  listAllProjectsByThematic,
   getProject,
   createProject,
   updateProject,
   getAfricanCountries,
-  type DepartmentData,
+  type ThematicData,
   type CountryData,
   type ProjectResultFile,
 } from "../../api/auth";
@@ -60,7 +60,7 @@ function LangTabs({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void })
 }
 
 const emptyForm = {
-  department_id: 0,
+  thematic_id: 0,
   title_fr: "",
   title_en: "",
   description_fr: "",
@@ -83,7 +83,7 @@ export default function ProjectForm() {
   const [searchParams] = useSearchParams();
   const isEditing = !!id;
 
-  const [departments, setDepartments] = useState<DepartmentData[]>([]);
+  const [thematics, setThematics] = useState<ThematicData[]>([]);
   const [countries, setCountries] = useState<CountryData[]>([]);
   const [countrySelections, setCountrySelections] = useState<CountrySelection[]>([
     createCountrySelection(),
@@ -96,23 +96,23 @@ export default function ProjectForm() {
   const [success, setSuccess] = useState("");
   const [lang, setLang] = useState<Lang>("fr");
 
-  // Load departments (for the selector) + project (if editing)
+  // Load thematic areas (for the selector) + project (if editing)
   const loadData = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     try {
-      const [depts, countryOptions] = await Promise.all([
-        listAllDepartments(token),
+      const [thematicOptions, countryOptions] = await Promise.all([
+        listAllThematics(token),
         getAfricanCountries(),
       ]);
-      setDepartments(depts);
+      setThematics(thematicOptions);
       setCountries(countryOptions);
 
       if (isEditing && id) {
         const project = await getProject(token, Number(id));
         if (project) {
           setForm({
-            department_id: project.department_id,
+            thematic_id: project.thematic_id,
             title_fr: project.title_fr || "",
             title_en: project.title_en || "",
             description_fr: project.description_fr || "",
@@ -135,17 +135,17 @@ export default function ProjectForm() {
           );
         }
       } else {
-        // New project: pre-select department from ?dept= query param
-        const deptFromUrl = searchParams.get("dept");
-        const initialDeptId =
-          deptFromUrl && depts.some((d) => d.id === Number(deptFromUrl))
-            ? Number(deptFromUrl)
-            : depts[0]?.id ?? 0;
-        setForm((f) => ({ ...f, department_id: initialDeptId }));
+        // New project: pre-select thematic area from ?thematic= query param
+        const thematicFromUrl = searchParams.get("thematic");
+        const initialThematicId =
+          thematicFromUrl && thematicOptions.some((item) => item.id === Number(thematicFromUrl))
+            ? Number(thematicFromUrl)
+            : thematicOptions[0]?.id ?? 0;
+        setForm((f) => ({ ...f, thematic_id: initialThematicId }));
 
-        // Default sort_order to next position in that department
-        if (initialDeptId) {
-          const existing = await listAllProjectsByDept(token, initialDeptId);
+        // Default sort_order to next position in that thematic area
+        if (initialThematicId) {
+          const existing = await listAllProjectsByThematic(token, initialThematicId);
           setForm((f) => ({ ...f, sort_order: existing.length }));
         }
       }
@@ -162,8 +162,8 @@ export default function ProjectForm() {
 
   const handleSave = async () => {
     if (!token) return;
-    if (!form.department_id) {
-      setError("Veuillez sélectionner un département.");
+    if (!form.thematic_id) {
+      setError("Veuillez sélectionner une thématique.");
       return;
     }
     const selectedCountryCodes = countrySelections
@@ -196,7 +196,7 @@ export default function ProjectForm() {
         await createProject(token, payload);
       }
       setSuccess("Projet enregistré avec succès !");
-      setTimeout(() => navigate(`/admin/projects?dept=${form.department_id}`), 800);
+      setTimeout(() => navigate(`/admin/projects?thematic=${form.thematic_id}`), 800);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -250,19 +250,19 @@ export default function ProjectForm() {
     );
   }
 
-  if (departments.length === 0) {
+  if (thematics.length === 0) {
     return (
       <div className="p-8 max-w-3xl">
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center">
-          <p className="text-ink/50 mb-3">Aucun département n’existe encore.</p>
+          <p className="text-ink/50 mb-3">Aucune thématique n’existe encore.</p>
           <p className="text-sm text-ink/40 mb-4">
-            Vous devez créer au moins un département avant d’ajouter un projet.
+            Vous devez créer au moins une thématique avant d’ajouter un projet.
           </p>
           <button
-            onClick={() => navigate("/admin/departments/new")}
+            onClick={() => navigate("/admin/thematics/new")}
             className="text-sm text-[#489e42] font-semibold hover:underline"
           >
-            Créer un département →
+            Créer une thématique →
           </button>
         </div>
       </div>
@@ -274,7 +274,7 @@ export default function ProjectForm() {
       {/* Header with breadcrumb */}
       <div className="mb-8">
         <button
-          onClick={() => navigate(`/admin/projects?dept=${form.department_id || ""}`)}
+          onClick={() => navigate(`/admin/projects?thematic=${form.thematic_id || ""}`)}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
           <ArrowLeft className="w-4 h-4" /> Retour aux projets
@@ -285,7 +285,7 @@ export default function ProjectForm() {
         <p className="text-ink/50 text-sm mt-1">
           {isEditing
             ? "Mettre à jour ce projet"
-            : "Ajouter un nouveau projet à un département"}
+            : "Ajouter un nouveau projet à une thématique"}
         </p>
       </div>
 
@@ -301,18 +301,18 @@ export default function ProjectForm() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-6 space-y-5">
-        {/* Department selector */}
+        {/* Thematic selector */}
         <div>
           <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Département <span className="text-red-500">*</span>
+            Thématique <span className="text-red-500">*</span>
           </label>
           <select
-            value={form.department_id || ""}
-            onChange={(e) => set("department_id", Number(e.target.value))}
+            value={form.thematic_id || ""}
+            onChange={(e) => set("thematic_id", Number(e.target.value))}
             className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
           >
-            <option value="" disabled>Sélectionner un département…</option>
-            {departments.map((d) => (
+            <option value="" disabled>Sélectionner une thématique…</option>
+            {thematics.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.title_fr} / {d.title_en}
               </option>
@@ -573,7 +573,7 @@ export default function ProjectForm() {
                 <p className="font-medium text-ink/70">Identifiant d’URL</p>
                 <p className="mt-0.5">
                   Le projet est accessible à l’adresse{" "}
-                  <code className="bg-white px-1.5 py-0.5 rounded text-xs">/projects/{"{dept}"}/{slug}</code>.
+                  <code className="bg-white px-1.5 py-0.5 rounded text-xs">/projects/{"{thematic}"}/{slug}</code>.
                   L’identifiant est généré automatiquement et ne peut pas être modifié afin de conserver une URL stable.
                 </p>
               </div>
@@ -594,7 +594,7 @@ export default function ProjectForm() {
           </button>
           <button
             type="button"
-            onClick={() => navigate(`/admin/projects?dept=${form.department_id || ""}`)}
+            onClick={() => navigate(`/admin/projects?thematic=${form.thematic_id || ""}`)}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
             Annuler

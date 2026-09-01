@@ -1,6 +1,5 @@
 import { ArrowRight, Play } from 'lucide-react';
 import { useLoaderData } from 'react-router-dom';
-import Contact from './components/home/Contact';
 import Fields from './components/home/Fields';
 import Hero from './components/home/Hero';
 import News from './components/home/News';
@@ -25,7 +24,6 @@ export default function HomePage() {
       <section className="bg-oss-paper py-10 lg:py-12">
         <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
           <div className="mb-12 max-w-3xl">
-            <p className="oss-kicker mb-4">{locale === 'fr' ? 'Ressources' : 'Resources'}</p>
             <h2 className="oss-section-title">
               {locale === 'fr' ? 'Publications et vidéos' : 'Publications and videos'}
             </h2>
@@ -67,7 +65,6 @@ export default function HomePage() {
       </section>
 
       <Partners items={partners} />
-      <Contact />
     </>
   );
 }

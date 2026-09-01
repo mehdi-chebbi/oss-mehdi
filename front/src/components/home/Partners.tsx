@@ -61,7 +61,6 @@ export default function Partners({ items: partners }: PartnersProps) {
     <section id="partenaires" className="bg-oss-paper py-10 lg:py-12">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         <div className="mb-10 max-w-2xl lg:mb-12">
-          <p className="oss-kicker mb-4">{locale === 'fr' ? 'Coopération' : 'Cooperation'}</p>
           <h2 className="oss-section-title">
             {locale === 'fr' ? 'Nos partenaires' : 'Our partners'}
           </h2>

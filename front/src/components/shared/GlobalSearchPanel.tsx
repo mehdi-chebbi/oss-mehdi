@@ -159,7 +159,7 @@ export default function GlobalSearchPanel({ open, locale, query, onQueryChange, 
                   </h2>
                   <div className="border-t border-oss-line">
                     {results.projects.map((item) => (
-                      <Link key={item.id} to={`/${locale}/projects/${item.department_slug}/${item.slug}`} onClick={closeAfterNavigation} className="group block border-b border-oss-line py-3">
+                      <Link key={item.id} to={`/${locale}/projects/${item.thematic_slug}/${item.slug}`} onClick={closeAfterNavigation} className="group block border-b border-oss-line py-3">
                         <span className="line-clamp-2 text-sm font-bold leading-snug text-oss-blue-dark transition-colors group-hover:text-oss-blue">{item.title}</span>
                         {item.excerpt && <span className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-ink/55">{item.excerpt}</span>}
                       </Link>

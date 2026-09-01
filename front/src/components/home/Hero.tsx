@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import type { HeroData } from '../../api/auth';
 import type { Locale } from '../../context/locale';
+import { formatFrenchTypography } from '../../lib/utils';
 import BrandBands from '../shared/BrandBands';
 
 interface HeroProps {
@@ -24,6 +25,8 @@ export default function Hero({ data: hero }: HeroProps) {
   const ctaSecondaryLabel = locale === 'en'
     ? (hero?.cta_secondary_label_en ?? 'Latest news')
     : (hero?.cta_secondary_label_fr ?? 'Dernières actualités');
+  const displayTitle = locale === 'fr' ? formatFrenchTypography(title) : title;
+  const displaySubtitle = locale === 'fr' ? formatFrenchTypography(subtitle) : subtitle;
 
   return (
     <section className="relative flex min-h-[100dvh] items-end overflow-hidden bg-oss-blue-dark pt-24">
@@ -41,10 +44,10 @@ export default function Hero({ data: hero }: HeroProps) {
             {locale === 'en' ? 'Sahara and Sahel Observatory' : 'Observatoire du Sahara et du Sahel'}
           </p>
           <h1 className="max-w-3xl text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-5xl lg:text-6xl xl:text-[4.4rem]">
-            {title}
+            {displayTitle}
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 lg:text-lg">
-            {subtitle}
+            {displaySubtitle}
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <a

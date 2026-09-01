@@ -891,8 +891,8 @@ export async function retryResourceIndex(token: string, id: string) {
   });
 }
 
-// ── Departments CRUD ──
-export interface DepartmentData {
+// ── Thematic areas CRUD ──
+export interface ThematicData {
   id: number;
   title_fr: string;
   title_en: string;
@@ -904,54 +904,54 @@ export interface DepartmentData {
   updated_at?: string;
 }
 
-// Public: all departments
-export async function getPublicDepartments() {
-  return request<DepartmentData[]>("/departments");
+// Public: all thematic areas
+export async function getPublicThematics() {
+  return request<ThematicData[]>("/thematics");
 }
 
-// Public: single department by slug
-export async function getDepartmentBySlug(slug: string) {
-  return request<DepartmentData>(`/departments/slug/${encodeURIComponent(slug)}`);
+// Public: single thematic area by slug
+export async function getThematicBySlug(slug: string) {
+  return request<ThematicData>(`/thematics/slug/${encodeURIComponent(slug)}`);
 }
 
-// Authenticated: list all departments
-export async function listAllDepartments(token: string) {
-  return request<DepartmentData[]>("/departments/all", { headers: authHeader(token) });
+// Authenticated: list all thematic areas
+export async function listAllThematics(token: string) {
+  return request<ThematicData[]>("/thematics/all", { headers: authHeader(token) });
 }
 
-// Authenticated: get single department for editing
-export async function getDepartment(token: string, id: number) {
-  return request<DepartmentData>(`/departments/${id}`, { headers: authHeader(token) });
+// Authenticated: get single thematic area for editing
+export async function getThematic(token: string, id: number) {
+  return request<ThematicData>(`/thematics/${id}`, { headers: authHeader(token) });
 }
 
-// Authenticated: create department
-export async function createDepartment(
+// Authenticated: create thematic area
+export async function createThematic(
   token: string,
-  data: Partial<DepartmentData>,
+  data: Partial<ThematicData>,
 ) {
-  return request<DepartmentData>("/departments", {
+  return request<ThematicData>("/thematics", {
     method: "POST",
     headers: authHeader(token),
     body: JSON.stringify(data),
   });
 }
 
-// Authenticated: update department
-export async function updateDepartment(
+// Authenticated: update thematic area
+export async function updateThematic(
   token: string,
   id: number,
-  data: Partial<DepartmentData>,
+  data: Partial<ThematicData>,
 ) {
-  return request<DepartmentData>(`/departments/${id}`, {
+  return request<ThematicData>(`/thematics/${id}`, {
     method: "PATCH",
     headers: authHeader(token),
     body: JSON.stringify(data),
   });
 }
 
-// Authenticated: delete department
-export async function deleteDepartment(token: string, id: number) {
-  return request<{ message: string }>(`/departments/${id}`, {
+// Authenticated: delete thematic area
+export async function deleteThematic(token: string, id: number) {
+  return request<{ message: string }>(`/thematics/${id}`, {
     method: "DELETE",
     headers: authHeader(token),
   });
@@ -976,7 +976,7 @@ export interface CountryData {
 
 export interface ProjectData {
   id: number;
-  department_id: number;
+  thematic_id: number;
   title_fr: string;
   title_en: string;
   description_fr: string;
@@ -996,10 +996,10 @@ export interface ProjectData {
   sort_order: number;
   created_at?: string;
   updated_at?: string;
-  // Joined from departments (public endpoints only)
-  department_slug?: string;
-  department_title_fr?: string;
-  department_title_en?: string;
+  // Joined from thematic areas (public endpoints only)
+  thematic_slug?: string;
+  thematic_title_fr?: string;
+  thematic_title_en?: string;
 }
 
 export async function getAfricanCountries() {
@@ -1022,9 +1022,9 @@ export function yearRange(start: number | null, end: number | null, locale: "fr"
   return s === end ? `${s}` : `${s} – ${end}`;
 }
 
-// Public: projects for a department (by dept slug)
-export async function getPublicProjectsByDept(deptSlug: string) {
-  return request<ProjectData[]>(`/projects/dept/${encodeURIComponent(deptSlug)}`);
+// Public: projects for a thematic area (by thematic slug)
+export async function getPublicProjectsByThematic(thematicSlug: string) {
+  return request<ProjectData[]>(`/projects/thematic/${encodeURIComponent(thematicSlug)}`);
 }
 
 // Public: single project by slug
@@ -1032,9 +1032,9 @@ export async function getProjectBySlug(slug: string) {
   return request<ProjectData>(`/projects/slug/${encodeURIComponent(slug)}`);
 }
 
-// Authenticated: list all projects for a department
-export async function listAllProjectsByDept(token: string, deptId: number) {
-  return request<ProjectData[]>(`/projects/all/${deptId}`, { headers: authHeader(token) });
+// Authenticated: list all projects for a thematic area
+export async function listAllProjectsByThematic(token: string, thematicId: number) {
+  return request<ProjectData[]>(`/projects/all/${thematicId}`, { headers: authHeader(token) });
 }
 
 // Authenticated: get single project for editing

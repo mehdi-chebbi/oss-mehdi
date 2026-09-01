@@ -1,6 +1,6 @@
 import { query } from "../config/db.js";
 
-export interface DepartmentRow {
+export interface ThematicRow {
   id: number;
   title_fr: string;
   title_en: string;
@@ -17,7 +17,7 @@ export interface DepartmentRow {
 // with the row ID appended to guarantee uniqueness without collision handling.
 // Generated once at creation, never editable, never regenerated — same approach
 // as news (stable URLs for SEO).
-function slugify(text: string, fallback = "department"): string {
+function slugify(text: string, fallback = "thematic"): string {
   return (
     text
       .normalize("NFD")
@@ -34,47 +34,47 @@ function slugify(text: string, fallback = "department"): string {
   );
 }
 
-// ── Public: departments ordered by sort_order ──
-export async function getPublicDepartments() {
+// ── Public: thematic areas ordered by sort_order ──
+export async function getPublicThematics() {
   const result = await query(
     `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order
-     FROM departments
+     FROM thematics
      ORDER BY sort_order ASC, id ASC`,
   );
   return result.rows;
 }
 
-// ── Public: single department by slug ──
-export async function getPublicDepartmentBySlug(slug: string) {
+// ── Public: single thematic area by slug ──
+export async function getPublicThematicBySlug(slug: string) {
   const result = await query(
     `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order, created_at
-     FROM departments
+     FROM thematics
      WHERE slug = $1`,
     [slug],
   );
   return result.rows[0] || null;
 }
 
-// ── Authenticated: list all departments (admin) ──
-export async function listAllDepartments() {
+// ── Authenticated: list all thematic areas (admin) ──
+export async function listAllThematics() {
   const result = await query(
     `SELECT id, title_fr, title_en, description_fr, description_en, slug, sort_order, created_at, updated_at
-     FROM departments
+     FROM thematics
      ORDER BY sort_order ASC, id ASC`,
   );
   return result.rows;
 }
 
-// ── Authenticated: get single department (admin) ──
-export async function getDepartment(id: number) {
-  const result = await query("SELECT * FROM departments WHERE id = $1", [id]);
+// ── Authenticated: get single thematic area (admin) ──
+export async function getThematic(id: number) {
+  const result = await query("SELECT * FROM thematics WHERE id = $1", [id]);
   return result.rows[0] || null;
 }
 
-// ── Authenticated: create department ──
+// ── Authenticated: create thematic area ──
 // Slug = slugify(title_en) + "-" + id. Insert with placeholder, then UPDATE
 // with the final slug (ID only known after INSERT).
-export async function createDepartment(data: {
+export async function createThematic(data: {
   title_fr: string;
   title_en: string;
   description_fr?: string;
@@ -82,7 +82,7 @@ export async function createDepartment(data: {
   sort_order?: number;
 }) {
   const result = await query(
-    `INSERT INTO departments (title_fr, title_en, description_fr, description_en, slug, sort_order)
+    `INSERT INTO thematics (title_fr, title_en, description_fr, description_en, slug, sort_order)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [
@@ -98,14 +98,14 @@ export async function createDepartment(data: {
   const row = result.rows[0];
   const finalSlug = `${slugify(data.title_en)}-${row.id}`;
 
-  await query("UPDATE departments SET slug = $1 WHERE id = $2", [finalSlug, row.id]);
+  await query("UPDATE thematics SET slug = $1 WHERE id = $2", [finalSlug, row.id]);
   row.slug = finalSlug;
   return row;
 }
 
-// ── Authenticated: update department ──
+// ── Authenticated: update thematic area ──
 // Slug is intentionally NOT updated on title change — URLs must stay stable.
-export async function updateDepartment(id: number, data: Partial<DepartmentRow>) {
+export async function updateThematic(id: number, data: Partial<ThematicRow>) {
   const fields: string[] = [];
   const values: unknown[] = [];
   let idx = 1;
@@ -131,14 +131,14 @@ export async function updateDepartment(id: number, data: Partial<DepartmentRow>)
   values.push(id);
 
   const result = await query(
-    `UPDATE departments SET ${fields.join(", ")} WHERE id = $${idx} RETURNING *`,
+    `UPDATE thematics SET ${fields.join(", ")} WHERE id = $${idx} RETURNING *`,
     values,
   );
   return result.rows[0] || null;
 }
 
-// ── Authenticated: delete department ──
-export async function deleteDepartment(id: number) {
-  const result = await query("DELETE FROM departments WHERE id = $1 RETURNING id", [id]);
+// ── Authenticated: delete thematic area ──
+export async function deleteThematic(id: number) {
+  const result = await query("DELETE FROM thematics WHERE id = $1 RETURNING id", [id]);
   return result.rows[0] || null;
 }

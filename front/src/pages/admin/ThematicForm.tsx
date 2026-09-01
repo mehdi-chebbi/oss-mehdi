@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import {
-  listAllDepartments,
-  getDepartment,
-  createDepartment,
-  updateDepartment,
+  listAllThematics,
+  getThematic,
+  createThematic,
+  updateThematic,
 } from "../../api/auth";
 import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
 
@@ -44,7 +44,7 @@ const emptyForm = {
   sort_order: 0,
 };
 
-export default function DepartmentForm() {
+export default function ThematicForm() {
   const { token } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -58,20 +58,20 @@ export default function DepartmentForm() {
   const [success, setSuccess] = useState("");
   const [lang, setLang] = useState<Lang>("fr");
 
-  const loadDepartment = useCallback(async () => {
+  const loadThematic = useCallback(async () => {
     if (!token || !id) return;
     setLoading(true);
     try {
-      const dept = await getDepartment(token, Number(id));
-      if (dept) {
+      const thematic = await getThematic(token, Number(id));
+      if (thematic) {
         setForm({
-          title_fr: dept.title_fr || "",
-          title_en: dept.title_en || "",
-          description_fr: dept.description_fr || "",
-          description_en: dept.description_en || "",
-          sort_order: dept.sort_order ?? 0,
+          title_fr: thematic.title_fr || "",
+          title_en: thematic.title_en || "",
+          description_fr: thematic.description_fr || "",
+          description_en: thematic.description_en || "",
+          sort_order: thematic.sort_order ?? 0,
         });
-        setSlug(dept.slug || "");
+        setSlug(thematic.slug || "");
       }
     } catch (err: any) {
       setError(err.message);
@@ -82,16 +82,16 @@ export default function DepartmentForm() {
 
   useEffect(() => {
     if (isEditing) {
-      loadDepartment();
+      loadThematic();
     } else {
       // Default sort_order to the next position
       if (token) {
-        listAllDepartments(token).then((depts) => {
-          setForm((f) => ({ ...f, sort_order: depts.length }));
+        listAllThematics(token).then((thematics) => {
+          setForm((f) => ({ ...f, sort_order: thematics.length }));
         });
       }
     }
-  }, [loadDepartment, isEditing, token]);
+  }, [loadThematic, isEditing, token]);
 
   const handleSave = async () => {
     if (!token) return;
@@ -100,12 +100,12 @@ export default function DepartmentForm() {
     setSuccess("");
     try {
       if (isEditing && id) {
-        await updateDepartment(token, Number(id), form);
+        await updateThematic(token, Number(id), form);
       } else {
-        await createDepartment(token, form);
+        await createThematic(token, form);
       }
-      setSuccess("Département enregistré avec succès.");
-      setTimeout(() => navigate("/admin/departments"), 800);
+      setSuccess("Thématique enregistrée avec succès.");
+      setTimeout(() => navigate("/admin/thematics"), 800);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -128,18 +128,18 @@ export default function DepartmentForm() {
       {/* Header with breadcrumb */}
       <div className="mb-8">
         <button
-          onClick={() => navigate("/admin/departments")}
+          onClick={() => navigate("/admin/thematics")}
           className="flex items-center gap-1.5 text-sm text-ink/50 hover:text-ink transition-colors mb-3"
         >
-          <ArrowLeft className="w-4 h-4" /> Retour aux départements
+          <ArrowLeft className="w-4 h-4" /> Retour aux thématiques
         </button>
         <h2 className="text-2xl font-bold text-ink">
-          {isEditing ? "Modifier le département" : "Nouveau département"}
+          {isEditing ? "Modifier la thématique" : "Nouvelle thématique"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
           {isEditing
-            ? "Mettez à jour ce département."
-            : "Ajoutez un département. Les projets seront regroupés sous celui-ci sur /projects."}
+            ? "Mettez à jour cette thématique."
+            : "Ajoutez une thématique. Les projets seront regroupés sous celle-ci sur /projects."}
         </p>
       </div>
 
@@ -221,7 +221,7 @@ export default function DepartmentForm() {
               <div>
                 <p className="font-medium text-ink/70">Identifiant d’URL</p>
                 <p className="mt-0.5">
-                  Le département est accessible à l’adresse{" "}
+                  La thématique est accessible à l’adresse{" "}
                   <code className="bg-white px-1.5 py-0.5 rounded text-xs">/projects/{slug}</code>.
                   L’identifiant est généré automatiquement et ne peut pas être modifié afin de conserver une URL stable.
                 </p>
@@ -243,7 +243,7 @@ export default function DepartmentForm() {
           </button>
           <button
             type="button"
-            onClick={() => navigate("/admin/departments")}
+            onClick={() => navigate("/admin/thematics")}
             className="px-6 py-2.5 border border-ink/15 text-ink/60 hover:text-ink font-medium rounded-lg transition-colors"
           >
             Annuler

@@ -42,7 +42,7 @@ export default function Water() {
       <DomainProjectsSection
         locale={locale}
         projects={projects}
-        departmentSlug="water-department"
+        thematicSlug="water"
         description={{
           fr: 'Découvrez les dernières initiatives de l’OSS consacrées à la sécurité hydrique et à la gestion concertée des ressources en eau.',
           en: 'Discover the latest OSS initiatives supporting water security and cooperative water resource management.',

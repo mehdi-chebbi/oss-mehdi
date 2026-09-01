@@ -247,11 +247,11 @@ CREATE TABLE IF NOT EXISTS preview_tokens (
 CREATE INDEX IF NOT EXISTS idx_preview_tokens_token ON preview_tokens (token);
 
 -- ═══════════════════════════════════════════
--- Departments (for /projects section)
--- Top-level grouping for projects. Projects table (added later) will
--- reference departments(id). Slug auto-generated from title_en, stable.
+-- Thematic areas (for /projects section)
+-- Top-level thematic grouping for projects. Projects reference thematics(id).
+-- Slug auto-generated from title_en, stable.
 -- ═══════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS departments (
+CREATE TABLE IF NOT EXISTS thematics (
     id              SERIAL PRIMARY KEY,
     title_fr        TEXT NOT NULL,
     title_en        TEXT NOT NULL,
@@ -263,10 +263,10 @@ CREATE TABLE IF NOT EXISTS departments (
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
+CREATE INDEX IF NOT EXISTS idx_thematics_slug ON thematics (slug);
 
 -- ═══════════════════════════════════════════
--- Projects (belong to a department)
+-- Projects (belong to a thematic area)
 -- year_end is nullable (ongoing projects have no end year yet).
 -- status is an enum: 'en_cours' (in progress) | 'cloture' (closed).
 -- budget is a free-text string (e.g. "1.2M EUR", "$500,000") for admin flexibility.
@@ -274,7 +274,7 @@ CREATE INDEX IF NOT EXISTS idx_departments_slug ON departments (slug);
 -- ═══════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS projects (
     id              SERIAL PRIMARY KEY,
-    department_id   INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    thematic_id     INT NOT NULL REFERENCES thematics(id) ON DELETE CASCADE,
     title_fr        TEXT NOT NULL,
     title_en        TEXT NOT NULL,
     description_fr  TEXT NOT NULL DEFAULT '',
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS projects (
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_projects_department ON projects (department_id);
+CREATE INDEX IF NOT EXISTS idx_projects_thematic ON projects (thematic_id);
 CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects (slug);
 
 -- ═══════════════════════════════════════════

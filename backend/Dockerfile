@@ -24,7 +24,7 @@ RUN npm install --omit=dev
 COPY --from=build /app/dist ./dist
 
 # Create uploads directory with subfolders
-RUN mkdir -p /app/uploads/hero /app/uploads/fields /app/uploads/tools /app/uploads/partners /app/uploads/socials /app/uploads/news /app/uploads/departments /app/uploads/projects /app/uploads/project-results /app/uploads/team /app/uploads/resources/files /app/uploads/resources/covers
+RUN mkdir -p /app/uploads/hero /app/uploads/fields /app/uploads/tools /app/uploads/partners /app/uploads/socials /app/uploads/news /app/uploads/thematics /app/uploads/projects /app/uploads/project-results /app/uploads/team /app/uploads/resources/files /app/uploads/resources/covers
 
 EXPOSE 8000
 

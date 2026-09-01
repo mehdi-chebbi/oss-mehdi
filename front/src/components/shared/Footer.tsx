@@ -56,13 +56,13 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.15fr_1.2fr_1fr_1.15fr] lg:gap-12 lg:py-16">
           <div>
-            <div className="inline-block bg-white p-3">
+            <div className="inline-block p-3">
               <img src="/logo-h.webp" alt="Observatoire du Sahara et du Sahel" className="h-16 w-auto" />
             </div>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/68">
               {locale === 'en'
-                ? 'The Sahara and Sahel Observatory supporting sustainable development in Africa.'
-                : "L'Observatoire du Sahara et du Sahel au service du développement durable en Afrique."}
+                ? <>The Sahara and Sahel Observatory<br />supporting sustainable development in Africa.</>
+                : <>{"L'Observatoire du Sahara et du Sahel"}<br />au service du développement durable en Afrique.</>}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {socials.map((social) => (
@@ -107,6 +107,13 @@ export default function Footer() {
                 );
               })}
             </ul>
+            <Link
+              to={`/${locale}/contact`}
+              className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:border-white hover:bg-white hover:text-oss-blue-dark active:-translate-y-px"
+            >
+              <Mail className="h-4 w-4" aria-hidden="true" />
+              {locale === 'en' ? 'Contact us' : 'Nous contacter'}
+            </Link>
           </div>
 
           <div>

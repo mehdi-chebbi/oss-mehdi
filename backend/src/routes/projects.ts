@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
-  getPublicProjectsByDeptSlug,
+  getPublicProjectsByThematicSlug,
   getPublicProjectBySlug,
-  listAllProjectsByDept,
+  listAllProjectsByThematic,
   getProject,
   createProject,
   updateProject,
@@ -21,14 +21,14 @@ router.get("/countries", async (_req, res) => {
   res.json(countries);
 });
 
-// Projects for a department (by dept slug)
-// GET /api/projects/dept/:deptSlug
-router.get("/dept/:deptSlug", async (req, res) => {
-  const items = await getPublicProjectsByDeptSlug(req.params.deptSlug);
+// Projects for a thematic area (by thematic slug)
+// GET /api/projects/thematic/:thematicSlug
+router.get("/thematic/:thematicSlug", async (req, res) => {
+  const items = await getPublicProjectsByThematicSlug(req.params.thematicSlug);
   res.json(items);
 });
 
-// Single project by slug (joins department for breadcrumb)
+// Single project by slug (joins thematic area for breadcrumb)
 // GET /api/projects/slug/:slug
 router.get("/slug/:slug", async (req, res) => {
   const project = await getPublicProjectBySlug(req.params.slug);
@@ -41,15 +41,15 @@ router.get("/slug/:slug", async (req, res) => {
 
 // ── Authenticated routes (admin) ──
 
-// List all projects for a department
-// GET /api/projects/all/:deptId
-router.get("/all/:deptId", editorOrAdmin, async (req, res) => {
-  const deptId = Number(req.params.deptId);
-  if (!Number.isFinite(deptId)) {
-    res.status(400).json({ error: "Invalid department id" });
+// List all projects for a thematic area
+// GET /api/projects/all/:thematicId
+router.get("/all/:thematicId", editorOrAdmin, async (req, res) => {
+  const thematicId = Number(req.params.thematicId);
+  if (!Number.isFinite(thematicId)) {
+    res.status(400).json({ error: "Invalid thematic id" });
     return;
   }
-  const items = await listAllProjectsByDept(deptId);
+  const items = await listAllProjectsByThematic(thematicId);
   res.json(items);
 });
 
@@ -67,7 +67,7 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
     const {
-      department_id,
+      thematic_id,
       title_fr,
       title_en,
       description_fr,
@@ -84,15 +84,15 @@ router.post("/", editorOrAdmin, async (req, res) => {
       country_codes,
     } = req.body;
 
-    if (!department_id || !title_fr || !title_en || !Array.isArray(country_codes) || country_codes.length === 0) {
+    if (!thematic_id || !title_fr || !title_en || !Array.isArray(country_codes) || country_codes.length === 0) {
       res.status(400).json({
-        error: "department_id, title_fr, title_en and at least one beneficiary country are required",
+        error: "thematic_id, title_fr, title_en and at least one beneficiary country are required",
       });
       return;
     }
 
     const project = await createProject({
-      department_id,
+      thematic_id,
       title_fr,
       title_en,
       description_fr,
@@ -125,8 +125,8 @@ router.patch("/:id", editorOrAdmin, async (req, res) => {
     if (body.year_end !== undefined) {
       body.year_end = body.year_end === null || body.year_end === "" ? null : Number(body.year_end) || null;
     }
-    if (body.department_id !== undefined) {
-      body.department_id = Number(body.department_id) || undefined;
+    if (body.thematic_id !== undefined) {
+      body.thematic_id = Number(body.thematic_id) || undefined;
     }
 
     const project = await updateProject(Number(req.params.id), body);

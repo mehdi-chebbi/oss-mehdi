@@ -3,15 +3,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/auth";
 import {
-  listAllDepartments,
-  listAllProjectsByDept,
+  listAllThematics,
+  listAllProjectsByThematic,
   deleteProject,
   statusLabel,
   yearRange,
   type ProjectData,
 } from "../../api/auth";
 import DeleteConfirmModal from "../../components/admin/DeleteConfirmModal";
-import { Loader2, Plus, Trash2, Pencil, Briefcase, Building2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Pencil, Briefcase, Tags } from "lucide-react";
 
 export default function AdminProjects() {
   const { token } = useAuth();
@@ -19,17 +19,17 @@ export default function AdminProjects() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [selectedDept, setSelectedDept] = useState<number | null>(null);
+  const [selectedThematic, setSelectedThematic] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<ProjectData | null>(null);
 
   const {
-    data: departments = [],
-    isLoading: loadingDepts,
-    error: deptsQueryError,
+    data: thematics = [],
+    isLoading: loadingThematics,
+    error: thematicsQueryError,
   } = useQuery({
-    queryKey: ["departments"],
-    queryFn: () => listAllDepartments(token!),
+    queryKey: ["thematics"],
+    queryFn: () => listAllThematics(token!),
     enabled: !!token,
   });
 
@@ -38,41 +38,40 @@ export default function AdminProjects() {
     isLoading: loadingProjects,
     error: projectsQueryError,
   } = useQuery({
-    queryKey: ["projects", selectedDept],
-    queryFn: () => listAllProjectsByDept(token!, selectedDept!),
-    enabled: !!token && !!selectedDept,
+    queryKey: ["projects", selectedThematic],
+    queryFn: () => listAllProjectsByThematic(token!, selectedThematic!),
+    enabled: !!token && !!selectedThematic,
   });
 
-  // Initialize selected department from URL (or default to first) once
-  // departments have loaded.
+  // Initialize selected thematic area from URL (or default to first) once loaded.
   useEffect(() => {
-    if (selectedDept !== null || departments.length === 0) return;
-    const fromUrl = searchParams.get("dept");
+    if (selectedThematic !== null || thematics.length === 0) return;
+    const fromUrl = searchParams.get("thematic");
     const initial =
-      fromUrl && departments.some((d) => d.id === Number(fromUrl))
+      fromUrl && thematics.some((item) => item.id === Number(fromUrl))
         ? Number(fromUrl)
-        : departments[0]?.id ?? null;
-    setSelectedDept(initial);
+        : thematics[0]?.id ?? null;
+    setSelectedThematic(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departments]);
+  }, [thematics]);
 
   useEffect(() => {
-    if (deptsQueryError) setError((deptsQueryError as Error).message);
+    if (thematicsQueryError) setError((thematicsQueryError as Error).message);
     else if (projectsQueryError) setError((projectsQueryError as Error).message);
-  }, [deptsQueryError, projectsQueryError]);
+  }, [thematicsQueryError, projectsQueryError]);
 
-  // Keep ?dept= in sync with the selector so the "Add Project" flow can read it
-  const handleDeptChange = (id: number) => {
-    setSelectedDept(id);
+  // Keep ?thematic= in sync so the "Add Project" flow can read it.
+  const handleThematicChange = (id: number) => {
+    setSelectedThematic(id);
     const next = new URLSearchParams(searchParams);
-    next.set("dept", String(id));
+    next.set("thematic", String(id));
     setSearchParams(next, { replace: true });
   };
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteProject(token!, id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects", selectedDept] });
+      queryClient.invalidateQueries({ queryKey: ["projects", selectedThematic] });
     },
   });
 
@@ -88,7 +87,7 @@ export default function AdminProjects() {
     }
   };
 
-  if (loadingDepts) {
+  if (loadingThematics) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2 className="w-6 h-6 text-ink/30 animate-spin" />
@@ -102,20 +101,20 @@ export default function AdminProjects() {
         <div>
           <h2 className="text-2xl font-bold text-ink">Projets</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Gérez les projets regroupés par département.
+            Gérez les projets regroupés par thématique.
           </p>
         </div>
         <button
           onClick={() =>
             navigate(
-              selectedDept
-                ? `/admin/projects/new?dept=${selectedDept}`
+              selectedThematic
+                ? `/admin/projects/new?thematic=${selectedThematic}`
                 : "/admin/projects/new",
             )
           }
-          disabled={!selectedDept}
+          disabled={!selectedThematic}
           className="flex items-center gap-2 px-4 py-2 bg-[#489e42] hover:bg-[#3d8a37] text-white font-semibold rounded-lg transition-colors text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-          title={selectedDept ? "" : "Sélectionnez d’abord un département"}
+          title={selectedThematic ? "" : "Sélectionnez d’abord une thématique"}
         >
           <Plus className="w-4 h-4" /> Ajouter un projet
         </button>
@@ -127,33 +126,33 @@ export default function AdminProjects() {
         </div>
       )}
 
-      {/* Department selector */}
-      {departments.length === 0 ? (
+      {/* Thematic selector */}
+      {thematics.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center">
-          <Building2 className="w-8 h-8 text-ink/20 mx-auto mb-3" />
-          <p className="text-ink/50 mb-1">Aucun département n’existe encore.</p>
+          <Tags className="w-8 h-8 text-ink/20 mx-auto mb-3" />
+          <p className="text-ink/50 mb-1">Aucune thématique n’existe encore.</p>
           <p className="text-sm text-ink/40">
-            Créez d’abord un département avant d’ajouter des projets.
+            Créez d’abord une thématique avant d’ajouter des projets.
           </p>
           <button
-            onClick={() => navigate("/admin/departments/new")}
+            onClick={() => navigate("/admin/thematics/new")}
             className="mt-4 inline-flex items-center gap-1.5 text-sm text-[#489e42] font-semibold hover:underline"
           >
-            <Plus className="w-3.5 h-3.5" /> Nouveau département
+            <Plus className="w-3.5 h-3.5" /> Nouvelle thématique
           </button>
         </div>
       ) : (
         <>
           <div className="mb-6">
             <label className="block text-sm font-medium text-ink/70 mb-1.5">
-              Département
+              Thématique
             </label>
             <select
-              value={selectedDept ?? ""}
-              onChange={(e) => handleDeptChange(Number(e.target.value))}
+              value={selectedThematic ?? ""}
+              onChange={(e) => handleThematicChange(Number(e.target.value))}
               className="w-full max-w-md px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
             >
-              {departments.map((d) => (
+              {thematics.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.title_fr} / {d.title_en}
                 </option>
@@ -168,7 +167,7 @@ export default function AdminProjects() {
             </div>
           ) : projects.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-ink/5 p-8 text-center text-ink/40">
-              Aucun projet dans ce département. Cliquez sur « Ajouter un projet » pour en créer un.
+              Aucun projet dans cette thématique. Cliquez sur « Ajouter un projet » pour en créer un.
             </div>
           ) : (
             <div className="space-y-3">

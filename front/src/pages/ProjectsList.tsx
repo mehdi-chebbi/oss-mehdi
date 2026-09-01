@@ -15,7 +15,7 @@ function truncate(text: string, max = 130): string {
 export default function ProjectsList() {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
-  const { departments } = useLoaderData() as ProjectsListLoaderData;
+  const { thematics } = useLoaderData() as ProjectsListLoaderData;
   const [openSlug, setOpenSlug] = useState<string | null>(null);
 
   const toggle = (slug: string) => {
@@ -32,8 +32,8 @@ export default function ProjectsList() {
           </h1>
           <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">
             {locale === 'fr'
-              ? 'Découvrez les projets portés par l’OSS, organisés par département et domaines d’expertise.'
-              : 'Explore OSS projects, organized by department and areas of expertise.'}
+              ? 'Découvrez les projets portés par l’OSS, organisés par thématique.'
+              : 'Explore OSS projects, organized by thematic area.'}
           </p>
         </div>
 
@@ -42,29 +42,29 @@ export default function ProjectsList() {
       <section className="mx-auto max-w-[1400px] px-6 pt-2 sm:px-8 lg:px-12">
         <div className="mb-9 max-w-2xl">
           <p className="oss-kicker mb-3">{locale === 'fr' ? 'Explorer le portefeuille' : 'Explore the portfolio'}</p>
-          <h2 className="oss-section-title">{locale === 'fr' ? 'Projets par département' : 'Projects by department'}</h2>
+          <h2 className="oss-section-title">{locale === 'fr' ? 'Projets par thématique' : 'Projects by thematic area'}</h2>
         </div>
 
-        {departments.length === 0 && (
+        {thematics.length === 0 && (
           <div className="flex min-h-64 items-center justify-center bg-white p-10 text-center text-ink/42">
-            {locale === 'fr' ? 'Aucun département pour le moment.' : 'No departments yet.'}
+            {locale === 'fr' ? 'Aucune thématique pour le moment.' : 'No thematic areas yet.'}
           </div>
         )}
 
         <div className="space-y-3">
-          {departments.map(({ dept, projects }) => {
-            const title = locale === 'fr' ? dept.title_fr : dept.title_en;
-            const desc = locale === 'fr' ? dept.description_fr : dept.description_en;
-            const isOpen = openSlug === dept.slug;
+          {thematics.map(({ thematic, projects }) => {
+            const title = locale === 'fr' ? thematic.title_fr : thematic.title_en;
+            const desc = locale === 'fr' ? thematic.description_fr : thematic.description_en;
+            const isOpen = openSlug === thematic.slug;
 
             return (
               <div
-                key={dept.id}
+                key={thematic.id}
                 className={`overflow-hidden border bg-white transition-colors duration-300 ${isOpen ? 'border-oss-blue/35' : 'border-oss-line'}`}
               >
                 <button
                   type="button"
-                  onClick={() => toggle(dept.slug)}
+                  onClick={() => toggle(thematic.slug)}
                   aria-expanded={isOpen}
                   className={`flex w-full items-center justify-between px-6 py-5 text-left transition-colors duration-300 sm:px-7 ${isOpen ? 'bg-oss-blue-dark text-white' : 'hover:bg-oss-blue/5'}`}
                 >
@@ -112,7 +112,7 @@ export default function ProjectsList() {
                           return (
                             <Link
                               key={project.id}
-                              to={`/${locale}/projects/${dept.slug}/${project.slug}`}
+                              to={`/${locale}/projects/${thematic.slug}/${project.slug}`}
                               className="group block overflow-hidden border border-oss-line bg-white transition-colors duration-300 hover:border-oss-blue/40"
                             >
                               <div className="relative aspect-[16/9] w-full overflow-hidden bg-oss-blue-dark">

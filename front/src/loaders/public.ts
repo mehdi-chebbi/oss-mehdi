@@ -20,9 +20,9 @@ import {
   listPublicNews,
   getNewsYears,
   getNewsBySlug,
-  getPublicDepartments,
-  getDepartmentBySlug,
-  getPublicProjectsByDept,
+  getPublicThematics,
+  getThematicBySlug,
+  getPublicProjectsByThematic,
   getProjectBySlug,
   listPublicResources,
   getResourceYears,
@@ -36,7 +36,7 @@ import {
   type NewsCategory,
   type ToolData,
   type PartnerData,
-  type DepartmentData,
+  type ThematicData,
   type ProjectData,
   type ResourceListResponse,
   type ResourceDocumentType,
@@ -127,48 +127,48 @@ export async function newsArticleLoader({
   }
 }
 
-// ── Projects list (departments with nested projects) ──
+// ── Projects list (thematic areas with nested projects) ──
 
-export interface DeptWithProjects {
-  dept: DepartmentData;
+export interface ThematicWithProjects {
+  thematic: ThematicData;
   projects: ProjectData[];
 }
 
 export interface ProjectsListLoaderData {
-  departments: DeptWithProjects[];
+  thematics: ThematicWithProjects[];
 }
 
 export async function projectsListLoader(): Promise<ProjectsListLoaderData> {
-  const departments = await getPublicDepartments().catch(() => []);
-  // Fetch projects for each department in parallel
+  const thematics = await getPublicThematics().catch(() => []);
+  // Fetch projects for each thematic area in parallel
   const withProjects = await Promise.all(
-    departments.map(async (dept) => {
-      const projects = await getPublicProjectsByDept(dept.slug).catch(() => []);
-      return { dept, projects };
+    thematics.map(async (thematic) => {
+      const projects = await getPublicProjectsByThematic(thematic.slug).catch(() => []);
+      return { thematic, projects };
     }),
   );
-  return { departments: withProjects };
+  return { thematics: withProjects };
 }
 
-// ── Department detail (kept for direct URL access / backward compat) ──
+// ── Thematic detail ──
 
-export interface DepartmentDetailLoaderData {
-  dept: DepartmentData | null;
+export interface ThematicDetailLoaderData {
+  thematic: ThematicData | null;
   projects: ProjectData[];
 }
 
-export async function departmentDetailLoader({
+export async function thematicDetailLoader({
   params,
-}: LoaderFunctionArgs): Promise<DepartmentDetailLoaderData> {
-  if (!params.deptSlug) return { dept: null, projects: [] };
+}: LoaderFunctionArgs): Promise<ThematicDetailLoaderData> {
+  if (!params.thematicSlug) return { thematic: null, projects: [] };
   try {
-    const [dept, projects] = await Promise.all([
-      getDepartmentBySlug(params.deptSlug),
-      getPublicProjectsByDept(params.deptSlug),
+    const [thematic, projects] = await Promise.all([
+      getThematicBySlug(params.thematicSlug),
+      getPublicProjectsByThematic(params.thematicSlug),
     ]);
-    return { dept, projects };
+    return { thematic, projects };
   } catch {
-    return { dept: null, projects: [] };
+    return { thematic: null, projects: [] };
   }
 }
 
@@ -178,8 +178,8 @@ export interface DomainProjectsLoaderData {
   projects: ProjectData[];
 }
 
-async function latestDepartmentProjects(departmentSlug: string): Promise<DomainProjectsLoaderData> {
-  const projects = await getPublicProjectsByDept(departmentSlug).catch(() => []);
+async function latestThematicProjects(thematicSlug: string): Promise<DomainProjectsLoaderData> {
+  const projects = await getPublicProjectsByThematic(thematicSlug).catch(() => []);
 
   return {
     projects: [...projects].sort((a, b) => b.id - a.id).slice(0, 3),
@@ -187,19 +187,19 @@ async function latestDepartmentProjects(departmentSlug: string): Promise<DomainP
 }
 
 export function biodiversityLoader() {
-  return latestDepartmentProjects('land-biodiversity-department');
+  return latestThematicProjects('land-biodiversity');
 }
 
 export function climateLoader() {
-  return latestDepartmentProjects('climate-department');
+  return latestThematicProjects('climate');
 }
 
 export function waterLoader() {
-  return latestDepartmentProjects('water-department');
+  return latestThematicProjects('water');
 }
 
 export function landLoader() {
-  return latestDepartmentProjects('land-biodiversity-department');
+  return latestThematicProjects('land-biodiversity');
 }
 
 // ── Knowledge sharing resource library ──
@@ -267,12 +267,12 @@ export async function projectDetailLoader({
   if (!params.projectSlug) return { project: null };
   try {
     const project = await getProjectBySlug(params.projectSlug);
-    // If the project's department slug doesn't match the URL, treat as 404
+    // If the project's thematic slug doesn't match the URL, treat as 404
     if (
       project &&
-      params.deptSlug &&
-      project.department_slug &&
-      project.department_slug !== params.deptSlug
+      params.thematicSlug &&
+      project.thematic_slug &&
+      project.thematic_slug !== params.thematicSlug
     ) {
       return { project: null };
     }

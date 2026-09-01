@@ -15,7 +15,7 @@ import {
   Share2,
   Newspaper,
   FolderKanban,
-  Building2,
+  Tags,
   Briefcase,
   UsersRound,
   Loader2,
@@ -50,7 +50,7 @@ const pages = [
     label: "Projets",
     icon: FolderKanban,
     sections: [
-      { to: "/admin/departments", label: "Départements", icon: Building2, adminOnly: false },
+      { to: "/admin/thematics", label: "Thématiques", icon: Tags, adminOnly: false },
       { to: "/admin/projects", label: "Projets", icon: Briefcase, adminOnly: false },
     ],
   },

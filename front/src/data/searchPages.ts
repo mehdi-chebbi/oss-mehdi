@@ -207,7 +207,7 @@ const STATIC_PAGES: StaticPageDefinition[] = [
   },
   {
     id: "contact",
-    path: "#contact",
+    path: "/contact",
     title: { fr: "Contacter l'OSS", en: "Contact OSS" },
     description: {
       fr: "Coordonnées et formulaire pour contacter l'Observatoire du Sahara et du Sahel.",

@@ -41,7 +41,6 @@ export default function News({ articles }: NewsProps) {
         {/* Section heading */}
         <div className="mb-10 lg:mb-12 flex w-full items-end justify-between gap-4">
           <div>
-            <p className="oss-kicker mb-4">{locale === 'fr' ? 'À la une' : 'Highlights'}</p>
             <h2 className="oss-section-title">
               {locale === 'fr' ? 'Actualités' : 'News'}
             </h2>

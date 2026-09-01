@@ -18,7 +18,7 @@ export interface ProjectSearchResult {
   title: string;
   excerpt: string;
   slug: string;
-  department_slug: string;
+  thematic_slug: string;
   score: number;
 }
 
@@ -107,7 +107,7 @@ export async function globalSearch(
     ),
     query(
       `SELECT p.id, p.${titleColumn} AS title, p.${projectDescriptionColumn} AS description,
-              p.${projectResultsColumn} AS results, p.slug, d.slug AS department_slug,
+              p.${projectResultsColumn} AS results, p.slug, t.slug AS thematic_slug,
               CASE
                 WHEN LOWER(p.${titleColumn}) = LOWER($1) THEN 100
                 WHEN LOWER(p.${otherTitleColumn}) = LOWER($1) THEN 95
@@ -117,7 +117,7 @@ export async function globalSearch(
                 ELSE 35
               END AS score
        FROM projects p
-       JOIN departments d ON d.id = p.department_id
+       JOIN thematics t ON t.id = p.thematic_id
        WHERE NOT EXISTS (
          SELECT 1
          FROM unnest($2::text[]) AS search_token(pattern)
@@ -171,7 +171,7 @@ export async function globalSearch(
     title: plainText(row.title),
     excerpt: excerptAround(preferredExcerptContent(normalizedTerm, row.description, row.results), normalizedTerm),
     slug: String(row.slug),
-    department_slug: String(row.department_slug),
+    thematic_slug: String(row.thematic_slug),
     score: Number(row.score),
   }));
 

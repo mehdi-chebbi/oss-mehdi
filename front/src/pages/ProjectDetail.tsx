@@ -3,7 +3,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Briefcase,
-  Building2,
+  Tags,
   CalendarDays,
   CircleDot,
   Download,
@@ -78,7 +78,7 @@ function fileType(url: string, mimeType?: string) {
 }
 
 export default function ProjectDetail() {
-  const { lang, deptSlug } = useParams<{ lang: string; deptSlug: string }>();
+  const { lang, thematicSlug } = useParams<{ lang: string; thematicSlug: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
   const { project } = useLoaderData() as ProjectDetailLoaderData;
 
@@ -106,8 +106,8 @@ export default function ProjectDetail() {
 
   const title = locale === 'fr' ? project.title_fr : project.title_en;
   const description = locale === 'fr' ? project.description_fr : project.description_en;
-  const deptTitle = locale === 'fr' ? project.department_title_fr : project.department_title_en;
-  const deptSlugValue = project.department_slug || deptSlug || '';
+  const thematicTitle = locale === 'fr' ? project.thematic_title_fr : project.thematic_title_en;
+  const thematicSlugValue = project.thematic_slug || thematicSlug || '';
   const duration = formatDuration(project.year_start, project.year_end, locale);
   const results = locale === 'fr' ? project.results_fr : project.results_en;
   const resultFiles = (project.result_files || []).filter((file) => file.url);
@@ -183,7 +183,7 @@ export default function ProjectDetail() {
 
             <div className="mt-8 border-t border-oss-line pt-7">
               <Link
-                to={`/${locale}/projects/${deptSlugValue}`}
+                to={`/${locale}/projects/${thematicSlugValue}`}
                 className="group inline-flex items-center gap-2 text-sm font-bold text-ink/55 transition-colors duration-200 hover:text-oss-blue"
               >
                 <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
@@ -277,18 +277,18 @@ export default function ProjectDetail() {
 
                 <div className="flex items-start gap-3 py-5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-oss-green/10 text-oss-green">
-                    <Building2 className="h-4 w-4" />
+                    <Tags className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
                     <dt className="mb-1 text-xs font-medium text-ink/45">
-                      {locale === 'fr' ? 'Département' : 'Department'}
+                      {locale === 'fr' ? 'Thématique' : 'Thematic area'}
                     </dt>
                     <dd>
                       <Link
-                        to={`/${locale}/projects/${deptSlugValue}`}
+                        to={`/${locale}/projects/${thematicSlugValue}`}
                         className="group inline-flex items-center gap-1.5 font-bold leading-snug text-oss-blue-dark transition-colors duration-200 hover:text-oss-blue"
                       >
-                        <span>{deptTitle}</span>
+                        <span>{thematicTitle}</span>
                         <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
                       </Link>
                     </dd>

@@ -44,7 +44,7 @@ export default function Biodiversity() {
       <DomainProjectsSection
         locale={locale}
         projects={projects}
-        departmentSlug="land-biodiversity-department"
+        thematicSlug="land-biodiversity"
         description={{
           fr: 'Découvrez les dernières initiatives de l’OSS en faveur de la biodiversité et des écosystèmes.',
           en: 'Discover the latest OSS initiatives supporting biodiversity and ecosystems.',

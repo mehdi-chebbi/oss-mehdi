@@ -42,7 +42,7 @@ export default function Climate() {
       <DomainProjectsSection
         locale={locale}
         projects={projects}
-        departmentSlug="climate-department"
+        thematicSlug="climate"
         description={{
           fr: 'Découvrez les dernières initiatives de l’OSS consacrées à l’adaptation et à la résilience climatique.',
           en: 'Discover the latest OSS initiatives supporting climate adaptation and resilience.',

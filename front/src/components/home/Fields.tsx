@@ -16,15 +16,9 @@ export default function Fields({ items: fields }: FieldsProps) {
     <section id="nos-domaines" className="bg-oss-paper pb-10 pt-20 lg:pb-12 lg:pt-24">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-3xl">
-          <p className="oss-kicker mb-4">{locale === 'fr' ? 'Notre mandat' : 'Our mandate'}</p>
           <h2 className="oss-section-title">
             {locale === 'fr' ? 'Nos domaines d’action' : 'Our fields of action'}
           </h2>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-ink/65 lg:text-lg">
-            {locale === 'fr'
-              ? 'Des connaissances partagées et des actions coordonnées au service de la résilience du Sahara et du Sahel.'
-              : 'Shared knowledge and coordinated action supporting resilience across the Sahara and Sahel.'}
-          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12">

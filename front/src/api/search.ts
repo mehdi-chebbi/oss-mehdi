@@ -16,7 +16,7 @@ export interface ProjectSearchResult {
   title: string;
   excerpt: string;
   slug: string;
-  department_slug: string;
+  thematic_slug: string;
   score: number;
 }
 
