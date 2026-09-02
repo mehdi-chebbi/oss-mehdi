@@ -14,6 +14,7 @@ const DEPARTMENTS = [
   { key: "direction", label: "Direction" },
   { key: "technique", label: "Technique" },
   { key: "administratif", label: "Administratif" },
+  { key: "audit", label: "Audit" },
   { key: "appui", label: "Appui" },
 ] as const;
 
@@ -22,6 +23,7 @@ const departmentBadgeColor: Record<string, string> = {
   technique: "bg-sand-200/60 text-sand-800",
   administratif: "bg-ink/5 text-ink/50",
   appui: "bg-ink/5 text-ink/50",
+  audit: "bg-forest-700/10 text-forest-700",
 };
 
 export default function AdminTeam() {

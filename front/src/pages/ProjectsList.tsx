@@ -17,6 +17,11 @@ export default function ProjectsList() {
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
   const { thematics } = useLoaderData() as ProjectsListLoaderData;
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const orderedThematics = [...thematics].sort((a, b) => {
+    const aIsTechnology = a.thematic.slug === 'technology-information-remote-sensing';
+    const bIsTechnology = b.thematic.slug === 'technology-information-remote-sensing';
+    return Number(aIsTechnology) - Number(bIsTechnology);
+  });
 
   const toggle = (slug: string) => {
     setOpenSlug((prev) => (prev === slug ? null : slug));
@@ -26,7 +31,6 @@ export default function ProjectsList() {
     <div className="font-oss min-h-screen overflow-hidden bg-oss-paper pb-24 text-ink antialiased selection:bg-oss-blue selection:text-white lg:pb-28">
       <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
         <div>
-          <p className="oss-kicker mb-5">{locale === 'fr' ? 'Portefeuille d’intervention' : 'Intervention portfolio'}</p>
           <h1 className="text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">
             {locale === 'fr' ? 'Nos projets' : 'Our projects'}
           </h1>
@@ -41,7 +45,6 @@ export default function ProjectsList() {
 
       <section className="mx-auto max-w-[1400px] px-6 pt-2 sm:px-8 lg:px-12">
         <div className="mb-9 max-w-2xl">
-          <p className="oss-kicker mb-3">{locale === 'fr' ? 'Explorer le portefeuille' : 'Explore the portfolio'}</p>
           <h2 className="oss-section-title">{locale === 'fr' ? 'Projets par thématique' : 'Projects by thematic area'}</h2>
         </div>
 
@@ -52,7 +55,7 @@ export default function ProjectsList() {
         )}
 
         <div className="space-y-3">
-          {thematics.map(({ thematic, projects }) => {
+          {orderedThematics.map(({ thematic, projects }) => {
             const title = locale === 'fr' ? thematic.title_fr : thematic.title_en;
             const desc = locale === 'fr' ? thematic.description_fr : thematic.description_en;
             const isOpen = openSlug === thematic.slug;

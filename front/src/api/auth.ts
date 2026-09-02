@@ -1145,8 +1145,6 @@ export interface TeamMemberData {
   name: string;
   title_fr: string;
   title_en: string;
-  diplomas_fr: string;
-  diplomas_en: string;
   nationality_fr: string;
   nationality_en: string;
   image: string;

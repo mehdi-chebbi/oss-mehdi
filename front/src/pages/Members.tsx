@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from 'react-router-dom';
 import BrandBands from '@/components/shared/BrandBands';
+import MemberWorldMap from '@/components/members/MemberWorldMap';
 
 export default function Members() {
-  const [activeTab, setActiveTab] = useState("africa");
+  const { lang } = useParams<{ lang: string }>();
+  const locale = lang === 'en' ? 'en' : 'fr';
   const [admissionVisible, setAdmissionVisible] = useState(false);
   const admissionRef = useRef<HTMLElement | null>(null);
 
@@ -23,31 +26,19 @@ export default function Members() {
     return () => observer.disconnect();
   }, []);
 
-  const africanCountries = [
-    'Algérie', 'Bénin', 'Burkina Faso', 'Cameroun', 'Cap Vert',
-    "Côte d'Ivoire", 'Djibouti', 'Egypte', 'Erythrée', 'Ethiopie',
-    'Gambie', 'Guinée', 'Guinée-Bissau', 'Kenya', 'Libéria', 'Libye',
-    'Mali', 'Maroc', 'Mauritanie', 'Niger', 'Nigeria', 'Ouganda',
-    'République centrafricaine', 'Sénégal', 'Somalie', 'Soudan', 'Tchad', 'Tunisie',
-  ];
-
-  const nonAfricanCountries = [
-    'Allemagne', 'Belgique', 'Canada', 'France', 'Italie', 'Luxembourg', 'Suisse',
-  ];
-
   const organisations = [
-    { abbr: 'APGMV', name: 'Agence Panafricaine de la Grande Muraille Verte', logo: '/member-logos/apgmv.jpg' },
-    { abbr: 'CARI', name: "Centre d'Actions et de Réalisations Internationales", logo: '/member-logos/cari.png' },
-    { abbr: 'CRTEAN', name: "Centre Régional de Télédétection des Etats de l'Afrique du Nord", logo: '/member-logos/crtean.jpg' },
-    { abbr: 'CILSS', name: "Comité permanent Inter-Etats de Lutte contre la Sécheresse dans le Sahel", logo: '/member-logos/cilss.png' },
-    { abbr: 'CBLT', name: 'Commission du Bassin du Lac Tchad', logo: '/member-logos/cblt.jpg' },
-    { abbr: 'CENSAD', name: 'Communauté des Etats sahélo-sahariens' },
-    { abbr: 'CNULCD', name: 'Convention des Nations Unies sur la Lutte Contre la Désertification', logo: '/member-logos/cnulcd.png' },
+    { abbr: 'APGMV', name: 'Agence Panafricaine de la Grande Muraille Verte', logo: '/member-logos/apgmv.jpg', website: 'https://www.grandemurailleverte.org/' },
+    { abbr: 'CARI', name: "Centre d'Actions et de Réalisations Internationales", logo: '/member-logos/cari.png', website: 'https://www.cariassociation.org/' },
+    { abbr: 'CRTEAN', name: "Centre Régional de Télédétection des Etats de l'Afrique du Nord", logo: '/member-logos/crtean.jpg', website: 'https://crtean.org.tn/' },
+    { abbr: 'CILSS', name: "Comité permanent Inter-Etats de Lutte contre la Sécheresse dans le Sahel", logo: '/member-logos/cilss.png', website: 'https://www.cilss.int/' },
+    { abbr: 'CBLT', name: 'Commission du Bassin du Lac Tchad', logo: '/member-logos/cblt.jpg', website: 'https://cblt.org/fr/' },
+    { abbr: 'CENSAD', name: 'Communauté des Etats sahélo-sahariens', website: 'https://censad.int/' },
+    { abbr: 'CNULCD', name: 'Convention des Nations Unies sur la Lutte Contre la Désertification', logo: '/member-logos/cnulcd.png', website: 'https://www.unccd.int/' },
     { abbr: 'CRU-BN', name: "Coordination Régionale des Usagers.eres des ressources naturelles du Bassin du Niger" },
-    { abbr: 'ENDA', name: 'Environnement et Développement du tiers-monde' },
-    { abbr: 'IGAD', name: 'Intergovernmental Authority on Development', logo: '/member-logos/igad.png' },
-    { abbr: 'FAO', name: "Organisation des Nations Unies pour l'alimentation et l'agriculture", logo: '/member-logos/fao.png' },
-    { abbr: 'UMA', name: 'Union du Maghreb Arabe', logo: '/member-logos/uma.png' },
+    { abbr: 'ENDA', name: 'Environnement et Développement du tiers-monde', website: 'https://www.enda-tm.org/' },
+    { abbr: 'IGAD', name: 'Intergovernmental Authority on Development', logo: '/member-logos/igad.png', website: 'https://igad.int/' },
+    { abbr: 'FAO', name: "Organisation des Nations Unies pour l'alimentation et l'agriculture", logo: '/member-logos/fao.png', website: 'https://www.fao.org/home/fr/' },
+    { abbr: 'UMA', name: 'Union du Maghreb Arabe', logo: '/member-logos/uma.png', website: 'https://maghrebarabe.org/fr/' },
   ];
 
   const admissionSteps = [
@@ -64,9 +55,6 @@ export default function Members() {
       content: "Seules les Organisations non gouvernementales internationales opérant dans le domaine de la science et dont les activités sont compatibles avec les objectifs de l'OSS, peuvent en devenir membres."
     }
   ];
-
-
-  const currentCountries = activeTab === "africa" ? africanCountries : nonAfricanCountries;
 
   return (
     <div className="font-oss min-h-screen overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
@@ -95,64 +83,25 @@ export default function Members() {
       </section>
 
       <section className="mx-auto max-w-[1400px] px-6 py-12 sm:px-8 lg:px-12">
-        <div className="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-9">
           <div>
-            <p className="oss-kicker mb-3">01 · États</p>
             <h2 className="oss-section-title">Pays membres</h2>
-          </div>
-          <div className="flex self-start border border-oss-line bg-white" role="tablist" aria-label="Groupes de pays membres">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "africa"}
-              onClick={() => setActiveTab("africa")}
-              className={`px-5 py-3 text-xs font-bold uppercase tracking-[0.07em] transition-colors duration-300 ${activeTab === "africa" ? "bg-oss-green text-white" : "text-ink/55 hover:bg-oss-green/10 hover:text-oss-blue-dark"}`}
-            >
-              Afrique · 28
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "international"}
-              onClick={() => setActiveTab("international")}
-              className={`border-l border-oss-line px-5 py-3 text-xs font-bold uppercase tracking-[0.07em] transition-colors duration-300 ${activeTab === "international" ? "bg-oss-blue text-white" : "text-ink/55 hover:bg-oss-blue/10 hover:text-oss-blue-dark"}`}
-            >
-              International · 07
-            </button>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink/65">Explorez le réseau international de l&apos;OSS et découvrez ses pays membres à travers le monde.</p>
           </div>
         </div>
-
-        <div className="overflow-hidden bg-white">
-          <div className={`h-1.5 ${activeTab === "africa" ? "bg-oss-green" : "bg-oss-blue"}`} aria-hidden="true" />
-          <div className="flex flex-col gap-2 px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-8">
-            <div>
-              <h3 className="text-xl font-bold text-oss-blue-dark">{activeTab === "africa" ? "Pays africains" : "Pays non africains"}</h3>
-              <p className="mt-1 text-sm text-ink/50">{activeTab === "africa" ? "Membres africains du réseau de l’OSS" : "Partenaires internationaux du réseau"}</p>
-            </div>
-            <span className="text-3xl font-bold text-oss-blue">{String(currentCountries.length).padStart(2, '0')}</span>
-          </div>
-          <div key={activeTab} className="grid border-t border-oss-line sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {currentCountries.map((country, index) => (
-              <div key={country} className="group flex min-h-14 items-center gap-3 border-b border-oss-line px-6 py-4 transition-colors hover:bg-oss-blue/5 sm:border-r">
-                <span className={`h-2 w-2 transition-transform duration-300 group-hover:scale-150 ${activeTab === "africa" ? "bg-oss-green" : "bg-oss-blue"}`} aria-hidden="true" />
-                <span className="text-sm font-medium text-ink/65 transition-colors group-hover:text-oss-blue-dark">{country}</span>
-                <span className="ml-auto text-[10px] font-bold text-ink/25">{String(index + 1).padStart(2, '0')}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <MemberWorldMap locale={locale} />
       </section>
 
       <section className="mx-auto max-w-[1400px] px-6 py-12 sm:px-8 lg:px-12">
         <div className="mb-9 max-w-2xl">
-          <p className="oss-kicker mb-3">02 · Organisations</p>
           <h2 className="oss-section-title">Organisations membres</h2>
           <p className="mt-4 text-base leading-relaxed text-ink/65">Institutions régionales et internationales réunies autour des priorités environnementales du continent.</p>
         </div>
 
         <div className="grid border-l border-t border-oss-line sm:grid-cols-2 lg:grid-cols-3">
-          {organisations.map((org, index) => (
-            <article key={org.abbr} className="group relative grid h-32 grid-cols-[8rem_1fr] overflow-hidden border-b border-r border-oss-line bg-white transition-colors duration-300 hover:bg-oss-blue/5">
+          {organisations.map((org, index) => {
+            const card = (
+              <article className="group relative grid h-32 grid-cols-[8rem_1fr] overflow-hidden border-b border-r border-oss-line bg-white transition-colors duration-300 hover:bg-oss-blue/5">
               <span className={`absolute left-0 top-0 h-1 w-12 transition-all duration-300 group-hover:w-full ${index % 3 === 0 ? "bg-oss-blue" : index % 3 === 1 ? "bg-oss-green" : "bg-oss-ochre"}`} aria-hidden="true" />
               <div className="flex min-h-full items-center justify-center overflow-hidden border-r border-oss-line bg-oss-paper">
                 {org.logo ? (
@@ -174,16 +123,31 @@ export default function Members() {
                 </div>
                 <p className="mt-2 text-[13px] leading-snug text-ink/62 transition-colors group-hover:text-oss-blue-dark">{org.name}</p>
               </div>
-            </article>
-          ))}
+              </article>
+            );
+
+            return org.website ? (
+              <a
+                key={org.abbr}
+                href={org.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visiter le site officiel de ${org.name}`}
+                className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-oss-blue"
+              >
+                {card}
+              </a>
+            ) : (
+              <div key={org.abbr}>{card}</div>
+            );
+          })}
         </div>
       </section>
 
       <section ref={admissionRef} className="mx-auto max-w-[1400px] px-6 pb-24 pt-12 sm:px-8 lg:px-12 lg:pb-28">
         <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           <div className="self-start bg-oss-blue-dark p-7 text-white sm:p-9 lg:sticky lg:top-28">
-            <p className="text-xs font-bold uppercase tracking-[0.1em] text-oss-ochre">03 · Procédure</p>
-            <h2 className="mt-5 text-4xl font-bold tracking-[-0.025em] sm:text-5xl">Admission</h2>
+            <h2 className="text-4xl font-bold tracking-[-0.025em] sm:text-5xl">Admission</h2>
             <p className="mt-6 text-base leading-relaxed text-white/72">Les États et les Organisations souhaitant adhérer à l&apos;OSS peuvent suivre la procédure décrite dans les statuts de l&apos;institution.</p>
             <p className="mt-8 border-l-2 border-oss-ochre pl-5 text-sm leading-relaxed text-white/62">Pour obtenir les documents statutaires et toute information complémentaire, rapprochez-vous du Secrétariat exécutif.</p>
           </div>

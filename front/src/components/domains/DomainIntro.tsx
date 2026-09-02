@@ -29,10 +29,8 @@ export default function DomainIntro({ title, paragraphs, image }: DomainIntroPro
           </div>
         </div>
         <div className="max-w-3xl space-y-8 border-l border-oss-line pl-6 text-[17px] leading-[1.85] text-ink/72 sm:pl-9 sm:text-lg lg:pl-12 lg:text-xl">
-          {paragraphs.map((paragraph, index) => (
-            <p key={paragraph} className={index === 0 ? 'font-semibold text-oss-blue-dark' : undefined}>
-              {paragraph}
-            </p>
+          {paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
       </div>

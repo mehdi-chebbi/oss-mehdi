@@ -7,12 +7,12 @@ const DEPARTMENTS = [
   { key: "direction", label: "Direction", labelEn: "Direction" },
   { key: "technique", label: "Technique", labelEn: "Technical" },
   { key: "administratif", label: "Administratif", labelEn: "Administrative" },
+  { key: "audit", label: "Audit", labelEn: "Audit" },
   { key: "appui", label: "Appui", labelEn: "Support" },
 ] as const;
 
 function MemberCard({ m, locale, featured = false }: { m: TeamMemberData; locale: "fr" | "en"; featured?: boolean }) {
   const title = locale === "en" ? m.title_en : m.title_fr;
-  const diplomas = locale === "en" ? m.diplomas_en : m.diplomas_fr;
   const nationality = locale === "en" ? m.nationality_en : m.nationality_fr;
 
   return (
@@ -27,20 +27,17 @@ function MemberCard({ m, locale, featured = false }: { m: TeamMemberData; locale
           </div>
         )}
       </div>
-      <div className="flex min-h-[260px] flex-1 flex-col p-5 sm:p-6">
+      <div className="flex min-h-[170px] flex-1 flex-col p-5 sm:p-6">
         <div className="min-h-[15px]">
           {nationality && <p className="text-[11px] font-bold uppercase leading-[15px] tracking-[0.07em] text-oss-blue">{nationality}</p>}
         </div>
 
         <h3 className="mt-3 min-h-[46px] line-clamp-2 text-lg font-bold leading-tight text-oss-blue-dark">{m.name}</h3>
 
-        <div className="mt-2 min-h-[58px]">
+        <div className="mt-auto flex min-h-[58px] items-end pt-3">
           {title && <p className="line-clamp-3 text-sm font-medium leading-snug text-ink/68">{title}</p>}
         </div>
 
-        <div className="mt-auto min-h-[72px] border-t border-oss-line pt-3">
-          {diplomas && <p className="line-clamp-3 text-xs leading-relaxed text-ink/52">{diplomas}</p>}
-        </div>
       </div>
     </article>
   );
@@ -62,7 +59,7 @@ export default function Team() {
   }, [activeDept]);
 
   return (
-    <div className="font-oss min-h-screen overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
+    <div className="font-oss min-h-[100dvh] overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
       <section className="mx-auto max-w-[1400px] px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
         <div>
           <p className="oss-kicker mb-5">{locale === "en" ? "People and expertise" : "Capital humain & expertise"}</p>
@@ -79,7 +76,7 @@ export default function Team() {
       </section>
 
       <section className="mx-auto max-w-[1400px] px-6 pb-24 pt-2 sm:px-8 lg:px-12 lg:pb-28">
-        <div className="mb-10 grid border border-oss-line bg-white sm:grid-cols-2 lg:grid-cols-4" role="tablist" aria-label={locale === "en" ? "Team departments" : "Départements de l'équipe"}>
+        <div className="mb-10 grid border border-oss-line bg-white sm:grid-cols-2 lg:grid-cols-5" role="tablist" aria-label={locale === "en" ? "Team departments" : "Départements de l'équipe"}>
           {DEPARTMENTS.map((department) => (
             <button
               key={department.key}

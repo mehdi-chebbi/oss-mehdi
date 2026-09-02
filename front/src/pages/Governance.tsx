@@ -4,15 +4,15 @@ import BrandBands from '@/components/shared/BrandBands';
 
 const boardComposition = [
   { label: "Président", value: "Egypte" },
+  { label: "Espace CBLT", value: "République Centrafricaine et Tchad" },
   { label: "Zone Cen-Sad", value: "Djibouti et Soudan" },
-  { label: "Zone de l'Union du Maghreb Arabe", value: "Maroc et Mauritanie" },
   { label: "Zone CILSS", value: "Bénin et Niger" },
   { label: "Région de l'IGAD", value: "Kenya et Ouganda" },
-  { label: "Espace CBLT", value: "République Centrafricaine et Tchad" },
-  { label: "Pays du Nord", value: "Allemagne, Belgique, Canada, France, Italie, Luxembourg et Suisse" },
-  { label: "Organisations sous-régionales", value: "APGMV, CBLT, CEN-SAD, CILSS, IGAD et UMA" },
   { label: "Organisations internationales", value: "CNULCD" },
   { label: "Organisations de la société civile", value: "ENDA et CARI" },
+  { label: "Organisations sous-régionales", value: "APGMV, CBLT, CEN-SAD, CILSS, IGAD et UMA" },
+  { label: "Pays du Nord", value: "Allemagne, Belgique, Canada, France, Italie, Luxembourg et Suisse" },
+  { label: "Zone de l'Union du Maghreb Arabe", value: "Maroc et Mauritanie" },
 ];
 
 const boardOffice = [
@@ -23,18 +23,18 @@ const boardOffice = [
 ];
 
 const committeeMembers = [
-  { name: "M. Habib BEN YAHIA", title: "Président d'honneur depuis 2016, ancien Président du COS, ancien Secrétaire Général de l'Union du Maghreb Arabe (UMA), ancien Ministre des Affaires Etrangères et de la Défense Nationale", country: "Tunisie" },
-  { name: "M. Jean Luc GNACADJA", title: "Président d'honneur, ancien Président du COS, ancien Secrétaire exécutif de la CNULCD, ancien Ministre de l'Environnement et du Développement durable", country: "Bénin" },
-  { name: "M. Assane SOUMARE", title: "Président, Professeur à l'Université de Nouakchott, ancien Ministre des Pêches", country: "Mauritanie" },
-  { name: "Mme Anneke TRUX", title: "Vice Présidente du COS et Cheffe de programme à la GIZ", country: "Allemagne" },
-  { name: "M. Alhamandou DORSOUMA", title: "Directeur intérimaire et chef de division au département du changement climatique et de la croissance verte à la BAD", country: "Tchad" },
-  { name: "Mme Anta SECK", title: "Coordinatrice du Programme de Gestion intégrée des Ressources en Eau (PGIRE 2)", country: "Sénégal" },
-  { name: "M. Callist TINDIMUGAYA", title: "Commissaire à la planification des ressources en eau et à la réglementation, Ministère de l'Eau et de l'Environnement", country: "Ouganda" },
-  { name: "Mme Dorothy AMWATA", title: "Professeure universitaire", country: "Kenya" },
-  { name: "M. Elyes HAMZA", title: "Directeur du Centre d'activités régionales pour les aires spécialement protégées (SPA/RAC), ancien Ministre de l'Agriculture", country: "Tunisie" },
-  { name: "M. Jean Luc CHOTTE", title: "Directeur de recherche à l'Institut de Recherche pour le Développement (IRD)", country: "France" },
-  { name: "M. Jesper WOHLERT", title: "Directeur de Humana People to People (HPP)", country: "Suisse" },
-  { name: "M. Raafat MISAK", title: "Professeur émérite au Desert Research Centre (DRC)", country: "Egypte" },
+  { name: "M. Habib BEN YAHIA", title: "Président d'honneur depuis 2016, ancien Président du COS, ancien Secrétaire Général de l'Union du Maghreb Arabe (UMA), ancien Ministre des Affaires Etrangères et de la Défense Nationale", country: "Tunisie", flag: "/flags/tn.svg", image: "/cos people/habib ben yahia.jpg" },
+  { name: "M. Jean Luc GNACADJA", title: "Président d'honneur, ancien Président du COS, ancien Secrétaire exécutif de la CNULCD, ancien Ministre de l'Environnement et du Développement durable", country: "Bénin", flag: "/flags/bj.svg", image: "/cos people/Jean Luc GNACADJA.jpg" },
+  { name: "M. Assane SOUMARE", title: "Président, Professeur à l'Université de Nouakchott, ancien Ministre des Pêches", country: "Mauritanie", flag: "/flags/mr.svg", image: "/cos people/assane soumare.jpg" },
+  { name: "Mme Anneke TRUX", title: "Vice Présidente du COS et Cheffe de programme à la GIZ", country: "Allemagne", flag: "/flags/de.svg", image: "/cos people/Anneke TRUX.webp" },
+  { name: "M. Alhamandou DORSOUMA", title: "Directeur intérimaire et chef de division au département du changement climatique et de la croissance verte à la BAD", country: "Tchad", flag: "/flags/td.svg", image: "/cos people/Alhamandou DORSOUMA.jpg" },
+  { name: "Mme Anta SECK", title: "Coordinatrice du Programme de Gestion intégrée des Ressources en Eau (PGIRE 2)", country: "Sénégal", flag: "/flags/sn.svg", image: "/cos people/Anta SECK.jpg" },
+  { name: "M. Callist TINDIMUGAYA", title: "Commissaire à la planification des ressources en eau et à la réglementation, Ministère de l'Eau et de l'Environnement", country: "Ouganda", flag: "/flags/ug.svg", image: "/cos people/Callist TINDIMUGAYA.jpg" },
+  { name: "Mme Dorothy AMWATA", title: "Professeure universitaire", country: "Kenya", flag: "/flags/ke.svg", image: "/cos people/Dorothy AMWATA.jpg" },
+  { name: "M. Elyes HAMZA", title: "Directeur du Centre d'activités régionales pour les aires spécialement protégées (SPA/RAC), ancien Ministre de l'Agriculture", country: "Tunisie", flag: "/flags/tn.svg", image: "/cos people/Elyes HAMZA.jpg" },
+  { name: "M. Jean Luc CHOTTE", title: "Directeur de recherche à l'Institut de Recherche pour le Développement (IRD)", country: "France", flag: "/flags/fr.svg", image: "/cos people/Jean Luc CHOTTE.webp" },
+  { name: "M. Jesper WOHLERT", title: "Directeur de Humana People to People (HPP)", country: "Suisse", flag: "/flags/ch.svg", image: "/cos people/Jesper WOHLERT.jpg" },
+  { name: "M. Raafat MISAK", title: "Professeur émérite au Desert Research Centre (DRC)", country: "Egypte", flag: "/flags/eg.svg", image: "/cos people/Raafat MISAK.jpg" },
 ];
 
 function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
@@ -73,10 +73,8 @@ function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; 
 }
 
 export default function Governance() {
-  const [boardView, setBoardView] = useState<"composition" | "bureau">("composition");
   const [selectedMember, setSelectedMember] = useState(0);
   const activeMember = committeeMembers[selectedMember];
-  const activeBoardRows = boardView === "composition" ? boardComposition : boardOffice;
 
   return (
     <div className="font-oss min-h-screen overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
@@ -102,8 +100,7 @@ export default function Governance() {
           ].map(([title, text], index) => (
             <div key={title} className="relative overflow-hidden bg-white p-6 transition-colors hover:bg-oss-blue/5">
               <span className={`absolute inset-x-0 top-0 h-1 ${index === 0 ? 'bg-oss-blue' : index === 1 ? 'bg-oss-green' : 'bg-oss-ochre'}`} aria-hidden="true" />
-              <span className="text-[11px] font-bold text-oss-blue/60">0{index + 1}</span>
-              <h2 className="mt-5 text-xl font-bold text-oss-blue-dark">{title}</h2>
+              <h2 className="text-xl font-bold text-oss-blue-dark">{title}</h2>
               <p className="mt-3 text-sm leading-relaxed text-ink/60">{text}</p>
             </div>
           ))}
@@ -146,22 +143,57 @@ export default function Governance() {
                 <div className="bg-oss-blue-dark p-5 text-white"><strong className="text-4xl text-oss-blue-light">27</strong><span className="mt-1 block text-xs text-white/55">membres élus</span></div>
                 <div className="bg-white p-5"><strong className="text-4xl text-oss-blue">11</strong><span className="mt-1 block text-xs text-ink/48">membres du Bureau</span></div>
               </div>
+              <div className="mt-8 border-t border-oss-line pt-7">
+                <h3 className="text-lg font-bold text-oss-blue-dark">Un organe de pilotage et de suivi</h3>
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink/60">
+                  <p>
+                    Entre deux sessions de l’Assemblée Générale, le Conseil veille à la continuité des orientations de l’OSS et accompagne leur traduction en décisions opérationnelles.
+                  </p>
+                  <p>
+                    Il constitue un espace de concertation entre les pays et les organisations membres, où sont examinées les priorités institutionnelles, financières et stratégiques de l’Organisation.
+                  </p>
+                </div>
+              </div>
               <p className="mt-5 text-sm leading-relaxed text-ink/45">Le Conseil se réunit une fois par an, statue par consensus et exerce un mandat renouvelable de quatre ans.</p>
             </div>
 
-            <div className="self-start overflow-hidden border border-oss-line bg-white">
-              <div className="flex border-b border-oss-line bg-oss-paper">
-                <button type="button" onClick={() => setBoardView("composition")} className={`flex-1 px-4 py-4 text-sm font-bold transition-colors ${boardView === "composition" ? "bg-oss-blue text-white" : "text-ink/48 hover:bg-oss-blue/5 hover:text-oss-blue-dark"}`}>Composition du CA</button>
-                <button type="button" onClick={() => setBoardView("bureau")} className={`flex-1 border-l border-oss-line px-4 py-4 text-sm font-bold transition-colors ${boardView === "bureau" ? "bg-oss-blue text-white" : "text-ink/48 hover:bg-oss-blue/5 hover:text-oss-blue-dark"}`}>Bureau du Conseil</button>
+            <div className="self-start">
+              <div className="overflow-hidden border border-oss-line bg-white">
+                <div className="border-b border-oss-line bg-oss-blue px-5 py-4 text-white">
+                  <h3 className="text-base font-bold">Composition du CA</h3>
+                  <p className="mt-1 text-xs text-white/65">Représentation des pays et organisations membres</p>
+                </div>
+                <div className="grid sm:grid-cols-2">
+                  {boardComposition.map((item, index) => (
+                    <div
+                      key={item.label}
+                      className={`min-h-28 border-oss-line p-5 transition-colors hover:bg-oss-blue/5 ${index % 2 === 0 ? "sm:border-r" : ""} ${index < boardComposition.length - 2 ? "border-b" : ""}`}
+                    >
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-oss-blue">{item.label}</span>
+                      <p className="mt-3 text-sm font-medium leading-relaxed text-ink/70">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div key={boardView} className="grid animate-[governance-panel-in_450ms_cubic-bezier(0.16,1,0.3,1)] sm:grid-cols-2">
-                {activeBoardRows.map((item, index) => (
-                  <div key={item.label} className={`min-h-28 border-oss-line p-5 transition-colors hover:bg-oss-blue/5 ${index % 2 === 0 ? "sm:border-r" : ""} ${index < activeBoardRows.length - 2 ? "border-b" : ""}`}>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-oss-blue">{item.label}</span>
-                    <p className="mt-3 text-sm font-medium leading-relaxed text-ink/70">{item.value}</p>
-                  </div>
-                ))}
+            </div>
+          </div>
+
+          <div className="mt-10 bg-oss-blue-dark p-5 text-white sm:p-6">
+            <div className="border-b border-white/15 pb-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-oss-blue-light">Instance exécutive</p>
+                <h3 className="mt-1 text-xl font-bold">Bureau du Conseil</h3>
               </div>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {boardOffice.map((item) => (
+                <div key={item.label} className="min-h-28 border border-white/15 bg-white/[0.035] p-5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-oss-blue-light">
+                    {item.label}
+                  </span>
+                  <p className="mt-3 text-sm font-medium leading-relaxed text-white/78">{item.value}</p>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>
@@ -193,18 +225,30 @@ export default function Governance() {
                 >
                   <div>
                     <span className={`text-sm font-bold ${selectedMember === index ? 'text-white' : 'text-oss-blue-dark'}`}>{member.name}</span>
-                    <span className={`mt-1 block text-xs ${selectedMember === index ? 'text-oss-ochre' : 'text-ink/42'}`}>{member.country}</span>
+                    <span className={`mt-1.5 flex items-center gap-2 text-xs ${selectedMember === index ? 'text-oss-ochre' : 'text-ink/42'}`}>
+                      <img src={member.flag} alt="" className="h-3.5 w-5 shrink-0 object-cover shadow-sm" aria-hidden="true" />
+                      {member.country}
+                    </span>
                   </div>
                   <ArrowRight className={`h-4 w-4 shrink-0 transition-transform ${selectedMember === index ? "translate-x-1 text-oss-ochre" : "text-ink/15"}`} />
                 </button>
               ))}
             </div>
 
-            <div key={activeMember.name} className="relative animate-[governance-panel-in_500ms_cubic-bezier(0.16,1,0.3,1)] overflow-hidden bg-oss-blue-dark p-8 pb-11 text-white lg:sticky lg:top-28 lg:min-h-[360px]">
-              <Compass className="h-7 w-7 text-oss-ochre" />
-              <span className="mt-16 block text-xs font-bold uppercase tracking-[0.1em] text-oss-blue-light">Membre du COS · {activeMember.country}</span>
-              <h3 className="mt-4 text-3xl font-bold leading-tight">{activeMember.name}</h3>
-              <p className="mt-5 leading-relaxed text-white/68">{activeMember.title}</p>
+            <div key={activeMember.name} className="relative grid animate-[governance-panel-in_500ms_cubic-bezier(0.16,1,0.3,1)] overflow-hidden bg-oss-blue-dark text-white sm:h-[460px] sm:grid-cols-[0.85fr_1.15fr] lg:sticky lg:top-28">
+              <div className="relative h-[300px] overflow-hidden bg-oss-blue sm:h-full">
+                <img src={activeMember.image} alt={activeMember.name} className="absolute inset-0 h-full w-full object-cover object-top" />
+                <div className="absolute inset-0 bg-gradient-to-t from-oss-blue-dark/35 to-transparent" aria-hidden="true" />
+              </div>
+              <div className="flex flex-col justify-center p-7 pb-12 sm:p-8 sm:pb-12">
+                <Compass className="h-7 w-7 text-oss-ochre" />
+                <span className="mt-8 flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.1em] text-oss-blue-light">
+                  <img src={activeMember.flag} alt="" className="h-4 w-6 shrink-0 object-cover shadow-sm" aria-hidden="true" />
+                  Membre du COS · {activeMember.country}
+                </span>
+                <h3 className="mt-4 text-3xl font-bold leading-tight">{activeMember.name}</h3>
+                <p className="mt-5 leading-relaxed text-white/68">{activeMember.title}</p>
+              </div>
               <BrandBands className="absolute inset-x-0 bottom-0" />
             </div>
           </div>

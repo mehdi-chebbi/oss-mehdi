@@ -336,8 +336,6 @@ CREATE TABLE IF NOT EXISTS team (
     name            VARCHAR(255) NOT NULL,
     title_fr        VARCHAR(255) NOT NULL DEFAULT '',
     title_en        VARCHAR(255) NOT NULL DEFAULT '',
-    diplomas_fr     TEXT NOT NULL DEFAULT '',
-    diplomas_en     TEXT NOT NULL DEFAULT '',
     nationality_fr  VARCHAR(255) NOT NULL DEFAULT '',
     nationality_en  VARCHAR(255) NOT NULL DEFAULT '',
     image           VARCHAR(500) NOT NULL DEFAULT '',

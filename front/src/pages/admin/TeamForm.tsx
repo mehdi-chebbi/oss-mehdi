@@ -13,6 +13,7 @@ const DEPARTMENTS = [
   { key: "direction", label: "Direction" },
   { key: "technique", label: "Technique" },
   { key: "administratif", label: "Administratif" },
+  { key: "audit", label: "Audit" },
   { key: "appui", label: "Appui" },
 ] as const;
 
@@ -20,8 +21,6 @@ const emptyForm = {
   name: "",
   title_fr: "",
   title_en: "",
-  diplomas_fr: "",
-  diplomas_en: "",
   nationality_fr: "",
   nationality_en: "",
   image: "",
@@ -50,8 +49,6 @@ export default function TeamForm() {
           name: member.name,
           title_fr: member.title_fr,
           title_en: member.title_en,
-          diplomas_fr: member.diplomas_fr,
-          diplomas_en: member.diplomas_en,
           nationality_fr: member.nationality_fr,
           nationality_en: member.nationality_en,
           image: member.image,
@@ -195,30 +192,6 @@ export default function TeamForm() {
               className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
             />
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Diplômes / qualifications (FR)
-          </label>
-          <textarea
-            value={form.diplomas_fr}
-            onChange={(e) => set("diplomas_fr", e.target.value)}
-            rows={3}
-            className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-ink/80 mb-1.5">
-            Diplômes / qualifications (EN)
-          </label>
-          <textarea
-            value={form.diplomas_en}
-            onChange={(e) => set("diplomas_en", e.target.value)}
-            rows={3}
-            className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-none"
-          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

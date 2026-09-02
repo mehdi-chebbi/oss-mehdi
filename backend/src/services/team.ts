@@ -5,8 +5,6 @@ export interface TeamRow {
   name: string;
   title_fr: string;
   title_en: string;
-  diplomas_fr: string;
-  diplomas_en: string;
   nationality_fr: string;
   nationality_en: string;
   image: string;
@@ -46,22 +44,18 @@ export async function createTeamMember(data: {
   name: string;
   title_fr?: string;
   title_en?: string;
-  diplomas_fr?: string;
-  diplomas_en?: string;
   nationality_fr?: string;
   nationality_en?: string;
   image?: string;
   department?: string;
 }) {
   const result = await query(
-    `INSERT INTO team (name, title_fr, title_en, diplomas_fr, diplomas_en, nationality_fr, nationality_en, image, department)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+    `INSERT INTO team (name, title_fr, title_en, nationality_fr, nationality_en, image, department)
+     VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
     [
       data.name,
       data.title_fr || "",
       data.title_en || "",
-      data.diplomas_fr || "",
-      data.diplomas_en || "",
       data.nationality_fr || "",
       data.nationality_en || "",
       data.image || "",
@@ -76,7 +70,7 @@ export async function updateTeamMember(id: number, data: Partial<TeamRow>) {
   const values: unknown[] = [];
   let idx = 1;
 
-  const allowed = ["name", "title_fr", "title_en", "diplomas_fr", "diplomas_en", "nationality_fr", "nationality_en", "image", "department"];
+  const allowed = ["name", "title_fr", "title_en", "nationality_fr", "nationality_en", "image", "department"];
 
   for (const key of allowed) {
     if ((data as any)[key] !== undefined) {
