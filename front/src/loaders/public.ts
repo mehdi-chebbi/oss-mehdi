@@ -17,6 +17,8 @@ import {
   getLatestNews,
   getPageTools,
   getPagePartners,
+  getHomepageVideo,
+  getHomepagePublication,
   listPublicNews,
   getNewsYears,
   getNewsBySlug,
@@ -42,6 +44,8 @@ import {
   type ResourceDocumentType,
   type ResourceField,
   type ResourceLanguage,
+  type HomepageVideoData,
+  type HomepagePublicationData,
 } from "@/api/auth";
 
 // ── Home page ──
@@ -56,18 +60,38 @@ export interface HomeLoaderData {
   latestNews: NewsData[];
   tools: ToolData[];
   partners: PartnerData[];
+  homepageVideo: HomepageVideoData | null;
+  homepagePublication: HomepagePublicationData | null;
 }
 
 export async function homeLoader(): Promise<HomeLoaderData> {
-  const [hero, fields, latestNews, tools, partners] = await Promise.all([
-    getPageHero().catch(() => null),
-    getPageFields().catch(() => []),
-    getLatestNews(4).catch(() => []),
-    getPageTools().catch(() => []),
-    getPagePartners().catch(() => []),
-  ]);
+  const [
+    hero,
+    fields,
+    latestNews,
+    tools,
+    partners,
+    homepageVideo,
+    homepagePublication,
+  ] = await Promise.all([
+      getPageHero().catch(() => null),
+      getPageFields().catch(() => []),
+      getLatestNews(4).catch(() => []),
+      getPageTools().catch(() => []),
+      getPagePartners().catch(() => []),
+      getHomepageVideo().catch(() => null),
+      getHomepagePublication().catch(() => null),
+    ]);
 
-  return { hero, fields, latestNews, tools, partners };
+  return {
+    hero,
+    fields,
+    latestNews,
+    tools,
+    partners,
+    homepageVideo,
+    homepagePublication,
+  };
 }
 
 // ── News list ──

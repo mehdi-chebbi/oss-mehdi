@@ -67,21 +67,10 @@ const pillars: Record<PillarName, {
 
 export default function About() {
   const [activeAxis, setActiveAxis] = useState(0);
-  const [isAxisHovered, setIsAxisHovered] = useState(false);
   const [activePillar, setActivePillar] = useState<PillarName>('Terre');
   const [isPillarHovered, setIsPillarHovered] = useState(false);
   const reduceMotion = useReducedMotion();
   const currentPillar = pillars[activePillar];
-
-  useEffect(() => {
-    if (isAxisHovered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const timer = window.setTimeout(() => {
-      setActiveAxis((current) => (current + 1) % axes.length);
-    }, 5000);
-
-    return () => window.clearTimeout(timer);
-  }, [activeAxis, isAxisHovered]);
 
   useEffect(() => {
     if (isPillarHovered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -122,41 +111,26 @@ export default function About() {
           <p className="mt-4 text-base leading-relaxed text-ink/65">Membres africains, pays partenaires et organisations réunis autour d&apos;une mission commune.</p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="relative overflow-hidden bg-oss-blue-dark p-7 text-white lg:row-span-2">
-            <span className="text-xs font-bold uppercase tracking-[0.1em] text-oss-blue-light">Réseau des membres</span>
-            <div className="mt-8 text-6xl font-bold leading-none">48</div>
-            <p className="mt-3 max-w-[16rem] text-sm leading-relaxed text-white/70">Une coopération multilatérale au service du développement durable.</p>
+          <div className="relative flex min-h-[230px] flex-col items-center justify-center overflow-hidden bg-oss-blue-dark p-7 text-center text-white">
+            <span className="text-sm font-bold uppercase tracking-[0.1em] text-oss-blue-light">Réseau des membres</span>
+            <div className="mt-5 text-7xl font-bold leading-none">48</div>
+            <p className="mt-4 max-w-[18rem] text-base font-medium leading-relaxed text-white/75">Une coopération multilatérale au service du développement durable.</p>
             <span className="absolute inset-x-0 bottom-0 h-1.5 bg-oss-ochre" aria-hidden="true" />
           </div>
-          <div className="relative bg-white p-7">
-            <div className="text-4xl font-bold text-oss-blue">28</div>
-            <p className="mt-2 text-sm text-ink/60">Pays africains membres</p>
+          <div className="relative flex min-h-[230px] flex-col items-center justify-center bg-white p-7 text-center">
+            <div className="text-5xl font-bold text-oss-blue">28</div>
+            <p className="mt-4 text-lg font-semibold leading-snug text-ink/65">Pays africains membres</p>
             <span className="absolute inset-x-0 top-0 h-1 bg-oss-green" aria-hidden="true" />
           </div>
-          <div className="relative bg-white p-7">
-            <div className="text-4xl font-bold text-oss-blue">07</div>
-            <p className="mt-2 text-sm text-ink/60">Pays non-africains</p>
+          <div className="relative flex min-h-[230px] flex-col items-center justify-center bg-white p-7 text-center">
+            <div className="text-5xl font-bold text-oss-blue">07</div>
+            <p className="mt-4 text-lg font-semibold leading-snug text-ink/65">Pays non-africains</p>
             <span className="absolute inset-x-0 top-0 h-1 bg-oss-blue" aria-hidden="true" />
           </div>
-          <div className="relative bg-white p-7">
-            <div className="text-4xl font-bold text-oss-blue">13</div>
-            <p className="mt-2 text-sm text-ink/60">Entités et organisations</p>
+          <div className="relative flex min-h-[230px] flex-col items-center justify-center bg-white p-7 text-center">
+            <div className="text-5xl font-bold text-oss-blue">13</div>
+            <p className="mt-4 text-lg font-semibold leading-snug text-ink/65">Entités et organisations</p>
             <span className="absolute inset-x-0 top-0 h-1 bg-oss-ochre" aria-hidden="true" />
-          </div>
-          <div className="relative bg-white p-7">
-            <div className="text-4xl font-bold text-oss-blue">1992</div>
-            <p className="mt-2 text-sm text-ink/60">Année de fondation</p>
-            <span className="absolute inset-x-0 top-0 h-1 bg-oss-teal" aria-hidden="true" />
-          </div>
-          <div className="relative bg-white p-7">
-            <div className="text-4xl font-bold text-oss-blue">2000</div>
-            <p className="mt-2 text-sm text-ink/60">Installation du siège à Tunis</p>
-            <span className="absolute inset-x-0 top-0 h-1 bg-oss-green" aria-hidden="true" />
-          </div>
-          <div className="relative bg-white p-7 sm:col-span-2 lg:col-span-1">
-            <div className="text-lg font-bold text-oss-blue-dark">Tunis, Tunisie</div>
-            <p className="mt-2 text-sm text-ink/60">Siège social de l&apos;OSS</p>
-            <span className="absolute inset-x-0 top-0 h-1 bg-oss-blue" aria-hidden="true" />
           </div>
         </div>
       </section>
@@ -167,18 +141,13 @@ export default function About() {
           <p className="mt-5 text-base leading-relaxed text-ink/65 sm:text-lg">L&apos;OSS aide ses pays membres africains à gérer durablement leurs ressources naturelles dans un contexte climatique exigeant. Son action se concentre sur les zones arides, semi-arides et subhumides sèches.</p>
         </div>
 
-        <div
-          className="mt-10 grid gap-3 lg:grid-cols-3"
-          onMouseLeave={() => setIsAxisHovered(false)}
-        >
+        <div className="mt-10 grid gap-3 lg:grid-cols-3">
           {axes.map((axis, index) => (
             <button
               key={axis.title}
               type="button"
-              onMouseEnter={() => {
-                setIsAxisHovered(true);
-                setActiveAxis(index);
-              }}
+              onMouseEnter={() => setActiveAxis(index)}
+              onFocus={() => setActiveAxis(index)}
               onClick={() => setActiveAxis(index)}
               aria-pressed={activeAxis === index}
               className={`relative min-h-24 overflow-hidden border p-5 text-left transition-colors duration-300 ${activeAxis === index ? 'border-oss-blue text-white' : 'border-oss-line bg-white text-oss-blue-dark hover:border-oss-blue/40 hover:bg-oss-blue/5'}`}
@@ -268,9 +237,9 @@ export default function About() {
                 <div className="flex flex-col justify-center p-7 sm:p-10">
                   <h3 className="text-3xl font-bold text-oss-blue-dark sm:text-4xl">{activePillar}</h3>
                   <p className="mt-5 text-base leading-relaxed text-ink/68 sm:text-lg">{currentPillar.text}</p>
-                  <div className="mt-8 grid gap-2 sm:grid-cols-2">
+                  <div className="mt-8 grid w-fit max-w-full gap-2">
                     {currentPillar.tags.map((tag) => (
-                      <div key={tag} className="border border-oss-line bg-oss-paper px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-oss-blue-dark/70">{tag}</div>
+                      <div key={tag} className="w-full border border-oss-line bg-oss-paper px-4 py-3 text-xs font-bold uppercase tracking-[0.06em] text-oss-blue-dark/70">{tag}</div>
                     ))}
                   </div>
                 </div>

@@ -23,6 +23,8 @@ import chatRoutes from "./routes/chat.js";
 import mailRoutes from "./routes/mail.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import searchRoutes from "./routes/search.js";
+import homepageVideoRoutes from "./routes/homepageVideo.js";
+import homepagePublicationRoutes from "./routes/homepagePublication.js";
 import { startResourceIndexer } from "./services/resourceIndexer.js";
 import { startNewsIndexer } from "./services/newsIndexer.js";
 import {
@@ -143,7 +145,7 @@ app.use((req, res, next) => {
     // Origin is allowlisted (or no allowlist configured in dev)
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Expose-Headers", "X-OSS-Sources");
     if (req.method === "OPTIONS") {
@@ -154,7 +156,7 @@ app.use((req, res, next) => {
     // No Origin header = same-origin request or non-browser client
     // Wildcard is fine here since there's no credentials header to protect
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Expose-Headers", "X-OSS-Sources");
     if (req.method === "OPTIONS") {
@@ -184,6 +186,8 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/mail", mailRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/homepage-video", homepageVideoRoutes);
+app.use("/api/homepage-publication", homepagePublicationRoutes);
 
 // Health check
 app.get("/api/health", async (_req, res) => {

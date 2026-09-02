@@ -57,28 +57,25 @@ INSERT INTO news (title_fr, title_en, body_fr, body_en, category, images, thumbn
    'institutional', '["/act4.jpg"]', 0, '2024-12-20', 'comite-pilotage-rapport-national-protocole-nagoya-tunisie');
 
 
--- ── Partners (top row = row_number 1, bottom row = row_number 2) ──
-INSERT INTO partners (page_id, name, image, row_number, sort_order) VALUES
-  -- Top row
-  (1, 'Adaptation Fund',                '/logo/adaptation-fund.png', 1, 1),
-  (1, 'Green Climate Fund',            '/logo/green-climate-fund.png', 1, 2),
-  (1, 'GEF',                           '/logo/gef.avif', 1, 3),
-  (1, 'FFEM',                          '/logo/ffem.webp', 1, 4),
-  (1, 'World Bank',                    '/logo/world-bank.webp', 1, 5),
-  (1, 'African Union',                 '/logo/african-union.png', 1, 6),
-  (1, 'African Development Bank',      '/logo/african-development-bank.png', 1, 7),
-  (1, 'African Water Facility',        '/logo/awf.png', 1, 8),
-  (1, 'UNEP',                          '/logo/unep.png', 1, 9),
-
-  -- Bottom row
-  (1, 'COOP',                          '/logo/coop.png', 2, 1),
-  (1, 'GIZ',                           '/logo/giz.png', 2, 2),
-  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', '/logo/luxembourg-environment.png', 2, 3),
-  (1, 'Swiss Confederation',           '/logo/swiss-confederation.svg', 2, 4),
-  (1, 'European Union',               '/logo/european-union.svg', 2, 5),
-  (1, 'Europe et Étranger',           '/logo/europe-foreign-affairs.jpg', 2, 6),
-  (1, 'Ministère de la Transition Écologique et Solidaire', '/logo/france-ecological-transition.svg', 2, 7),
-  (1, 'AFD',                           '/logo/afd.png', 2, 8);
+-- ── Partners ──
+INSERT INTO partners (page_id, name, image, website_url, sort_order) VALUES
+  (1, 'Adaptation Fund',                '/logo/adaptation-fund.png', 'https://www.adaptation-fund.org/', 1),
+  (1, 'Green Climate Fund',            '/logo/green-climate-fund.png', 'https://www.greenclimate.fund/', 2),
+  (1, 'GEF',                           '/logo/gef.avif', 'https://www.thegef.org/', 3),
+  (1, 'FFEM',                          '/logo/ffem.webp', 'https://ffem.fr/fr', 4),
+  (1, 'World Bank',                    '/logo/world-bank.webp', 'https://www.worldbank.org/', 5),
+  (1, 'African Union',                 '/logo/african-union.png', 'https://www.au.int/en', 6),
+  (1, 'African Development Bank',      '/logo/african-development-bank.png', 'https://www.afdb.org/en', 7),
+  (1, 'African Water Facility',        '/logo/awf.png', 'https://www.africanwaterfacility.org/en', 8),
+  (1, 'UNEP',                          '/logo/unep.png', 'https://www.unep.org/', 9),
+  (1, 'COOP',                          '/logo/coop.png', '', 10),
+  (1, 'GIZ',                           '/logo/giz.png', 'https://www.giz.de/en/', 11),
+  (1, 'Ministère de l''Environnement du Climat et de la Biodiversité', '/logo/luxembourg-environment.png', 'https://mecb.gouvernement.lu/en.html', 12),
+  (1, 'Swiss Confederation',           '/logo/swiss-confederation.svg', 'https://www.admin.ch/gov/en/start.html', 13),
+  (1, 'European Union',               '/logo/european-union.svg', 'https://european-union.europa.eu/index_en', 14),
+  (1, 'Europe et Étranger',           '/logo/europe-foreign-affairs.jpg', 'https://www.diplomatie.gouv.fr/fr', 15),
+  (1, 'Ministère de la Transition Écologique et Solidaire', '/logo/france-ecological-transition.svg', 'https://www.ecologie.gouv.fr/en', 16),
+  (1, 'AFD',                           '/logo/afd.png', 'https://www.afd.fr/fr', 17);
 
 
 -- ── Tools (Nos outils) ──

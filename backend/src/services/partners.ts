@@ -5,7 +5,7 @@ export interface PartnerRow {
   page_id: number;
   name: string;
   image: string;
-  row_number: number;
+  website_url: string;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -13,7 +13,7 @@ export interface PartnerRow {
 
 export async function getPagePartners(pageId: number) {
   const result = await query(
-    "SELECT * FROM partners WHERE page_id = $1 ORDER BY row_number ASC, sort_order ASC",
+    "SELECT * FROM partners WHERE page_id = $1 ORDER BY sort_order ASC, id ASC",
     [pageId],
   );
   return result.rows;
@@ -21,7 +21,7 @@ export async function getPagePartners(pageId: number) {
 
 export async function listPartners(pageId: number) {
   const result = await query(
-    "SELECT * FROM partners WHERE page_id = $1 ORDER BY row_number ASC, sort_order ASC",
+    "SELECT * FROM partners WHERE page_id = $1 ORDER BY sort_order ASC, id ASC",
     [pageId],
   );
   return result.rows;
@@ -36,17 +36,17 @@ export async function createPartner(data: {
   page_id: number;
   name: string;
   image?: string;
-  row_number?: number;
+  website_url?: string;
   sort_order?: number;
 }) {
   const result = await query(
-    `INSERT INTO partners (page_id, name, image, row_number, sort_order)
+    `INSERT INTO partners (page_id, name, image, website_url, sort_order)
      VALUES ($1,$2,$3,$4,$5) RETURNING *`,
     [
       data.page_id,
       data.name,
       data.image || "",
-      data.row_number ?? 1,
+      data.website_url || "",
       data.sort_order ?? 0,
     ],
   );
@@ -58,7 +58,7 @@ export async function updatePartner(id: number, data: Partial<PartnerRow>) {
   const values: unknown[] = [];
   let idx = 1;
 
-  const allowed = ["name", "image", "row_number", "sort_order"];
+  const allowed = ["name", "image", "website_url", "sort_order"];
 
   for (const key of allowed) {
     if ((data as any)[key] !== undefined) {

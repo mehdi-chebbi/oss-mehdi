@@ -28,7 +28,7 @@ RUN printf 'server {\n\
   root /usr/share/nginx/html;\n\
   index index.html;\n\
 \n\
-  client_max_body_size 155M;\n\
+  client_max_body_size 260M;\n\
 \n\
   location /api/ {\n\
     proxy_pass http://backend:8000;\n\

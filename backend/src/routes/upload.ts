@@ -22,7 +22,8 @@ router.post("/:section", editorOrAdmin, (req, res) => {
   upload(req, res, (err) => {
     if (err) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        res.status(413).json({ error: "File too large (max 10 MB)" });
+        const limit = section === "videos" ? "250 MB" : "10 MB";
+        res.status(413).json({ error: `File too large (max ${limit})` });
         return;
       }
       res.status(400).json({ error: err.message });

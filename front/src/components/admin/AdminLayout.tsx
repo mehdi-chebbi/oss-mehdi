@@ -24,6 +24,8 @@ import {
   Menu,
   X,
   ExternalLink,
+  Video,
+  BookOpen,
 } from "lucide-react";
 
 /* Sidebar structure */
@@ -33,6 +35,8 @@ const pages = [
     icon: Home,
     sections: [
       { to: "/admin/hero", label: "Bannière", icon: Image, adminOnly: false },
+      { to: "/admin/homepage-publication", label: "Publication récente", icon: BookOpen, adminOnly: false },
+      { to: "/admin/homepage-video", label: "Vidéo", icon: Video, adminOnly: false },
       { to: "/admin/fields", label: "Domaines", icon: Layers, adminOnly: false },
       { to: "/admin/tools", label: "Outils", icon: Wrench, adminOnly: false },
       { to: "/admin/partners", label: "Partenaires", icon: Handshake, adminOnly: false },

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
+import { Autoplay } from 'swiper/modules';
 import type { ToolData } from '@/api/auth';
 import { localized, useLocale } from '@/context/locale';
 import 'swiper/css';
@@ -64,10 +65,16 @@ export default function Tools({ items: tools }: ToolsProps) {
 
           <div className="min-w-0">
             <Swiper
+              modules={[Autoplay]}
               slidesPerView={1}
               spaceBetween={18}
-              loop={tools.length > 2}
+              loop={tools.length > 1}
               speed={450}
+              autoplay={tools.length > 1 ? {
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              } : false}
               onSwiper={(instance) => setSwiper(instance)}
               onSlideChange={(instance) => setActiveIdx(instance.realIndex)}
               className="h-full"

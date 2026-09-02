@@ -17,11 +17,14 @@ const VALID_SECTIONS = [
   "projects",
   "project-results",
   "team",
+  "videos",
+  "publications",
 ] as const;
 type Section = (typeof VALID_SECTIONS)[number];
 
 // Max file size: 10 MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_VIDEO_FILE_SIZE = 250 * 1024 * 1024;
 
 // Allowed MIME types
 const ALLOWED_IMAGE_MIME_TYPES = [
@@ -32,6 +35,9 @@ const ALLOWED_IMAGE_MIME_TYPES = [
   "image/svg+xml",
   "image/svg",
 ];
+
+const ALLOWED_VIDEO_EXTENSIONS = new Set([".mp4", ".webm"]);
+const ALLOWED_VIDEO_MIME_TYPES = new Set(["video/mp4", "video/webm"]);
 
 const ALLOWED_RESULT_EXTENSIONS = new Set([
   ".pdf",
@@ -63,7 +69,8 @@ const ALLOWED_RESULT_MIME_TYPES = new Set([
 
 /**
  * Returns a multer storage engine that saves files to
- * `uploads/{section}/{uuid}.{ext}`
+ * `uploads/{section}/{uuid}.{ext}`. Homepage videos retain a sanitized
+ * original filename followed by a UUID.
  */
 function storageForSection(section: Section) {
   return multer.diskStorage({
@@ -75,6 +82,17 @@ function storageForSection(section: Section) {
     },
     filename: (_req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase() || ".bin";
+      if (section === "videos") {
+        const originalStem = path.basename(file.originalname, ext)
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .toLowerCase()
+          .slice(0, 80) || "video";
+        cb(null, `${originalStem}-${uuidv4()}${ext}`);
+        return;
+      }
       cb(null, `${uuidv4()}${ext}`);
     },
   });
@@ -91,9 +109,23 @@ export function uploadMiddleware(section: string) {
 
   return multer({
     storage: storageForSection(section as Section),
-    limits: { fileSize: MAX_FILE_SIZE },
+    limits: {
+      fileSize: section === "videos" ? MAX_VIDEO_FILE_SIZE : MAX_FILE_SIZE,
+    },
     fileFilter: (_req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase();
+      if (section === "videos") {
+        const isVideo =
+          ALLOWED_VIDEO_EXTENSIONS.has(ext) &&
+          ALLOWED_VIDEO_MIME_TYPES.has(file.mimetype);
+        const isPoster = ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype);
+        if (isVideo || isPoster) {
+          cb(null, true);
+        } else {
+          cb(new Error("Only MP4, WebM, JPEG, PNG, GIF, WebP and SVG files are allowed"));
+        }
+        return;
+      }
       if (section === "project-results") {
         if (
           ALLOWED_RESULT_EXTENSIONS.has(ext) &&

@@ -82,7 +82,7 @@ export default function Governance() {
     <div className="font-oss min-h-screen overflow-hidden bg-oss-paper text-ink antialiased selection:bg-oss-blue selection:text-white">
       {/* Introduction */}
       <section className="px-6 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-20">
-        <div className="mx-auto grid max-w-[1400px] gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+        <div className="mx-auto max-w-[1400px]">
           <Reveal>
             <p className="oss-kicker mb-5">Gouvernance de l&apos;OSS</p>
             <h1 className="max-w-4xl text-4xl font-bold leading-[1.04] tracking-[-0.035em] text-oss-blue-dark sm:text-5xl lg:text-6xl">
@@ -91,21 +91,6 @@ export default function Governance() {
             <p className="mt-7 max-w-2xl border-l-4 border-oss-ochre pl-6 text-base leading-relaxed text-ink/68 sm:text-lg">
               L’OSS collabore avec ses pays membres selon le principe de subsidiarité, en initiant et en facilitant des partenariats face aux défis environnementaux communs.
             </p>
-          </Reveal>
-
-          <Reveal delay={140}>
-            <div className="relative overflow-hidden bg-oss-blue-dark p-7 pb-10 text-white lg:p-9 lg:pb-12">
-              <p className="text-xs font-bold uppercase tracking-[0.1em] text-oss-ochre">Modèle institutionnel</p>
-              <p className="mt-6 text-2xl font-bold leading-snug">
-                Une structure légère, flexible et transparente, portée par une équipe multiculturelle et multidisciplinaire.
-              </p>
-              <div className="mt-8 grid grid-cols-3 divide-x divide-white/15 border-t border-white/15 pt-6">
-                <div className="pr-4"><strong className="block text-4xl text-oss-blue-light">04</strong><span className="mt-1 block text-xs text-white/55">organes</span></div>
-                <div className="px-4"><strong className="block text-4xl text-oss-blue-light">27</strong><span className="mt-1 block text-xs text-white/55">membres du CA</span></div>
-                <div className="pl-4"><strong className="block text-4xl text-oss-blue-light">04</strong><span className="mt-1 block text-xs text-white/55">ans par mandat</span></div>
-              </div>
-              <BrandBands className="absolute inset-x-0 bottom-0" />
-            </div>
           </Reveal>
         </div>
 
@@ -130,8 +115,7 @@ export default function Governance() {
       <section id="assemblee" className="scroll-mt-24 px-6 py-12 sm:px-8 lg:px-12">
         <Reveal className="mx-auto grid max-w-[1400px] gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           <div>
-            <span className="oss-kicker">01 · Organe suprême</span>
-            <h2 className="oss-section-title mt-4">L’Assemblée Générale</h2>
+            <h2 className="oss-section-title">L’Assemblée Générale</h2>
           </div>
           <div>
             <p className="text-lg leading-relaxed text-ink/68 sm:text-xl">
@@ -154,8 +138,7 @@ export default function Governance() {
         <Reveal className="mx-auto max-w-[1400px]">
           <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
             <div>
-              <span className="oss-kicker">02 · Décision &amp; supervision</span>
-              <h2 className="oss-section-title mt-4">Le Conseil d’Administration</h2>
+              <h2 className="oss-section-title">Le Conseil d’Administration</h2>
               <p className="mt-6 leading-relaxed text-ink/65">
                 Le CA met en œuvre les orientations de l’Assemblée Générale, examine les états financiers, amende les textes réglementaires, désigne le Secrétaire Exécutif et adopte le budget annuel.
               </p>
@@ -189,8 +172,7 @@ export default function Governance() {
         <Reveal className="mx-auto max-w-[1400px]">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
-              <span className="oss-kicker">03 · Réflexion &amp; anticipation</span>
-              <h2 className="oss-section-title mt-4">Le Comité d’Orientation Stratégique</h2>
+              <h2 className="oss-section-title">Le Comité d’Orientation Stratégique</h2>
             </div>
             <div className="space-y-4 text-base leading-relaxed text-ink/65">
               <p>Organe bénévole et consultatif, le COS conduit une mission de réflexion, d’anticipation et d’analyse stratégique face aux évolutions de la gouvernance régionale et internationale.</p>
@@ -231,17 +213,13 @@ export default function Governance() {
 
       {/* Executive Secretariat */}
       <section id="secretariat" className="scroll-mt-24 px-6 pb-24 pt-12 sm:px-8 lg:px-12 lg:pb-28">
-        <Reveal className="mx-auto max-w-[1400px] overflow-hidden bg-white">
-          <div className="grid lg:grid-cols-[0.7fr_1.3fr] lg:items-stretch">
-            <div className="relative bg-oss-blue p-8 pb-12 text-white md:p-12 md:pb-14">
-              <span className="text-xs font-bold uppercase tracking-[0.1em] text-oss-ochre">04 · Mise en œuvre</span>
-              <h2 className="mt-4 text-4xl font-bold tracking-[-0.025em] sm:text-5xl">Le Secrétariat Exécutif</h2>
-              <BrandBands className="absolute inset-x-0 bottom-0" />
-            </div>
-            <p className="flex items-center p-8 text-lg leading-relaxed text-ink/65 md:p-12 lg:p-16">
-              Constitué d’une équipe pluriculturelle, multidisciplinaire et compétente, il applique les décisions du CA et de l’AG et prend les mesures nécessaires à la gestion de l’OSS, à l’exécution de ses programmes, à l’application de ses politiques et à l’accomplissement de sa mission.
-            </p>
+        <Reveal className="mx-auto grid max-w-[1400px] gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+          <div>
+            <h2 className="oss-section-title">Le Secrétariat Exécutif</h2>
           </div>
+          <p className="text-lg leading-relaxed text-ink/68 sm:text-xl">
+            Constitué d’une équipe pluriculturelle, multidisciplinaire et compétente, il applique les décisions du CA et de l’AG et prend les mesures nécessaires à la gestion de l’OSS, à l’exécution de ses programmes, à l’application de ses politiques et à l’accomplissement de sa mission.
+          </p>
         </Reveal>
       </section>
 

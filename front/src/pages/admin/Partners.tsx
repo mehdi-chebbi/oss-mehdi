@@ -29,9 +29,6 @@ export default function AdminPartners() {
     if (queryError) setError((queryError as Error).message);
   }, [queryError]);
 
-  const row1 = partners.filter((p) => p.row_number === 1);
-  const row2 = partners.filter((p) => p.row_number === 2);
-
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deletePartner(token!, id),
     onSuccess: () => {
@@ -59,16 +56,9 @@ export default function AdminPartners() {
     );
   }
 
-  const renderRow = (label: string, items: PartnerData[]) => (
-    <div className="mb-6">
-      <h3 className="text-sm font-semibold text-ink/50 uppercase tracking-wider mb-2">
-        {label}
-      </h3>
-      {items.length === 0 ? (
-        <p className="text-ink/30 text-sm">Aucun partenaire sur cette ligne</p>
-      ) : (
-        <div className="space-y-2">
-          {items.map((p) => (
+  const renderPartners = (items: PartnerData[]) => (
+    <div className="space-y-2">
+      {items.map((p) => (
             <div
               key={p.id}
               className="bg-white rounded-xl shadow-sm border border-ink/5 p-3 flex items-center gap-3"
@@ -89,6 +79,7 @@ export default function AdminPartners() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-ink text-sm truncate">{p.name}</p>
+                <p className="mt-0.5 text-xs text-ink/40">Ordre {p.sort_order}</p>
               </div>
               <button
                 onClick={() => navigate(`/admin/partners/${p.id}`)}
@@ -104,9 +95,7 @@ export default function AdminPartners() {
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
-          ))}
-        </div>
-      )}
+      ))}
     </div>
   );
 
@@ -116,7 +105,7 @@ export default function AdminPartners() {
         <div>
           <h2 className="text-2xl font-bold text-ink">Partenaires</h2>
           <p className="text-ink/50 text-sm mt-1">
-            Gérez les logos des partenaires dans les deux lignes défilantes.
+            Gérez les logos affichés dans la grille des partenaires.
           </p>
         </div>
         <button
@@ -139,8 +128,7 @@ export default function AdminPartners() {
         </div>
       )}
 
-      {renderRow("Ligne 1, défile vers la droite", row1)}
-      {renderRow("Ligne 2, défile vers la gauche", row2)}
+      {partners.length > 0 && renderPartners(partners)}
 
       {/* Delete confirmation modal */}
       <DeleteConfirmModal

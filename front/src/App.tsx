@@ -7,6 +7,8 @@ import HomePage from "./HomePage";
 import Login from "./pages/Login";
 import AdminUsers from "./pages/admin/Users";
 import AdminHero from "./pages/admin/Hero";
+import AdminHomepageVideo from "./pages/admin/HomepageVideo";
+import AdminHomepagePublication from "./pages/admin/HomepagePublication";
 import AdminFields from "./pages/admin/Fields";
 import FieldForm from "./pages/admin/FieldForm";
 import AdminTools from "./pages/admin/Tools";
@@ -130,6 +132,8 @@ export const router = createBrowserRouter([
           { path: "dashboard", element: <AdminDashboard /> },
           { path: "users", element: <AdminUsers /> },
           { path: "hero", element: <AdminHero /> },
+          { path: "homepage-video", element: <AdminHomepageVideo /> },
+          { path: "homepage-publication", element: <AdminHomepagePublication /> },
 
           // Fields
           { path: "fields", element: <AdminFields /> },

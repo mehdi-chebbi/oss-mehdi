@@ -63,12 +63,12 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
       >
         <BrandBands className="h-[6px] lg:h-[8px] 2xl:h-[9px] [&>span]:h-[3px] lg:[&>span]:h-[4px] 2xl:[&>span]:h-[4.5px] [&>span:nth-child(2)]:top-[2px] lg:[&>span:nth-child(2)]:top-[2.5px] 2xl:[&>span:nth-child(2)]:top-[3px] [&>span:nth-child(3)]:top-[4px] lg:[&>span:nth-child(3)]:top-[5px] 2xl:[&>span:nth-child(3)]:top-[6px]" />
 
-        <nav className="mx-auto flex h-[74px] max-w-[1800px] items-center gap-5 px-4 sm:px-6 lg:h-[96px] lg:gap-6 lg:px-8 2xl:h-[111px] 2xl:gap-[30px] 2xl:px-12" aria-label="Navigation principale">
+        <nav className="mx-auto flex h-[74px] max-w-[2100px] items-center gap-5 px-4 sm:px-6 lg:h-[96px] lg:px-8 xl:gap-3 xl:px-5 2xl:h-[111px] 2xl:gap-5 2xl:px-8" aria-label="Navigation principale">
           <Link to={`/${currentLang}`} className="shrink-0" aria-label="OSS - Accueil">
-            <img src="/logo-h.webp" alt="OSS" className="h-12 w-auto sm:h-14 lg:h-[68px] 2xl:h-[84px]" />
+            <img src="/logo-h.webp" alt="OSS" className="h-12 w-auto sm:h-14 lg:h-[68px] xl:h-[60px] 2xl:h-[84px]" />
           </Link>
 
-          <ul className="hidden flex-1 items-center justify-center lg:flex">
+          <ul className="hidden min-w-0 flex-1 items-center justify-center xl:flex">
             {navItems.map((item) => (
               <li
                 key={item.label}
@@ -81,7 +81,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                       type="button"
                       onMouseEnter={() => setOpenDropdown(item.label)}
                       onClick={() => setOpenDropdown((value) => value === item.label ? null : item.label)}
-                      className="flex items-center gap-1 whitespace-nowrap px-2.5 py-3 text-lg font-bold text-oss-blue-dark transition-colors hover:text-oss-blue xl:px-3 2xl:text-xl"
+                      className="flex items-center gap-1 whitespace-nowrap px-1 py-3 text-sm font-bold text-oss-blue-dark transition-colors hover:text-oss-blue 2xl:px-2.5 2xl:text-lg"
                       aria-expanded={openDropdown === item.label}
                     >
                       {item.label}
@@ -99,13 +99,13 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
                 ) : renderLink(
                   item.href,
                   item.label,
-                  'block whitespace-nowrap px-2.5 py-3 text-lg font-bold text-oss-blue-dark transition-colors hover:text-oss-blue xl:px-3 2xl:text-xl',
+                  'block whitespace-nowrap px-1 py-3 text-sm font-bold text-oss-blue-dark transition-colors hover:text-oss-blue 2xl:px-2.5 2xl:text-lg',
                 )}
               </li>
             ))}
           </ul>
 
-          <div className="ml-auto hidden items-center gap-2 lg:ml-0 lg:flex">
+          <div className="ml-auto hidden shrink-0 items-center gap-2 xl:ml-0 xl:flex">
             <button
               type="button"
               data-global-search-trigger
@@ -121,7 +121,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
               <button
                 type="button"
                 onClick={() => setLangOpen((value) => !value)}
-                className="flex h-9 items-center gap-1.5 border border-oss-blue/20 px-3 text-xs font-bold text-oss-blue-dark transition-colors hover:border-oss-blue"
+                className="flex h-9 items-center gap-1.5 border border-oss-blue/20 px-2 text-[11px] font-bold text-oss-blue-dark transition-colors hover:border-oss-blue 2xl:px-3 2xl:text-xs"
                 aria-expanded={langOpen}
               >
                 <Globe2 className="h-4 w-4 text-oss-blue" />
@@ -143,14 +143,14 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
             </div>
             <Link
               to={`/${currentLang}/report`}
-              className="inline-flex h-9 items-center gap-2 whitespace-nowrap bg-oss-ochre px-3 text-xs font-bold text-oss-blue-dark transition-colors hover:bg-oss-blue hover:text-white"
+              className="inline-flex h-9 items-center gap-1.5 whitespace-nowrap bg-oss-ochre px-2 text-[11px] font-bold text-oss-blue-dark transition-colors hover:bg-oss-blue hover:text-white 2xl:gap-2 2xl:px-3 2xl:text-xs"
             >
               <AlertCircle className="h-4 w-4" />
               {currentLang === 'en' ? 'Complaints' : 'Plaintes'}
             </Link>
             <button
               type="button"
-              className="inline-flex h-9 items-center whitespace-nowrap bg-oss-blue px-3 text-xs font-bold text-white transition-colors hover:bg-oss-blue-dark"
+              className="inline-flex h-9 items-center whitespace-nowrap bg-oss-blue px-2 text-[11px] font-bold text-white transition-colors hover:bg-oss-blue-dark 2xl:px-3 2xl:text-xs"
             >
               {currentLang === 'en' ? 'Members' : 'Membres'}
             </button>
@@ -159,7 +159,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
           <button
             type="button"
             onClick={() => setMobileOpen((value) => !value)}
-            className="ml-auto grid h-10 w-10 place-items-center bg-oss-blue text-white lg:hidden"
+            className="ml-auto grid h-10 w-10 place-items-center bg-oss-blue text-white xl:hidden"
             aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={mobileOpen}
           >
@@ -167,9 +167,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
           </button>
         </nav>
 
-        <BrandBands className="h-[6px] lg:h-[8px] 2xl:h-[9px] [&>span]:h-[3px] lg:[&>span]:h-[4px] 2xl:[&>span]:h-[4.5px] [&>span:nth-child(2)]:top-[2px] lg:[&>span:nth-child(2)]:top-[2.5px] 2xl:[&>span:nth-child(2)]:top-[3px] [&>span:nth-child(3)]:top-[4px] lg:[&>span:nth-child(3)]:top-[5px] 2xl:[&>span:nth-child(3)]:top-[6px]" />
-
-        <div className={`overflow-y-auto border-t border-oss-blue/10 bg-white transition-[max-height,opacity] duration-200 lg:hidden ${mobileOpen ? 'max-h-[calc(100dvh-86px)] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`overflow-y-auto border-t border-oss-blue/10 bg-white transition-[max-height,opacity] duration-200 xl:hidden ${mobileOpen ? 'max-h-[calc(100dvh-80px)] opacity-100 lg:max-h-[calc(100dvh-104px)]' : 'max-h-0 opacity-0'}`}>
           <div className="mx-auto max-w-7xl px-5 py-4">
             <button
               type="button"
@@ -233,7 +231,7 @@ export default function Navbar({ overlay = false }: { overlay?: boolean }) {
           onClose={() => setSearchOpen(false)}
         />
       </header>
-      {!overlay && <div className="h-[86px] lg:h-28 2xl:h-[129px]" aria-hidden="true" />}
+      {!overlay && <div className="h-[80px] lg:h-[104px] 2xl:h-[120px]" aria-hidden="true" />}
     </>
   );
 }

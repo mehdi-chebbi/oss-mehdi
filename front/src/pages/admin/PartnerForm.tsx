@@ -14,7 +14,7 @@ const emptyForm = {
   page_id: 1,
   name: "",
   image: "",
-  row_number: 1,
+  website_url: "",
   sort_order: 0,
 };
 
@@ -40,7 +40,7 @@ export default function PartnerForm() {
           page_id: partner.page_id,
           name: partner.name,
           image: partner.image,
-          row_number: partner.row_number,
+          website_url: partner.website_url || "",
           sort_order: partner.sort_order,
         });
       }
@@ -57,7 +57,7 @@ export default function PartnerForm() {
     } else {
       if (token) {
         listPartners(token).then((partners) => {
-          setForm((f) => ({ ...f, sort_order: partners.length }));
+          setForm((f) => ({ ...f, sort_order: partners.length + 1 }));
         });
       }
     }
@@ -107,7 +107,7 @@ export default function PartnerForm() {
           {isEditing ? "Modifier le partenaire" : "Nouveau partenaire"}
         </h2>
         <p className="text-ink/50 text-sm mt-1">
-          {isEditing ? "Mettez à jour ce partenaire." : "Ajoutez un partenaire aux lignes défilantes."}
+          {isEditing ? "Mettez à jour ce partenaire." : "Ajoutez un partenaire à la grille."}
         </p>
       </div>
 
@@ -146,31 +146,33 @@ export default function PartnerForm() {
           contain
         />
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Ligne de défilement
-            </label>
-            <select
-              value={form.row_number}
-              onChange={(e) => set("row_number", Number(e.target.value))}
-              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink bg-white"
-            >
-              <option value={1}>Ligne 1, défile vers la droite</option>
-              <option value={2}>Ligne 2, défile vers la gauche</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Ordre d’affichage
-            </label>
-            <input
-              type="number"
-              value={form.sort_order}
-              onChange={(e) => set("sort_order", Number(e.target.value))}
-              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
-            />
-          </div>
+        <div className="mb-4">
+          <label className="mb-1.5 block text-sm font-medium text-ink/80">
+            Site web du partenaire
+          </label>
+          <input
+            type="url"
+            value={form.website_url}
+            onChange={(e) => set("website_url", e.target.value)}
+            placeholder="https://www.exemple.org"
+            className="w-full rounded-lg border border-ink/15 px-4 py-2.5 text-ink focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#489e42]"
+          />
+          <p className="mt-1.5 text-xs text-ink/45">
+            Facultatif. Le logo devient cliquable lorsqu’un lien est renseigné.
+          </p>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-ink/80 mb-1.5">
+            Ordre d’affichage
+          </label>
+          <input
+            type="number"
+            min={1}
+            value={form.sort_order}
+            onChange={(e) => set("sort_order", Number(e.target.value))}
+            className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink"
+          />
         </div>
 
         <div className="border-t border-ink/5 pt-5 flex gap-3">

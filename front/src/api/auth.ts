@@ -217,6 +217,70 @@ export async function uploadFile(
   return res.json();
 }
 
+// ── Homepage video ──
+export interface HomepageVideoData {
+  id: number;
+  title_fr: string;
+  title_en: string;
+  video_url: string;
+  poster_url: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function getHomepageVideo() {
+  return request<HomepageVideoData | null>("/homepage-video");
+}
+
+export async function saveHomepageVideo(
+  token: string,
+  data: Pick<HomepageVideoData, "title_fr" | "title_en" | "video_url" | "poster_url">,
+) {
+  return request<HomepageVideoData>("/homepage-video", {
+    method: "PUT",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
+// ── Recent homepage publication ──
+export interface HomepagePublicationData {
+  id: number;
+  title_fr: string;
+  title_en: string;
+  description_fr: string;
+  description_en: string;
+  image_url: string;
+  url_fr: string | null;
+  url_en: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function getHomepagePublication() {
+  return request<HomepagePublicationData | null>("/homepage-publication");
+}
+
+export async function saveHomepagePublication(
+  token: string,
+  data: Pick<
+    HomepagePublicationData,
+    | "title_fr"
+    | "title_en"
+    | "description_fr"
+    | "description_en"
+    | "image_url"
+    | "url_fr"
+    | "url_en"
+  >,
+) {
+  return request<HomepagePublicationData>("/homepage-publication", {
+    method: "PUT",
+    headers: authHeader(token),
+    body: JSON.stringify(data),
+  });
+}
+
 // ── Auth ──
 
 // NOTE: login/register use a RAW fetch (not the `request` helper) because they are
@@ -506,7 +570,7 @@ export interface PartnerData {
   page_id: number;
   name: string;
   image: string;
-  row_number: number;
+  website_url: string;
   sort_order: number;
   created_at?: string;
   updated_at?: string;

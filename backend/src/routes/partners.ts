@@ -11,6 +11,16 @@ import {
 
 const router = Router();
 
+function hasInvalidWebsiteUrl(value: unknown) {
+  if (value === undefined || value === null || value === "") return false;
+  try {
+    const url = new URL(String(value));
+    return url.protocol !== "http:" && url.protocol !== "https:";
+  } catch {
+    return true;
+  }
+}
+
 router.get("/", async (req, res) => {
   const pageId = Number(req.query.page_id) || 1;
   const partners = await getPagePartners(pageId);
@@ -34,6 +44,10 @@ router.get("/:id", editorOrAdmin, async (req, res) => {
 
 router.post("/", editorOrAdmin, async (req, res) => {
   try {
+    if (hasInvalidWebsiteUrl(req.body.website_url)) {
+      res.status(400).json({ error: "Partner website must be a valid HTTP or HTTPS URL" });
+      return;
+    }
     const partner = await createPartner(req.body);
     res.status(201).json(partner);
   } catch (err: any) {
@@ -43,6 +57,10 @@ router.post("/", editorOrAdmin, async (req, res) => {
 
 router.patch("/:id", editorOrAdmin, async (req, res) => {
   try {
+    if (hasInvalidWebsiteUrl(req.body.website_url)) {
+      res.status(400).json({ error: "Partner website must be a valid HTTP or HTTPS URL" });
+      return;
+    }
     const partner = await updatePartner(Number(req.params.id), req.body);
     if (!partner) {
       res.status(404).json({ error: "Partner not found" });
