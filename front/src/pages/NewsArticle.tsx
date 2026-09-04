@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { useLoaderData, useParams, Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Pagination, Navigation } from 'swiper/modules';
@@ -6,6 +6,7 @@ import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Images } from 'luci
 import { newsCategoryLabel } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { NewsArticleLoaderData } from '@/loaders/public';
+import { newsBodyHtml } from '@/utils/newsContent';
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -24,27 +25,6 @@ function formatDate(iso: string, locale: Locale): string {
   }
 }
 
-
-function renderBody(body: string): ReactNode {
-  if (!body) return null;
-  const paragraphs = body
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.replace(/\s+/g, ' ').trim())
-    .filter(Boolean);
-
-  return paragraphs.map((paragraph, index) => (
-    <p
-      key={index}
-      className={`mb-8 text-[18px] leading-[1.85] text-ink/70 md:text-[19px] ${
-        index === 0
-          ? 'first-letter:float-left first-letter:mr-3 first-letter:mt-2 first-letter:text-[76px] first-letter:font-bold first-letter:leading-[0.72] first-letter:text-oss-blue'
-          : ''
-      }`}
-    >
-      {paragraph}
-    </p>
-  ));
-}
 
 export default function NewsArticle() {
   const { lang } = useParams<{ lang: string }>();
@@ -129,7 +109,7 @@ export default function NewsArticle() {
                       >
                         {images.map((url, index) => (
                           <SwiperSlide key={`${url}-${index}`}>
-                            <img src={url} alt={`${title} — ${index + 1}`} className="h-full w-full object-cover" />
+                            <img src={url} alt={`${title} - ${index + 1}`} className="h-full w-full object-cover" />
                           </SwiperSlide>
                         ))}
                       </Swiper>
@@ -155,7 +135,10 @@ export default function NewsArticle() {
         {/* Article body */}
         <section className="px-6 py-10 sm:px-8 lg:px-12 lg:py-16">
           <div className="mx-auto max-w-[1100px] border-l-4 border-oss-ochre bg-white px-7 py-9 sm:px-10 sm:py-12 lg:px-14">
-            <div className="mx-auto max-w-[920px]">{renderBody(body)}</div>
+            <div
+              className="news-rich-text mx-auto max-w-[920px]"
+              dangerouslySetInnerHTML={{ __html: newsBodyHtml(body) }}
+            />
             <div className="mx-auto mt-12 max-w-[920px] border-t border-oss-line pt-6">
               <Link to={`/${locale}/news`} className="group inline-flex items-center gap-2 text-sm font-bold text-ink/55 transition-colors hover:text-oss-blue">
                 <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
@@ -178,6 +161,94 @@ export default function NewsArticle() {
         }
         .news-detail-carousel .swiper-pagination-bullet-active {
           opacity: 1;
+        }
+        .news-rich-text {
+          color: rgb(21 39 53 / 0.72);
+          font-size: 18px;
+          line-height: 1.85;
+        }
+        .news-rich-text > * + * {
+          margin-top: 1.75rem;
+        }
+        .news-rich-text h2,
+        .news-rich-text h3,
+        .news-rich-text h4 {
+          color: var(--color-oss-blue-dark);
+          font-weight: 700;
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+        }
+        .news-rich-text h2 {
+          margin-top: 3.25rem;
+          font-size: clamp(1.65rem, 3vw, 2.25rem);
+        }
+        .news-rich-text h3 {
+          margin-top: 2.5rem;
+          font-size: clamp(1.3rem, 2vw, 1.65rem);
+        }
+        .news-rich-text h4 {
+          margin-top: 2rem;
+          font-size: clamp(1.08rem, 1.5vw, 1.25rem);
+          letter-spacing: -0.01em;
+        }
+        .news-rich-text > p:first-of-type::first-letter {
+          float: left;
+          margin: 0.44rem 0.75rem 0 0;
+          color: var(--color-oss-blue);
+          font-size: 4.75rem;
+          font-weight: 700;
+          line-height: 0.72;
+        }
+        .news-rich-text strong { color: inherit; }
+        .news-rich-text em { font-style: italic; }
+        .news-rich-text ul,
+        .news-rich-text ol { padding-left: 1.5rem; }
+        .news-rich-text ul { list-style: disc; }
+        .news-rich-text ol { list-style: decimal; }
+        .news-rich-text li + li { margin-top: 0.55rem; }
+        .news-rich-text blockquote {
+          border-left: 4px solid var(--color-oss-ochre);
+          padding: 0.4rem 0 0.4rem 1.4rem;
+          color: rgb(21 39 53 / 0.82);
+          font-size: 1.1em;
+          font-style: italic;
+        }
+        .news-rich-text a {
+          color: var(--color-oss-blue);
+          font-weight: 650;
+          text-decoration: underline;
+          text-decoration-color: rgb(49 131 212 / 0.35);
+          text-underline-offset: 0.2em;
+        }
+        .news-rich-text img {
+          display: block;
+          width: auto;
+          max-width: 100%;
+          height: auto;
+          margin: 2rem auto;
+          border-radius: 1rem;
+        }
+        .news-rich-text img[data-size="25"] { width: 25%; }
+        .news-rich-text img[data-size="50"] { width: 50%; }
+        .news-rich-text img[data-size="75"] { width: 75%; }
+        .news-rich-text img[data-size="100"] { width: 100%; }
+        .news-rich-text figcaption {
+          margin-top: -1.25rem;
+          color: rgb(21 39 53 / 0.52);
+          font-size: 0.8em;
+          line-height: 1.5;
+          text-align: center;
+        }
+        .news-rich-text hr {
+          margin: 3rem 0;
+          border: 0;
+          border-top: 1px solid var(--color-oss-line);
+        }
+        @media (min-width: 768px) {
+          .news-rich-text { font-size: 19px; }
+        }
+        @media (max-width: 639px) {
+          .news-rich-text img[data-size] { width: 100%; }
         }
         @media (prefers-reduced-motion: reduce) {
           .news-detail-carousel *, [class*="news-article-rise"] {

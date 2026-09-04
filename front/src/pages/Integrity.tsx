@@ -372,23 +372,18 @@ export default function Integrity() {
           role="tabpanel"
           id={`panel-${activeSection.id}`}
           aria-labelledby={`tab-${activeSection.id}`}
-          className="pt-14 lg:pt-20"
+          className="pt-10 lg:pt-12"
         >
-          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
-            <div>
-              <span className="mb-6 block h-1 w-12 bg-oss-green" aria-hidden="true" />
-              <h2 className="max-w-xl text-3xl font-bold leading-tight tracking-[-0.025em] text-oss-blue-dark sm:text-4xl">
-                {activeSection.title[locale]}
-              </h2>
-            </div>
-            <p className="max-w-4xl text-base leading-[1.85] text-ink/68 sm:text-lg">
-              {activeSection.introduction[locale]}
-            </p>
-          </div>
+          <div className="grid border border-oss-line bg-oss-paper md:grid-cols-2">
+            {activeSection.documents.map((document, documentIndex) => {
+              const isLastUnpaired = activeSection.documents.length % 2 === 1
+                && documentIndex === activeSection.documents.length - 1;
 
-          <div className="mt-12 grid gap-px border border-oss-line bg-oss-line md:grid-cols-2">
-            {activeSection.documents.map((document) => (
-              <article key={document.title.fr} className="flex min-h-64 flex-col bg-white p-6 sm:p-7">
+              return (
+              <article
+                key={document.title.fr}
+                className={`flex min-h-64 flex-col bg-white p-6 ring-1 ring-inset ring-oss-line sm:p-7 ${isLastUnpaired ? 'md:col-span-2 md:w-1/2 md:justify-self-center' : ''}`}
+              >
                 <FileText className="h-6 w-6 text-oss-green" aria-hidden="true" />
                 <h3 className="mt-6 text-lg font-bold leading-snug text-oss-blue-dark sm:text-xl">
                   {document.title[locale]}
@@ -417,7 +412,8 @@ export default function Integrity() {
                   </div>
                 )}
               </article>
-            ))}
+              );
+            })}
           </div>
         </section>
       </div>

@@ -49,7 +49,6 @@ export default function Contact() {
     <section id="contact" className="bg-oss-paper pb-20 pt-10 lg:pb-24 lg:pt-12">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-8 lg:px-12">
         <div className="mb-12 max-w-2xl">
-          <p className="oss-kicker mb-4">{locale === 'en' ? 'Get in touch' : 'Échangeons'}</p>
           <h2 className="oss-section-title">{labels.title}</h2>
         </div>
 
@@ -107,6 +106,19 @@ export default function Contact() {
               </button>
             </form>
           )}
+        </div>
+
+        <div className="mt-12 overflow-hidden border border-oss-line bg-white lg:mt-16">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d796.2773358349358!2d10.212414019300132!3d36.83793818315475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd34de49b7042f%3A0x3c9554dac2e40fde!2sObservatoire%20du%20Sahara%20et%20du%20Sahel!5e1!3m2!1sfr!2stn!4v1788426252021!5m2!1sfr!2stn"
+            title={locale === 'fr'
+              ? 'Localisation du siège de l’Observatoire du Sahara et du Sahel'
+              : 'Location of the Sahara and Sahel Observatory headquarters'}
+            className="block h-[320px] w-full border-0 sm:h-[420px] lg:h-[480px]"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
         </div>
       </div>
     </section>

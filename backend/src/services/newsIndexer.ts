@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { pool, query } from "../config/db.js";
 import { env } from "../config/env.js";
+import { newsHtmlToPlainText } from "../utils/newsHtml.js";
 import { embedTexts } from "./resourceIndexer.js";
 import type { NewsRow } from "./news.js";
 
@@ -19,7 +20,7 @@ type NewsChunk = {
 };
 
 function cleanText(value: string) {
-  return value.replace(/\s+/g, " ").trim();
+  return newsHtmlToPlainText(value).replace(/\s+/g, " ").trim();
 }
 
 function chunkArticle(title: string, body: string, language: NewsLanguage) {

@@ -1,4 +1,5 @@
 import { query } from "../config/db.js";
+import { newsHtmlToPlainText } from "../utils/newsHtml.js";
 
 export type SearchLocale = "fr" | "en";
 
@@ -32,14 +33,7 @@ export interface GlobalSearchResponse {
 }
 
 function plainText(value: unknown): string {
-  return String(value || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
+  return newsHtmlToPlainText(value)
     .replace(/[—–]/g, "-")
     .replace(/\s+/g, " ")
     .trim();

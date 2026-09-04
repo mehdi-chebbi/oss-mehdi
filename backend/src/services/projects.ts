@@ -146,6 +146,40 @@ export async function getPublicProjectsByThematicSlug(thematicSlug: string) {
   return result.rows.map(withCountries);
 }
 
+export async function getPaginatedPublicProjectsByThematicSlug(
+  thematicSlug: string,
+  page: number,
+  limit: number,
+) {
+  const offset = (page - 1) * limit;
+  const [itemsResult, countResult] = await Promise.all([
+    query(
+      `SELECT p.id, p.title_fr, p.title_en, p.description_fr, p.description_en, p.image,
+              p.year_start, p.year_end, p.status, p.budget, p.beneficiary_country_codes,
+              p.slug, p.sort_order,
+              t.slug AS thematic_slug, t.title_fr AS thematic_title_fr, t.title_en AS thematic_title_en
+       FROM projects p
+       JOIN thematics t ON t.id = p.thematic_id
+       WHERE t.slug = $1
+       ORDER BY p.sort_order ASC, p.id ASC
+       LIMIT $2 OFFSET $3`,
+      [thematicSlug, limit, offset],
+    ),
+    query(
+      `SELECT COUNT(*)::int AS total
+       FROM projects p
+       JOIN thematics t ON t.id = p.thematic_id
+       WHERE t.slug = $1`,
+      [thematicSlug],
+    ),
+  ]);
+
+  return {
+    items: itemsResult.rows.map(withCountries),
+    total: Number(countResult.rows[0]?.total || 0),
+  };
+}
+
 // ── Public: single project by slug ──
 // Joins thematics for breadcrumb context.
 export async function getPublicProjectBySlug(slug: string) {

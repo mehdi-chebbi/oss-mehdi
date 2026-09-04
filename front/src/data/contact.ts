@@ -24,7 +24,7 @@ export function getContactInfo(locale: Locale): ContactInfoItem[] {
       {
         kind: 'email',
         label: 'Email',
-        value: 'contact@oss-online.org',
+        value: 'boc@oss.org.tn',
       },
       {
         kind: 'hours',
@@ -48,7 +48,7 @@ export function getContactInfo(locale: Locale): ContactInfoItem[] {
     {
       kind: 'email',
       label: 'Email',
-      value: 'contact@oss-online.org',
+      value: 'boc@oss.org.tn',
     },
     {
       kind: 'hours',

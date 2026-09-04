@@ -2,13 +2,11 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { getThumbnail, newsCategoryLabel, type NewsData } from '@/api/auth';
 import type { Locale } from '@/context/locale';
+import { newsExcerpt } from '@/utils/newsContent';
 
 // Truncate body to ~150 chars at a word boundary for card previews.
 function truncate(text: string, max = 300): string {
-  if (!text) return '';
-  const clean = text.replace(/\s+/g, ' ').trim();
-  if (clean.length <= max) return clean;
-  return clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
+  return newsExcerpt(text, max);
 }
 
 function formatDate(iso: string, locale: Locale): string {

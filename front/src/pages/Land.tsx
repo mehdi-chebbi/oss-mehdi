@@ -42,7 +42,7 @@ export default function Land() {
       <DomainProjectsSection
         locale={locale}
         projects={projects}
-        thematicSlug="land-biodiversity"
+        thematicSlug="land"
         description={{
           fr: 'Découvrez les dernières initiatives de l’OSS consacrées à la restauration des terres et à la lutte contre la désertification.',
           en: 'Discover the latest OSS initiatives supporting land restoration and the fight against desertification.',

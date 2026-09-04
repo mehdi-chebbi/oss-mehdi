@@ -25,6 +25,7 @@ import {
   getPublicThematics,
   getThematicBySlug,
   getPublicProjectsByThematic,
+  getPublicProjectsPageByThematic,
   getProjectBySlug,
   listPublicResources,
   getResourceYears,
@@ -156,6 +157,8 @@ export async function newsArticleLoader({
 export interface ThematicWithProjects {
   thematic: ThematicData;
   projects: ProjectData[];
+  total: number;
+  totalPages: number;
 }
 
 export interface ProjectsListLoaderData {
@@ -164,11 +167,20 @@ export interface ProjectsListLoaderData {
 
 export async function projectsListLoader(): Promise<ProjectsListLoaderData> {
   const thematics = await getPublicThematics().catch(() => []);
-  // Fetch projects for each thematic area in parallel
+  // Fetch only the first portfolio page for each thematic area in parallel.
   const withProjects = await Promise.all(
     thematics.map(async (thematic) => {
-      const projects = await getPublicProjectsByThematic(thematic.slug).catch(() => []);
-      return { thematic, projects };
+      const page = await getPublicProjectsPageByThematic(thematic.slug, 1, 9).catch(() => ({
+        items: [],
+        total: 0,
+        totalPages: 0,
+      }));
+      return {
+        thematic,
+        projects: page.items,
+        total: page.total,
+        totalPages: page.totalPages,
+      };
     }),
   );
   return { thematics: withProjects };
@@ -211,7 +223,7 @@ async function latestThematicProjects(thematicSlug: string): Promise<DomainProje
 }
 
 export function biodiversityLoader() {
-  return latestThematicProjects('land-biodiversity');
+  return latestThematicProjects('biodiversity');
 }
 
 export function climateLoader() {
@@ -223,7 +235,7 @@ export function waterLoader() {
 }
 
 export function landLoader() {
-  return latestThematicProjects('land-biodiversity');
+  return latestThematicProjects('land');
 }
 
 // ── Knowledge sharing resource library ──

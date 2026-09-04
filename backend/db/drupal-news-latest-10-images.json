@@ -1,0 +1,892 @@
+{
+  "format_version": 1,
+  "generated_at": "2026-09-04T08:35:47.178Z",
+  "source": "C:\\Users\\mehdi\\Desktop\\oss-mehdi\\oss-mehdi\\backend\\db\\drupal-content.json",
+  "output_root": "C:\\Users\\mehdi\\Desktop\\oss-mehdi\\oss-mehdi\\storage\\uploads\\news\\drupal",
+  "article_ids": [
+    1270,
+    1269,
+    1268,
+    1267,
+    1266,
+    1265,
+    1264,
+    1263,
+    1262,
+    1261
+  ],
+  "counts": {
+    "articles": 10,
+    "unique_urls": 108,
+    "downloaded": 108,
+    "existing": 0,
+    "failed": 0,
+    "bytes": 354124802
+  },
+  "images": {
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2180_1.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2180_1.JPG",
+      "local_path": "/uploads/news/drupal/bfcae3d5c5d494b6-IMG_2180_1.jpg",
+      "file_name": "bfcae3d5c5d494b6-IMG_2180_1.jpg",
+      "status": "downloaded",
+      "size": 7590623,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2152.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2152.JPG",
+      "local_path": "/uploads/news/drupal/fa7ef8583d728663-IMG_2152.jpg",
+      "file_name": "fa7ef8583d728663-IMG_2152.jpg",
+      "status": "downloaded",
+      "size": 8921169,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2153.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2153.JPG",
+      "local_path": "/uploads/news/drupal/6cadd1cd05514409-IMG_2153.jpg",
+      "file_name": "6cadd1cd05514409-IMG_2153.jpg",
+      "status": "downloaded",
+      "size": 7814606,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2157.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2157.JPG",
+      "local_path": "/uploads/news/drupal/00fdd0ac60d75688-IMG_2157.jpg",
+      "file_name": "00fdd0ac60d75688-IMG_2157.jpg",
+      "status": "downloaded",
+      "size": 9179138,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2158.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2158.JPG",
+      "local_path": "/uploads/news/drupal/8ac70d5bdf59030f-IMG_2158.jpg",
+      "file_name": "8ac70d5bdf59030f-IMG_2158.jpg",
+      "status": "downloaded",
+      "size": 8131240,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2160.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2160.JPG",
+      "local_path": "/uploads/news/drupal/dec2ca7a9e450a97-IMG_2160.jpg",
+      "file_name": "dec2ca7a9e450a97-IMG_2160.jpg",
+      "status": "downloaded",
+      "size": 8505160,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2162.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2162.JPG",
+      "local_path": "/uploads/news/drupal/c9c172c1a3add43c-IMG_2162.jpg",
+      "file_name": "c9c172c1a3add43c-IMG_2162.jpg",
+      "status": "downloaded",
+      "size": 8844307,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2163.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2163.JPG",
+      "local_path": "/uploads/news/drupal/c5e2fb0c8e1ef6ed-IMG_2163.jpg",
+      "file_name": "c5e2fb0c8e1ef6ed-IMG_2163.jpg",
+      "status": "downloaded",
+      "size": 9694730,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2168.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2168.JPG",
+      "local_path": "/uploads/news/drupal/7cf01b4324c8dcc8-IMG_2168.jpg",
+      "file_name": "7cf01b4324c8dcc8-IMG_2168.jpg",
+      "status": "downloaded",
+      "size": 7792782,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2175.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2175.JPG",
+      "local_path": "/uploads/news/drupal/9f00ad964a4f3984-IMG_2175.jpg",
+      "file_name": "9f00ad964a4f3984-IMG_2175.jpg",
+      "status": "downloaded",
+      "size": 11799770,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2179.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2179.JPG",
+      "local_path": "/uploads/news/drupal/362049a6e37601d5-IMG_2179.jpg",
+      "file_name": "362049a6e37601d5-IMG_2179.jpg",
+      "status": "downloaded",
+      "size": 11953268,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2178.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2178.JPG",
+      "local_path": "/uploads/news/drupal/976da0ffeb366886-IMG_2178.jpg",
+      "file_name": "976da0ffeb366886-IMG_2178.jpg",
+      "status": "downloaded",
+      "size": 14343968,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG_2180_0.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG_2180_0.JPG",
+      "local_path": "/uploads/news/drupal/9ec0eb60f5397394-IMG_2180_0.jpg",
+      "file_name": "9ec0eb60f5397394-IMG_2180_0.jpg",
+      "status": "downloaded",
+      "size": 7590623,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/80bd4b23-4bb6-4181-89f0-6870d98e4e76.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/80bd4b23-4bb6-4181-89f0-6870d98e4e76.jpg",
+      "local_path": "/uploads/news/drupal/0c7cc0088c63149c-80bd4b23-4bb6-4181-89f0-6870d98e4e76.jpg",
+      "file_name": "0c7cc0088c63149c-80bd4b23-4bb6-4181-89f0-6870d98e4e76.jpg",
+      "status": "downloaded",
+      "size": 172507,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/61be927d-d744-441a-9754-d18d0fc2d51f.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/61be927d-d744-441a-9754-d18d0fc2d51f.jpg",
+      "local_path": "/uploads/news/drupal/4a044510f17a0a47-61be927d-d744-441a-9754-d18d0fc2d51f.jpg",
+      "file_name": "4a044510f17a0a47-61be927d-d744-441a-9754-d18d0fc2d51f.jpg",
+      "status": "downloaded",
+      "size": 111992,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/79b2b4ea-7f48-4582-9897-f12662bb2543.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/79b2b4ea-7f48-4582-9897-f12662bb2543.jpg",
+      "local_path": "/uploads/news/drupal/1c4244e18a415af3-79b2b4ea-7f48-4582-9897-f12662bb2543.jpg",
+      "file_name": "1c4244e18a415af3-79b2b4ea-7f48-4582-9897-f12662bb2543.jpg",
+      "status": "downloaded",
+      "size": 149757,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/80bd4b23-4bb6-4181-89f0-6870d98e4e76_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/80bd4b23-4bb6-4181-89f0-6870d98e4e76_0.jpg",
+      "local_path": "/uploads/news/drupal/05c79f635f3a354a-80bd4b23-4bb6-4181-89f0-6870d98e4e76_0.jpg",
+      "file_name": "05c79f635f3a354a-80bd4b23-4bb6-4181-89f0-6870d98e4e76_0.jpg",
+      "status": "downloaded",
+      "size": 172507,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/85e51c67-23f7-4ec9-a4b9-733ad5bbbe41.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/85e51c67-23f7-4ec9-a4b9-733ad5bbbe41.jpg",
+      "local_path": "/uploads/news/drupal/72560b6a2213fdf1-85e51c67-23f7-4ec9-a4b9-733ad5bbbe41.jpg",
+      "file_name": "72560b6a2213fdf1-85e51c67-23f7-4ec9-a4b9-733ad5bbbe41.jpg",
+      "status": "downloaded",
+      "size": 138042,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/89e36c9b-6e54-4349-9a1e-f8488c995231.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/89e36c9b-6e54-4349-9a1e-f8488c995231.jpg",
+      "local_path": "/uploads/news/drupal/6370df54322cd27e-89e36c9b-6e54-4349-9a1e-f8488c995231.jpg",
+      "file_name": "6370df54322cd27e-89e36c9b-6e54-4349-9a1e-f8488c995231.jpg",
+      "status": "downloaded",
+      "size": 142199,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/bf16365f-9fb6-4409-b47c-c1deb76d0a8e.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/bf16365f-9fb6-4409-b47c-c1deb76d0a8e.jpg",
+      "local_path": "/uploads/news/drupal/fb6c3da910a453f8-bf16365f-9fb6-4409-b47c-c1deb76d0a8e.jpg",
+      "file_name": "fb6c3da910a453f8-bf16365f-9fb6-4409-b47c-c1deb76d0a8e.jpg",
+      "status": "downloaded",
+      "size": 140355,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/e409d948-05e8-4774-94a2-c0f19ca0358e.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/e409d948-05e8-4774-94a2-c0f19ca0358e.jpg",
+      "local_path": "/uploads/news/drupal/868365182020cc52-e409d948-05e8-4774-94a2-c0f19ca0358e.jpg",
+      "file_name": "868365182020cc52-e409d948-05e8-4774-94a2-c0f19ca0358e.jpg",
+      "status": "downloaded",
+      "size": 165819,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/e604fa9f-bf86-4dd0-b485-5635d82742b6.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/e604fa9f-bf86-4dd0-b485-5635d82742b6.jpg",
+      "local_path": "/uploads/news/drupal/7057730438dedfea-e604fa9f-bf86-4dd0-b485-5635d82742b6.jpg",
+      "file_name": "7057730438dedfea-e604fa9f-bf86-4dd0-b485-5635d82742b6.jpg",
+      "status": "downloaded",
+      "size": 144613,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/e69436d1-a535-4c86-b058-92af0add7b2d.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/e69436d1-a535-4c86-b058-92af0add7b2d.jpg",
+      "local_path": "/uploads/news/drupal/12c5ec51f6469b3d-e69436d1-a535-4c86-b058-92af0add7b2d.jpg",
+      "file_name": "12c5ec51f6469b3d-e69436d1-a535-4c86-b058-92af0add7b2d.jpg",
+      "status": "downloaded",
+      "size": 148548,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/WhatsApp%20Image%202026-08-18%20at%2009.16.19.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/WhatsApp%20Image%202026-08-18%20at%2009.16.19.jpeg",
+      "local_path": "/uploads/news/drupal/46369ea1bc06fa2b-WhatsApp%20Image%202026-08-18%20at%2009.16.19.jpeg",
+      "file_name": "46369ea1bc06fa2b-WhatsApp Image 2026-08-18 at 09.16.19.jpeg",
+      "status": "downloaded",
+      "size": 235912,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032.jpg",
+      "local_path": "/uploads/news/drupal/45a850373c389c69-Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032.jpg",
+      "file_name": "45a850373c389c69-Capture d’écran 2026-08-07 135032.jpg",
+      "status": "downloaded",
+      "size": 308235,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/NbK-RAOB.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/NbK-RAOB.jpg",
+      "local_path": "/uploads/news/drupal/a138b7f3a74c1001-NbK-RAOB.jpg",
+      "file_name": "a138b7f3a74c1001-NbK-RAOB.jpg",
+      "status": "downloaded",
+      "size": 346127,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032_0.jpg",
+      "local_path": "/uploads/news/drupal/a0e5ac9a8a96327d-Capture%20d%E2%80%99%C3%A9cran%202026-08-07%20135032_0.jpg",
+      "file_name": "a0e5ac9a8a96327d-Capture d’écran 2026-08-07 135032_0.jpg",
+      "status": "downloaded",
+      "size": 308235,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0002.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0002.jpg",
+      "local_path": "/uploads/news/drupal/656a6ad1fc241fbe-IMG-20260807-WA0002.jpg",
+      "file_name": "656a6ad1fc241fbe-IMG-20260807-WA0002.jpg",
+      "status": "downloaded",
+      "size": 189749,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0000.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0000.jpg",
+      "local_path": "/uploads/news/drupal/18cbf8988a40c03a-IMG-20260807-WA0000.jpg",
+      "file_name": "18cbf8988a40c03a-IMG-20260807-WA0000.jpg",
+      "status": "downloaded",
+      "size": 143743,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0001.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0001.jpg",
+      "local_path": "/uploads/news/drupal/604fc593674a6a02-IMG-20260807-WA0001.jpg",
+      "file_name": "604fc593674a6a02-IMG-20260807-WA0001.jpg",
+      "status": "downloaded",
+      "size": 213369,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0002_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0002_0.jpg",
+      "local_path": "/uploads/news/drupal/75740681a4936877-IMG-20260807-WA0002_0.jpg",
+      "file_name": "75740681a4936877-IMG-20260807-WA0002_0.jpg",
+      "status": "downloaded",
+      "size": 189749,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0004.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0004.jpg",
+      "local_path": "/uploads/news/drupal/da5465febff69e10-IMG-20260807-WA0004.jpg",
+      "file_name": "da5465febff69e10-IMG-20260807-WA0004.jpg",
+      "status": "downloaded",
+      "size": 174542,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0005.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0005.jpg",
+      "local_path": "/uploads/news/drupal/b0274db0c720c7d9-IMG-20260807-WA0005.jpg",
+      "file_name": "b0274db0c720c7d9-IMG-20260807-WA0005.jpg",
+      "status": "downloaded",
+      "size": 191676,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0008.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0008.jpg",
+      "local_path": "/uploads/news/drupal/efe847845fb9a741-IMG-20260807-WA0008.jpg",
+      "file_name": "efe847845fb9a741-IMG-20260807-WA0008.jpg",
+      "status": "downloaded",
+      "size": 244190,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0009.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/IMG-20260807-WA0009.jpg",
+      "local_path": "/uploads/news/drupal/f08e90b5e46e23fe-IMG-20260807-WA0009.jpg",
+      "file_name": "f08e90b5e46e23fe-IMG-20260807-WA0009.jpg",
+      "status": "downloaded",
+      "size": 117625,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/CoverImage.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/CoverImage.png",
+      "local_path": "/uploads/news/drupal/271729468fd4b129-CoverImage.png",
+      "file_name": "271729468fd4b129-CoverImage.png",
+      "status": "downloaded",
+      "size": 17458701,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/1.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/1.png",
+      "local_path": "/uploads/news/drupal/0374e862a1cc92cc-1.png",
+      "file_name": "0374e862a1cc92cc-1.png",
+      "status": "downloaded",
+      "size": 887344,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/2.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/2.png",
+      "local_path": "/uploads/news/drupal/06d7ae80c3f1ad99-2.png",
+      "file_name": "06d7ae80c3f1ad99-2.png",
+      "status": "downloaded",
+      "size": 1566117,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/3.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/3.png",
+      "local_path": "/uploads/news/drupal/3c639c74aeaa4afe-3.png",
+      "file_name": "3c639c74aeaa4afe-3.png",
+      "status": "downloaded",
+      "size": 847957,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/4.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/4.png",
+      "local_path": "/uploads/news/drupal/71f63b1385f2bafe-4.png",
+      "file_name": "71f63b1385f2bafe-4.png",
+      "status": "downloaded",
+      "size": 453339,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/5.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/5.png",
+      "local_path": "/uploads/news/drupal/d94468591852faed-5.png",
+      "file_name": "d94468591852faed-5.png",
+      "status": "downloaded",
+      "size": 2582660,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2009.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2009.png",
+      "local_path": "/uploads/news/drupal/ebf70f3625c5d2c7-Capture%20d%E2%80%99%C3%A9cran%2009.png",
+      "file_name": "ebf70f3625c5d2c7-Capture d’écran 09.png",
+      "status": "downloaded",
+      "size": 906416,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2011.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2011.png",
+      "local_path": "/uploads/news/drupal/b2d47c62eb2e7690-Capture%20d%E2%80%99%C3%A9cran%2011.png",
+      "file_name": "b2d47c62eb2e7690-Capture d’écran 11.png",
+      "status": "downloaded",
+      "size": 1045322,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2016.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2016.png",
+      "local_path": "/uploads/news/drupal/51eee74300eb29a4-Capture%20d%E2%80%99%C3%A9cran%2016.png",
+      "file_name": "51eee74300eb29a4-Capture d’écran 16.png",
+      "status": "downloaded",
+      "size": 1204835,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2018.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2018.png",
+      "local_path": "/uploads/news/drupal/150ca5a75abaa0be-Capture%20d%E2%80%99%C3%A9cran%2018.png",
+      "file_name": "150ca5a75abaa0be-Capture d’écran 18.png",
+      "status": "downloaded",
+      "size": 1327392,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2040.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/Capture%20d%E2%80%99%C3%A9cran%2040.png",
+      "local_path": "/uploads/news/drupal/af70b431c6d1f826-Capture%20d%E2%80%99%C3%A9cran%2040.png",
+      "file_name": "af70b431c6d1f826-Capture d’écran 40.png",
+      "status": "downloaded",
+      "size": 1970403,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/CoverImage_0.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/CoverImage_0.png",
+      "local_path": "/uploads/news/drupal/32ab4ec8e77c6617-CoverImage_0.png",
+      "file_name": "32ab4ec8e77c6617-CoverImage_0.png",
+      "status": "downloaded",
+      "size": 17458701,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/5_1.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/5_1.jpeg",
+      "local_path": "/uploads/news/drupal/fdba9e04dd2ac499-5_1.jpeg",
+      "file_name": "fdba9e04dd2ac499-5_1.jpeg",
+      "status": "downloaded",
+      "size": 6360697,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/1.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/1.jpeg",
+      "local_path": "/uploads/news/drupal/fc67c456c5d4b3c6-1.jpeg",
+      "file_name": "fc67c456c5d4b3c6-1.jpeg",
+      "status": "downloaded",
+      "size": 1299691,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/3.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/3.jpeg",
+      "local_path": "/uploads/news/drupal/3746042b2783ea8f-3.jpeg",
+      "file_name": "3746042b2783ea8f-3.jpeg",
+      "status": "downloaded",
+      "size": 216197,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/4.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/4.jpeg",
+      "local_path": "/uploads/news/drupal/756c422f2b830727-4.jpeg",
+      "file_name": "756c422f2b830727-4.jpeg",
+      "status": "downloaded",
+      "size": 179620,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/5_0.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/5_0.jpeg",
+      "local_path": "/uploads/news/drupal/e3e22e8322147062-5_0.jpeg",
+      "file_name": "e3e22e8322147062-5_0.jpeg",
+      "status": "downloaded",
+      "size": 511767,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/6.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/6.jpeg",
+      "local_path": "/uploads/news/drupal/df37096988f52061-6.jpeg",
+      "file_name": "df37096988f52061-6.jpeg",
+      "status": "downloaded",
+      "size": 284498,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/7.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/7.jpeg",
+      "local_path": "/uploads/news/drupal/90043104c5e56ca1-7.jpeg",
+      "file_name": "90043104c5e56ca1-7.jpeg",
+      "status": "downloaded",
+      "size": 1261204,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/8.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/8.jpeg",
+      "local_path": "/uploads/news/drupal/241124f1237f4269-8.jpeg",
+      "file_name": "241124f1237f4269-8.jpeg",
+      "status": "downloaded",
+      "size": 717528,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/9.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/9.jpeg",
+      "local_path": "/uploads/news/drupal/931eece8d33d29fd-9.jpeg",
+      "file_name": "931eece8d33d29fd-9.jpeg",
+      "status": "downloaded",
+      "size": 215848,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/10.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/10.jpeg",
+      "local_path": "/uploads/news/drupal/ead5cf86f6c7d3d6-10.jpeg",
+      "file_name": "ead5cf86f6c7d3d6-10.jpeg",
+      "status": "downloaded",
+      "size": 314074,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-08/11.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-08/11.jpeg",
+      "local_path": "/uploads/news/drupal/5f3433651e249975-11.jpeg",
+      "file_name": "5f3433651e249975-11.jpeg",
+      "status": "downloaded",
+      "size": 139889,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3586.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3586.JPG",
+      "local_path": "/uploads/news/drupal/2f3a19ecc7e1bd91-IMG_3586.jpg",
+      "file_name": "2f3a19ecc7e1bd91-IMG_3586.jpg",
+      "status": "downloaded",
+      "size": 5189651,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3552.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3552.JPG",
+      "local_path": "/uploads/news/drupal/476454dd1e5f5a81-IMG_3552.jpg",
+      "file_name": "476454dd1e5f5a81-IMG_3552.jpg",
+      "status": "downloaded",
+      "size": 11830313,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/_MG_3883.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/_MG_3883.JPG",
+      "local_path": "/uploads/news/drupal/74917903506fa994-_MG_3883.jpg",
+      "file_name": "74917903506fa994-_MG_3883.jpg",
+      "status": "downloaded",
+      "size": 3714145,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/_MG_3890.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/_MG_3890.JPG",
+      "local_path": "/uploads/news/drupal/6bb50715facfef60-_MG_3890.jpg",
+      "file_name": "6bb50715facfef60-_MG_3890.jpg",
+      "status": "downloaded",
+      "size": 3895144,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/_MG_3907.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/_MG_3907.JPG",
+      "local_path": "/uploads/news/drupal/4a3dc5865951c0d1-_MG_3907.jpg",
+      "file_name": "4a3dc5865951c0d1-_MG_3907.jpg",
+      "status": "downloaded",
+      "size": 3956933,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/_MG_3955.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/_MG_3955.JPG",
+      "local_path": "/uploads/news/drupal/01656a71ed29446c-_MG_3955.jpg",
+      "file_name": "01656a71ed29446c-_MG_3955.jpg",
+      "status": "downloaded",
+      "size": 5903279,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3153.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3153.JPG",
+      "local_path": "/uploads/news/drupal/ab72f372fdb9fa54-IMG_3153.jpg",
+      "file_name": "ab72f372fdb9fa54-IMG_3153.jpg",
+      "status": "downloaded",
+      "size": 4936924,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3227.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3227.JPG",
+      "local_path": "/uploads/news/drupal/6140025bdd5958f6-IMG_3227.jpg",
+      "file_name": "6140025bdd5958f6-IMG_3227.jpg",
+      "status": "downloaded",
+      "size": 4698859,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3271.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3271.JPG",
+      "local_path": "/uploads/news/drupal/974edf1ab97760d5-IMG_3271.jpg",
+      "file_name": "974edf1ab97760d5-IMG_3271.jpg",
+      "status": "downloaded",
+      "size": 4551571,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3345.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3345.JPG",
+      "local_path": "/uploads/news/drupal/9120b91ccb6fc36d-IMG_3345.jpg",
+      "file_name": "9120b91ccb6fc36d-IMG_3345.jpg",
+      "status": "downloaded",
+      "size": 3764480,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3348.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3348.JPG",
+      "local_path": "/uploads/news/drupal/599421706f371d9c-IMG_3348.jpg",
+      "file_name": "599421706f371d9c-IMG_3348.jpg",
+      "status": "downloaded",
+      "size": 5681136,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3373.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3373.JPG",
+      "local_path": "/uploads/news/drupal/f754bec933854c5c-IMG_3373.jpg",
+      "file_name": "f754bec933854c5c-IMG_3373.jpg",
+      "status": "downloaded",
+      "size": 4180476,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3405.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3405.JPG",
+      "local_path": "/uploads/news/drupal/9dd9d83884170907-IMG_3405.jpg",
+      "file_name": "9dd9d83884170907-IMG_3405.jpg",
+      "status": "downloaded",
+      "size": 6033604,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3426.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3426.JPG",
+      "local_path": "/uploads/news/drupal/6c4b5c96eb8e7ecc-IMG_3426.jpg",
+      "file_name": "6c4b5c96eb8e7ecc-IMG_3426.jpg",
+      "status": "downloaded",
+      "size": 6625371,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3442.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3442.JPG",
+      "local_path": "/uploads/news/drupal/a658f7674c84a2b7-IMG_3442.jpg",
+      "file_name": "a658f7674c84a2b7-IMG_3442.jpg",
+      "status": "downloaded",
+      "size": 6593513,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3459.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3459.JPG",
+      "local_path": "/uploads/news/drupal/822535699b830660-IMG_3459.jpg",
+      "file_name": "822535699b830660-IMG_3459.jpg",
+      "status": "downloaded",
+      "size": 5461727,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3481.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3481.JPG",
+      "local_path": "/uploads/news/drupal/61abe796077357ca-IMG_3481.jpg",
+      "file_name": "61abe796077357ca-IMG_3481.jpg",
+      "status": "downloaded",
+      "size": 5374111,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3545.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3545.JPG",
+      "local_path": "/uploads/news/drupal/7e63013d2006638f-IMG_3545.jpg",
+      "file_name": "7e63013d2006638f-IMG_3545.jpg",
+      "status": "downloaded",
+      "size": 3668684,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3586_0.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3586_0.JPG",
+      "local_path": "/uploads/news/drupal/ad2301146e39c23a-IMG_3586_0.jpg",
+      "file_name": "ad2301146e39c23a-IMG_3586_0.jpg",
+      "status": "downloaded",
+      "size": 5189651,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3625.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3625.JPG",
+      "local_path": "/uploads/news/drupal/999d42819eef7358-IMG_3625.jpg",
+      "file_name": "999d42819eef7358-IMG_3625.jpg",
+      "status": "downloaded",
+      "size": 3567906,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_3740.JPG": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_3740.JPG",
+      "local_path": "/uploads/news/drupal/fd3add9b688b7acc-IMG_3740.jpg",
+      "file_name": "fd3add9b688b7acc-IMG_3740.jpg",
+      "status": "downloaded",
+      "size": 3352283,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_1900.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_1900.jpg",
+      "local_path": "/uploads/news/drupal/a8e7ce4aa811e987-IMG_1900.jpg",
+      "file_name": "a8e7ce4aa811e987-IMG_1900.jpg",
+      "status": "downloaded",
+      "size": 3539813,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_1900_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_1900_0.jpg",
+      "local_path": "/uploads/news/drupal/f865647af90d5803-IMG_1900_0.jpg",
+      "file_name": "f865647af90d5803-IMG_1900_0.jpg",
+      "status": "downloaded",
+      "size": 3539813,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20115915.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20115915.png",
+      "local_path": "/uploads/news/drupal/bf08da7da6b1c1c9-Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20115915.png",
+      "file_name": "bf08da7da6b1c1c9-Capture d’écran 2026-07-13 115915.png",
+      "status": "downloaded",
+      "size": 340887,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110944.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110944.png",
+      "local_path": "/uploads/news/drupal/0699910e7c5591b8-Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110944.png",
+      "file_name": "0699910e7c5591b8-Capture d’écran 2026-07-13 110944.png",
+      "status": "downloaded",
+      "size": 863722,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110751.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110751.png",
+      "local_path": "/uploads/news/drupal/8dc30544a2278918-Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110751.png",
+      "file_name": "8dc30544a2278918-Capture d’écran 2026-07-13 110751.png",
+      "status": "downloaded",
+      "size": 657173,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110710.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110710.png",
+      "local_path": "/uploads/news/drupal/0ad473c3d350b6d1-Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110710.png",
+      "file_name": "0ad473c3d350b6d1-Capture d’écran 2026-07-13 110710.png",
+      "status": "downloaded",
+      "size": 632932,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110613.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110613.png",
+      "local_path": "/uploads/news/drupal/1b81d2d57e6882c7-Capture%20d%E2%80%99%C3%A9cran%202026-07-13%20110613.png",
+      "file_name": "1b81d2d57e6882c7-Capture d’écran 2026-07-13 110613.png",
+      "status": "downloaded",
+      "size": 573040,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_9430%20-%20Copie.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_9430%20-%20Copie.png",
+      "local_path": "/uploads/news/drupal/247d34b8e54cb533-IMG_9430%20-%20Copie.png",
+      "file_name": "247d34b8e54cb533-IMG_9430 - Copie.png",
+      "status": "downloaded",
+      "size": 18085159,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_9430%20-%20Copie_0.png": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_9430%20-%20Copie_0.png",
+      "local_path": "/uploads/news/drupal/ead8b081d9a03f9b-IMG_9430%20-%20Copie_0.png",
+      "file_name": "ead8b081d9a03f9b-IMG_9430 - Copie_0.png",
+      "status": "downloaded",
+      "size": 18085159,
+      "content_type": "image/png"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_9445.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_9445.jpeg",
+      "local_path": "/uploads/news/drupal/1288b1dc73926197-IMG_9445.jpeg",
+      "file_name": "1288b1dc73926197-IMG_9445.jpeg",
+      "status": "downloaded",
+      "size": 5436494,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_9424.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_9424.jpeg",
+      "local_path": "/uploads/news/drupal/96b6c42f8dd2149d-IMG_9424.jpeg",
+      "file_name": "96b6c42f8dd2149d-IMG_9424.jpeg",
+      "status": "downloaded",
+      "size": 2486345,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/IMG_9420.jpeg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/IMG_9420.jpeg",
+      "local_path": "/uploads/news/drupal/0b0766b94c295441-IMG_9420.jpeg",
+      "file_name": "0b0766b94c295441-IMG_9420.jpeg",
+      "status": "downloaded",
+      "size": 3620433,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/angola.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/angola.jpg",
+      "local_path": "/uploads/news/drupal/25d55c47ddc77508-angola.jpg",
+      "file_name": "25d55c47ddc77508-angola.jpg",
+      "status": "downloaded",
+      "size": 141440,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/736248644_1334720265291128_3804041183866659955_n_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/736248644_1334720265291128_3804041183866659955_n_0.jpg",
+      "local_path": "/uploads/news/drupal/c36aeac885acbe37-736248644_1334720265291128_3804041183866659955_n_0.jpg",
+      "file_name": "c36aeac885acbe37-736248644_1334720265291128_3804041183866659955_n_0.jpg",
+      "status": "downloaded",
+      "size": 141440,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/736248644_1334720265291128_3804041183866659955_n.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/736248644_1334720265291128_3804041183866659955_n.jpg",
+      "local_path": "/uploads/news/drupal/66666a48cfde1446-736248644_1334720265291128_3804041183866659955_n.jpg",
+      "file_name": "66666a48cfde1446-736248644_1334720265291128_3804041183866659955_n.jpg",
+      "status": "downloaded",
+      "size": 141440,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-1_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-1_0.jpg",
+      "local_path": "/uploads/news/drupal/ade9cfa1c7a8e421-Adswac-1_0.jpg",
+      "file_name": "ade9cfa1c7a8e421-Adswac-1_0.jpg",
+      "status": "downloaded",
+      "size": 138840,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-7.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-7.jpg",
+      "local_path": "/uploads/news/drupal/9f49929fb0a92b6b-Adswac-7.jpg",
+      "file_name": "9f49929fb0a92b6b-Adswac-7.jpg",
+      "status": "downloaded",
+      "size": 209869,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-2_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-2_0.jpg",
+      "local_path": "/uploads/news/drupal/dc2603953bc8b3e1-Adswac-2_0.jpg",
+      "file_name": "dc2603953bc8b3e1-Adswac-2_0.jpg",
+      "status": "downloaded",
+      "size": 100269,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-6.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-6.jpg",
+      "local_path": "/uploads/news/drupal/efc1bb571c31fbd9-Adswac-6.jpg",
+      "file_name": "efc1bb571c31fbd9-Adswac-6.jpg",
+      "status": "downloaded",
+      "size": 269081,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-3_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-3_0.jpg",
+      "local_path": "/uploads/news/drupal/c1b7f0c73b2a3608-Adswac-3_0.jpg",
+      "file_name": "c1b7f0c73b2a3608-Adswac-3_0.jpg",
+      "status": "downloaded",
+      "size": 79326,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-5.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-5.jpg",
+      "local_path": "/uploads/news/drupal/141929ec34061696-Adswac-5.jpg",
+      "file_name": "141929ec34061696-Adswac-5.jpg",
+      "status": "downloaded",
+      "size": 160430,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-4_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-4_0.jpg",
+      "local_path": "/uploads/news/drupal/d24c59fdec23eadf-Adswac-4_0.jpg",
+      "file_name": "d24c59fdec23eadf-Adswac-4_0.jpg",
+      "status": "downloaded",
+      "size": 116523,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-4.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-4.jpg",
+      "local_path": "/uploads/news/drupal/620319e2f86e67d3-Adswac-4.jpg",
+      "file_name": "620319e2f86e67d3-Adswac-4.jpg",
+      "status": "downloaded",
+      "size": 116523,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-5_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-5_0.jpg",
+      "local_path": "/uploads/news/drupal/133939b641350199-Adswac-5_0.jpg",
+      "file_name": "133939b641350199-Adswac-5_0.jpg",
+      "status": "downloaded",
+      "size": 160430,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-3.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-3.jpg",
+      "local_path": "/uploads/news/drupal/7260c949ef9ab2c6-Adswac-3.jpg",
+      "file_name": "7260c949ef9ab2c6-Adswac-3.jpg",
+      "status": "downloaded",
+      "size": 79326,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-6_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-6_0.jpg",
+      "local_path": "/uploads/news/drupal/be13e797092ac352-Adswac-6_0.jpg",
+      "file_name": "be13e797092ac352-Adswac-6_0.jpg",
+      "status": "downloaded",
+      "size": 269081,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-2.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-2.jpg",
+      "local_path": "/uploads/news/drupal/101ffd73414947da-Adswac-2.jpg",
+      "file_name": "101ffd73414947da-Adswac-2.jpg",
+      "status": "downloaded",
+      "size": 100269,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-7_0.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-7_0.jpg",
+      "local_path": "/uploads/news/drupal/dfe0182fb5b586ff-Adswac-7_0.jpg",
+      "file_name": "dfe0182fb5b586ff-Adswac-7_0.jpg",
+      "status": "downloaded",
+      "size": 209869,
+      "content_type": "image/jpeg"
+    },
+    "https://www.oss-online.org/sites/default/files/2026-07/Adswac-1.jpg": {
+      "remote_url": "https://www.oss-online.org/sites/default/files/2026-07/Adswac-1.jpg",
+      "local_path": "/uploads/news/drupal/c49bfd6fa7151c8b-Adswac-1.jpg",
+      "file_name": "c49bfd6fa7151c8b-Adswac-1.jpg",
+      "status": "downloaded",
+      "size": 138840,
+      "content_type": "image/jpeg"
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { editorOrAdmin } from "../middleware/editorOrAdmin.js";
 import {
   getPublicProjectsByThematicSlug,
+  getPaginatedPublicProjectsByThematicSlug,
   getPublicProjectBySlug,
   listAllProjectsByThematic,
   getProject,
@@ -26,6 +27,26 @@ router.get("/countries", async (_req, res) => {
 router.get("/thematic/:thematicSlug", async (req, res) => {
   const items = await getPublicProjectsByThematicSlug(req.params.thematicSlug);
   res.json(items);
+});
+
+// Paginated projects for a thematic area, used by the expandable public portfolio.
+// GET /api/projects/thematic/:thematicSlug/paginated?page=1&limit=9
+router.get("/thematic/:thematicSlug/paginated", async (req, res) => {
+  const page = Math.max(1, Number.parseInt(String(req.query.page || "1"), 10) || 1);
+  const limit = Math.min(24, Math.max(1, Number.parseInt(String(req.query.limit || "9"), 10) || 9));
+  const { items, total } = await getPaginatedPublicProjectsByThematicSlug(
+    req.params.thematicSlug,
+    page,
+    limit,
+  );
+
+  res.json({
+    items,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  });
 });
 
 // Single project by slug (joins thematic area for breadcrumb)

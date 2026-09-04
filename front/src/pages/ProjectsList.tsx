@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLoaderData, useParams, Link } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Briefcase } from 'lucide-react';
-import { statusLabel, yearRange } from '@/api/auth';
+import { getPublicProjectsPageByThematic, statusLabel, yearRange, type ProjectData } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { ProjectsListLoaderData } from '@/loaders/public';
 
@@ -12,11 +12,30 @@ function truncate(text: string, max = 130): string {
   return clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
 }
 
+const PROJECTS_PER_PAGE = 9;
+
+interface ThematicPageState {
+  page: number;
+  projects: ProjectData[];
+  total: number;
+  totalPages: number;
+}
+
 export default function ProjectsList() {
   const { lang } = useParams<{ lang: string }>();
   const locale: Locale = lang === 'en' ? 'en' : 'fr';
   const { thematics } = useLoaderData() as ProjectsListLoaderData;
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [projectPages, setProjectPages] = useState<Record<string, ThematicPageState>>(() =>
+    Object.fromEntries(
+      thematics.map(({ thematic, projects, total, totalPages }) => [
+        thematic.slug,
+        { page: 1, projects, total, totalPages },
+      ]),
+    ),
+  );
+  const [loadingPages, setLoadingPages] = useState<Record<string, boolean>>({});
+  const [pageErrors, setPageErrors] = useState<Record<string, boolean>>({});
   const orderedThematics = [...thematics].sort((a, b) => {
     const aIsTechnology = a.thematic.slug === 'technology-information-remote-sensing';
     const bIsTechnology = b.thematic.slug === 'technology-information-remote-sensing';
@@ -24,7 +43,47 @@ export default function ProjectsList() {
   });
 
   const toggle = (slug: string) => {
-    setOpenSlug((prev) => (prev === slug ? null : slug));
+    if (openSlug !== slug) {
+      setOpenSlug(slug);
+      return;
+    }
+
+    const initialPage = thematics.find(({ thematic }) => thematic.slug === slug);
+    if (initialPage) {
+      setProjectPages((current) => ({
+        ...current,
+        [slug]: {
+          page: 1,
+          projects: initialPage.projects,
+          total: initialPage.total,
+          totalPages: initialPage.totalPages,
+        },
+      }));
+    }
+    setPageErrors((current) => ({ ...current, [slug]: false }));
+    setOpenSlug(null);
+  };
+
+  const loadProjectPage = async (slug: string, page: number) => {
+    setLoadingPages((current) => ({ ...current, [slug]: true }));
+    setPageErrors((current) => ({ ...current, [slug]: false }));
+
+    try {
+      const data = await getPublicProjectsPageByThematic(slug, page, PROJECTS_PER_PAGE);
+      setProjectPages((current) => ({
+        ...current,
+        [slug]: {
+          page: data.page,
+          projects: data.items,
+          total: data.total,
+          totalPages: data.totalPages,
+        },
+      }));
+    } catch {
+      setPageErrors((current) => ({ ...current, [slug]: true }));
+    } finally {
+      setLoadingPages((current) => ({ ...current, [slug]: false }));
+    }
   };
 
   return (
@@ -55,10 +114,17 @@ export default function ProjectsList() {
         )}
 
         <div className="space-y-3">
-          {orderedThematics.map(({ thematic, projects }) => {
+          {orderedThematics.map(({ thematic, projects, total, totalPages }) => {
             const title = locale === 'fr' ? thematic.title_fr : thematic.title_en;
             const desc = locale === 'fr' ? thematic.description_fr : thematic.description_en;
             const isOpen = openSlug === thematic.slug;
+            const projectPage = projectPages[thematic.slug] ?? {
+              page: 1,
+              projects,
+              total,
+              totalPages,
+            };
+            const isPageLoading = Boolean(loadingPages[thematic.slug]);
 
             return (
               <div
@@ -77,7 +143,7 @@ export default function ProjectsList() {
                       {title}
                     </h3>
                     <span className={`shrink-0 px-2.5 py-1 text-xs font-bold ${isOpen ? 'bg-white/10 text-oss-blue-light' : 'bg-oss-paper text-ink/42'}`}>
-                      {String(projects.length).padStart(2, '0')}
+                      {String(projectPage.total).padStart(2, '0')}
                     </span>
                   </div>
                   <ChevronDown
@@ -99,15 +165,16 @@ export default function ProjectsList() {
                   )}
 
                   <div className="bg-oss-paper p-4 sm:p-6">
-                    {projects.length === 0 ? (
+                    {projectPage.total === 0 ? (
                       <p className="py-8 text-center text-sm text-ink/40">
                         {locale === 'fr'
                           ? 'Aucun projet.'
                           : 'No projects.'}
                       </p>
                     ) : (
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {projects.map((project) => {
+                      <div>
+                        <div className={`grid gap-4 transition-opacity md:grid-cols-2 lg:grid-cols-3 ${isPageLoading ? 'opacity-55' : 'opacity-100'}`}>
+                          {projectPage.projects.map((project) => {
                           const pTitle = locale === 'fr' ? project.title_fr : project.title_en;
                           const pDesc = locale === 'fr' ? project.description_fr : project.description_en;
                           const yrs = yearRange(project.year_start, project.year_end, locale);
@@ -162,7 +229,40 @@ export default function ProjectsList() {
                               </div>
                             </Link>
                           );
-                        })}
+                          })}
+                        </div>
+
+                        {projectPage.totalPages > 1 && (
+                          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 border-t border-oss-line pt-6">
+                            <button
+                              type="button"
+                              onClick={() => loadProjectPage(thematic.slug, projectPage.page - 1)}
+                              disabled={projectPage.page <= 1 || isPageLoading}
+                              className="min-h-10 border border-oss-line bg-white px-4 py-2 text-sm font-bold text-oss-blue-dark transition-colors hover:border-oss-blue/40 hover:text-oss-blue disabled:cursor-not-allowed disabled:opacity-35"
+                            >
+                              {locale === 'fr' ? 'Précédent' : 'Previous'}
+                            </button>
+                            <span className="bg-oss-blue px-4 py-2.5 text-sm font-bold text-white" aria-live="polite">
+                              {projectPage.page} / {projectPage.totalPages}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => loadProjectPage(thematic.slug, projectPage.page + 1)}
+                              disabled={projectPage.page >= projectPage.totalPages || isPageLoading}
+                              className="min-h-10 border border-oss-line bg-white px-4 py-2 text-sm font-bold text-oss-blue-dark transition-colors hover:border-oss-blue/40 hover:text-oss-blue disabled:cursor-not-allowed disabled:opacity-35"
+                            >
+                              {locale === 'fr' ? 'Suivant' : 'Next'}
+                            </button>
+                          </div>
+                        )}
+
+                        {pageErrors[thematic.slug] && (
+                          <p className="mt-4 text-center text-sm text-red-600" role="alert">
+                            {locale === 'fr'
+                              ? 'Impossible de charger cette page. Veuillez réessayer.'
+                              : 'Unable to load this page. Please try again.'}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>

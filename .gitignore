@@ -23,3 +23,7 @@ storage/uploads/
 
 # Local Kubernetes secrets
 k8s/secret.yaml
+
+# Local database backups may contain credentials and session data
+*_backup.sql
+*_backup.sql.gz

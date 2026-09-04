@@ -696,8 +696,8 @@ export interface NewsData {
   id: number;
   title_fr: string;
   title_en: string;
-  body_fr: string;
-  body_en: string;
+  body_fr: string; // server-sanitized rich-text HTML
+  body_en: string; // server-sanitized rich-text HTML
   category: NewsCategory;
   images: string[];        // array of image URL strings
   thumbnail_index: number; // which image is the card thumbnail
@@ -1089,6 +1089,21 @@ export function yearRange(start: number | null, end: number | null, locale: "fr"
 // Public: projects for a thematic area (by thematic slug)
 export async function getPublicProjectsByThematic(thematicSlug: string) {
   return request<ProjectData[]>(`/projects/thematic/${encodeURIComponent(thematicSlug)}`);
+}
+
+export interface ProjectPageData {
+  items: ProjectData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function getPublicProjectsPageByThematic(thematicSlug: string, page = 1, limit = 9) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  return request<ProjectPageData>(
+    `/projects/thematic/${encodeURIComponent(thematicSlug)}/paginated?${params.toString()}`,
+  );
 }
 
 // Public: single project by slug

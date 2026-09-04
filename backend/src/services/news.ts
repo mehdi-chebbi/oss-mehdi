@@ -1,4 +1,5 @@
 import { pool, query } from "../config/db.js";
+import { sanitizeNewsHtml } from "../utils/newsHtml.js";
 import { enqueueNewsForSubscribers } from "./newsletter.js";
 
 export const NEWS_CATEGORIES = [
@@ -21,8 +22,8 @@ export interface NewsRow {
   id: number;
   title_fr: string;
   title_en: string;
-  body_fr: string;
-  body_en: string;
+  body_fr: string; // sanitized rich-text HTML
+  body_en: string; // sanitized rich-text HTML
   category: NewsCategory;
   images: string[];        // JSONB array of URL strings
   thumbnail_index: number; // which image is the card thumbnail
@@ -74,6 +75,17 @@ function clampThumbnailIndex(idx: unknown, images: string[]): number {
   return Math.min(Math.max(0, n), images.length - 1);
 }
 
+function normalizeNewsRow(row: any) {
+  const images = normalizeImages(row.images);
+  return {
+    ...row,
+    ...(row.body_fr !== undefined ? { body_fr: sanitizeNewsHtml(row.body_fr) } : {}),
+    ...(row.body_en !== undefined ? { body_en: sanitizeNewsHtml(row.body_en) } : {}),
+    images,
+    thumbnail_index: clampThumbnailIndex(row.thumbnail_index, images),
+  };
+}
+
 // ── Public: latest news (for the home page) ──
 export async function getLatestNews(limit = 4) {
   const result = await query(
@@ -83,11 +95,7 @@ export async function getLatestNews(limit = 4) {
      LIMIT $1`,
     [limit],
   );
-  return result.rows.map((r: any) => ({
-    ...r,
-    images: normalizeImages(r.images),
-    thumbnail_index: clampThumbnailIndex(r.thumbnail_index, normalizeImages(r.images)),
-  }));
+  return result.rows.map(normalizeNewsRow);
 }
 
 // ── Public: paginated list with optional year + keyword filter (for /news) ──
@@ -141,11 +149,7 @@ export async function listPublicNews(opts: {
     params,
   );
 
-  const items = result.rows.map((r: any) => ({
-    ...r,
-    images: normalizeImages(r.images),
-    thumbnail_index: clampThumbnailIndex(r.thumbnail_index, normalizeImages(r.images)),
-  }));
+  const items = result.rows.map(normalizeNewsRow);
 
   return { items, total };
 }
@@ -159,13 +163,7 @@ export async function getPublicNewsBySlug(slug: string) {
     [slug],
   );
   if (!result.rows[0]) return null;
-  const r = result.rows[0];
-  const images = normalizeImages(r.images);
-  return {
-    ...r,
-    images,
-    thumbnail_index: clampThumbnailIndex(r.thumbnail_index, images),
-  };
+  return normalizeNewsRow(result.rows[0]);
 }
 
 // ── Public: distinct article years (for the year filter) ──
@@ -187,24 +185,14 @@ export async function listAllNews() {
      FROM news
      ORDER BY date DESC, id DESC`,
   );
-  return result.rows.map((r: any) => ({
-    ...r,
-    images: normalizeImages(r.images),
-    thumbnail_index: clampThumbnailIndex(r.thumbnail_index, normalizeImages(r.images)),
-  }));
+  return result.rows.map(normalizeNewsRow);
 }
 
 // ── Authenticated: get single news (admin, includes body) ──
 export async function getNews(id: number) {
   const result = await query("SELECT * FROM news WHERE id = $1", [id]);
   if (!result.rows[0]) return null;
-  const r = result.rows[0];
-  const images = normalizeImages(r.images);
-  return {
-    ...r,
-    images,
-    thumbnail_index: clampThumbnailIndex(r.thumbnail_index, images),
-  };
+  return normalizeNewsRow(result.rows[0]);
 }
 
 // ── Authenticated: create news ──
@@ -234,8 +222,8 @@ export async function createNews(data: {
       [
         data.title_fr,
         data.title_en,
-        data.body_fr || "",
-        data.body_en || "",
+        sanitizeNewsHtml(data.body_fr),
+        sanitizeNewsHtml(data.body_en),
         data.category,
         JSON.stringify(images),
         thumbnail_index,
@@ -301,7 +289,11 @@ export async function updateNews(id: number, data: Partial<NewsRow>) {
   for (const key of allowed) {
     if ((data as any)[key] !== undefined) {
       fields.push(`${key} = $${idx++}`);
-      values.push((data as any)[key]);
+      values.push(
+        key === "body_fr" || key === "body_en"
+          ? sanitizeNewsHtml((data as any)[key])
+          : (data as any)[key],
+      );
     }
   }
 
@@ -315,10 +307,7 @@ export async function updateNews(id: number, data: Partial<NewsRow>) {
     values,
   );
   if (!result.rows[0]) return null;
-  const r = result.rows[0];
-  r.images = normalizeImages(r.images);
-  r.thumbnail_index = clampThumbnailIndex(r.thumbnail_index, r.images);
-  return r;
+  return normalizeNewsRow(result.rows[0]);
 }
 
 // ── Authenticated: delete news ──

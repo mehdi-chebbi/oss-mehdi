@@ -1,5 +1,6 @@
 import { env } from "../config/env.js";
 import { pool, query } from "../config/db.js";
+import { newsHtmlToPlainText } from "../utils/newsHtml.js";
 import { escapeHtml, isMailConfigured, mailLayout, sendMail } from "./mail.js";
 
 type NewsletterDelivery = {
@@ -76,8 +77,7 @@ async function claimDelivery(): Promise<NewsletterDelivery | null> {
 }
 
 function plainTextExcerpt(value: string) {
-  const plain = value
-    .replace(/<[^>]*>/g, " ")
+  const plain = newsHtmlToPlainText(value)
     .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .replace(/[#>*_`~]/g, "")

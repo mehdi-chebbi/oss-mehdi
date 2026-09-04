@@ -10,6 +10,7 @@ import {
   type NewsCategory,
 } from "../../api/auth";
 import MultiImageUpload from "../../components/admin/MultiImageUpload";
+import RichTextEditor from "../../components/admin/RichTextEditor";
 import { Globe, Loader2, ArrowLeft, Info } from "lucide-react";
 
 type Lang = "fr" | "en";
@@ -180,17 +181,12 @@ export default function NewsForm() {
             />
           </div>
 
-          {/* Body */}
+          {/* Rich article body */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-ink/80 mb-1.5">
-              Corps de l’article ({lang.toUpperCase()}). Une ligne vide sépare les paragraphes.
-            </label>
-            <textarea
+            <RichTextEditor
               value={lang === "fr" ? form.body_fr : form.body_en}
-              onChange={(e) => set(lang === "fr" ? "body_fr" : "body_en", e.target.value)}
-              rows={10}
-              className="w-full px-4 py-2.5 border border-ink/15 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#489e42] focus:border-transparent text-ink resize-y font-mono text-sm"
-              placeholder="Rédigez l’article complet ici..."
+              onChange={(html) => set(lang === "fr" ? "body_fr" : "body_en", html)}
+              label={`Corps de l’article (${lang.toUpperCase()})`}
             />
           </div>
         </div>

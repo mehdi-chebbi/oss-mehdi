@@ -4,12 +4,10 @@ import { ArrowRight, ArrowLeft, Search, Loader2 } from 'lucide-react';
 import { getThumbnail, NEWS_CATEGORIES, newsCategoryLabel } from '@/api/auth';
 import type { Locale } from '@/context/locale';
 import type { NewsListLoaderData } from '@/loaders/public';
+import { newsExcerpt } from '@/utils/newsContent';
 
 function truncate(text: string, max = 150): string {
-  if (!text) return '';
-  const clean = text.replace(/\s+/g, ' ').trim();
-  if (clean.length <= max) return clean;
-  return clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
+  return newsExcerpt(text, max);
 }
 
 function formatDate(iso: string, locale: Locale): string {
